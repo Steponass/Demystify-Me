@@ -1,0 +1,46 @@
+:root {
+
+/* COLORS */
+--clr-bg:       oklch(0.4483 0.1098 245.05);
+--clr-whiteish: oklch(0.9851 0      0     );
+--clr-blackish: oklch(0.133  0.0021 196.91);
+
+/* SPACING */
+--space-4px:   4px;
+--space-8px:   8px;
+--space-12px: 12px;
+--space-16px: 16px;
+--space-24px: 24px;
+--space-32px: 32px;
+--space-48px: 48px;
+--space-64px: 64px;
+--space-96px: 96px;
+
+/* Fluid Spacing: https://utopia.fyi/space/calculator?c=360,16,1.25,1280,16,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+--space-4-8px:   clamp(4px,  2.4348px +  0.4348vw,  8px);
+--space-8-12px:  clamp(8px,  6.4348px +  0.4348vw, 12px);
+--space-12-16px: clamp(12px, 10.4348px + 0.4348vw, 16px);
+--space-16-24px: clamp(16px, 12.8696px + 0.8696vw, 24px);
+--space-24-32px: clamp(24px, 20.8696px + 0.8696vw, 32px);
+--space-32-48px: clamp(32px, 25.7391px + 1.7391vw, 48px);
+--space-48-64px: clamp(48px, 41.7391px + 1.7391vw, 64px);
+--space-64-96px: clamp(64px, 51.4783px + 3.4783vw, 96px);
+
+/* BORDER RADIUS */
+--radius-2px:   2px;
+--radius-4px:   4px;
+--radius-8px:   8px;
+--radius-16px: 16px;
+
+/* TRANSITIONS */
+--transition-fast: 150ms ease;
+--transition-normal: 300ms ease;
+--transition-slow: 600ms ease;
+
+/* CLOUD SIZES */
+--cloud-size-mobile: 150px;
+--cloud-size-desktop: 300px;
+--cloud-size: clamp(var(--cloud-size-mobile), 15vw, var(--cloud-size-desktop));
+
+
+}
