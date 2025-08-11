@@ -12,6 +12,8 @@ const LoadingScreen = () => (
 
 // Create a component to test our store
 const StoreTest = React.lazy(() => import('./components/screens/StoreTest'));
+const BlowDetectionTest = React.lazy(() => import('./components/test/BlowDetectionTest'));
+
 
 function App() {
   return (
@@ -20,18 +22,21 @@ function App() {
         <Routes>
           {/* Home route - redirects to tutorial */}
           <Route path="/" element={<Navigate to="/tutorial" replace />} />
-          
+
           {/* Tutorial route */}
           <Route path="/tutorial" element={<TutorialLevel levelId={0} />} />
-          
+
           {/* Level routes with protection */}
           <Route path="/level/:levelId" element={<ProtectedLevelRoute />}>
             <Route index element={<LevelRouter />} />
           </Route>
-          
+
+          {/* TESTING STUFF */}
           {/* Test route - for development only */}
           <Route path="/test-store" element={<StoreTest />} />
-          
+          <Route path="/test-blow" element={<BlowDetectionTest />} />
+          {/* END OF TESTING STUFF */}
+
           {/* Catch-all route - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
