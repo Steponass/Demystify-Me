@@ -6,7 +6,7 @@ import levelData from '@data/levels/level-01.json';
 
 const Level01 = ({ levelId }) => {
   const containerRef = useRef(null);
-  
+
   const cloudConfigs = levelData.clouds.map(cloud => ({
     cloudId: cloud.cloudId,
     cloudType: cloud.cloudType
@@ -34,18 +34,20 @@ const Level01 = ({ levelId }) => {
     console.log(`Cloud ${cloudId} revealed!`);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleZoomChange = useCallback((isZoomed) => {
-    console.log(`Zoom state changed: ${isZoomed}`);
+    // Only log when debugging is needed
+    // console.log(`Zoom state changed: ${isZoomed}`);
   }, []);
 
   return (
     <div>
       <h3>{levelData.title}</h3>
       <h5>Status: {isCompleted ? 'Completed' : 'In Progress'}</h5>
-      
-      <div 
+
+      <div
         ref={containerRef}
-        style={{ 
+        style={{
           position: 'relative',
           width: '100%',
           height: '90vh',
@@ -54,7 +56,7 @@ const Level01 = ({ levelId }) => {
       >
         {levelData.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];
-          
+
           // Don't render until we have position data
           if (!position) return null;
 

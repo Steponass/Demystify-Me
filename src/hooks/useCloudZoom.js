@@ -5,7 +5,7 @@ import { Flip } from 'gsap/Flip';
 
 gsap.registerPlugin(Flip);
 
-const useCloudZoom = () => {
+const useCloudZoom = (isRevealed = false) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [isZoomingOut, setIsZoomingOut] = useState(false);
   const cloudRef = useRef(null);
@@ -30,7 +30,7 @@ const useCloudZoom = () => {
       width: '100%',
       height: '100%',
       backgroundColor: 'hsla(203, 91%, 29%, 0.98)',
-      zIndex: 1000,
+      zIndex: 9,
       opacity: 0
     });
     gsap.to(overlay, { opacity: 1, duration: 0.6, ease: "power2.inOut" });
@@ -126,20 +126,18 @@ const useCloudZoom = () => {
     });
   }, [isZoomed]);
 
-  const handleScreenTap = useCallback((e) => {
-    if (!isZoomed) return;
+  const handleScreenTap = useCallback(() => {
+    if (!isZoomed || !isRevealed) return;
 
-    if (!cloudRef.current?.contains(e.target)) {
-      handleZoomOut();
-    }
-  }, [isZoomed, handleZoomOut]);
+    handleZoomOut();
+  }, [isZoomed, isRevealed, handleZoomOut]);
 
   useEffect(() => {
-    if (isZoomed) {
+    if (isZoomed && isRevealed) {
       document.addEventListener('click', handleScreenTap);
       return () => document.removeEventListener('click', handleScreenTap);
     }
-  }, [isZoomed, handleScreenTap]);
+  }, [isZoomed, isRevealed, handleScreenTap]);
 
   return {
     cloudRef,

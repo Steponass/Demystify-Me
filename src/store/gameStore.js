@@ -62,7 +62,13 @@ const useGameStore = create(
         const levelClouds = cloudStates[levelId] || {};
         const cloudState = levelClouds[cloudId];
 
-        if (!cloudState) return;
+  console.log('Current cloud state:', { levelId, cloudId, cloudState });
+
+
+          if (!cloudState) {
+    console.warn('Cloud state not found:', { levelId, cloudId });
+    return;
+  }
 
         let newLayer;
         let isRevealed;
@@ -100,7 +106,11 @@ const useGameStore = create(
               }
             }
           }
+
+          
         });
+
+        
       },
 
       getCloudState: (levelId, cloudId) => {
