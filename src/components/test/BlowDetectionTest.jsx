@@ -8,7 +8,7 @@ const BlowDetectionTest = () => {
   const [xlBlowCount, setXLBlowCount] = useState(0);
   const [lastBlowType, setLastBlowType] = useState(null);
   const [currentLevel, setCurrentLevel] = useState(0);
-  const [customThreshold, setCustomThreshold] = useState(0.35);
+  const [customThreshold, setCustomThreshold] = useState(0.3);
   const [peakLevel, setPeakLevel] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   

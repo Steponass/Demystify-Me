@@ -17,11 +17,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
  * @returns {Object} - Blow detection state and controls
  */
 const useBlowDetection = ({
-  anyBlowMinDuration = 200,
-  longBlowThreshold = 800,
-  xlBlowThreshold = 1400,
+  anyBlowMinDuration = 150,
+  longBlowThreshold = 500,
+  xlBlowThreshold = 800,
   doubleBlowMaxGap = 650,
-  blowThreshold = 0.35,
+  blowThreshold = 0.3,
   onAnyBlow = () => {},
   onDoubleBlow = () => {},
   onLongBlow = () => {},
