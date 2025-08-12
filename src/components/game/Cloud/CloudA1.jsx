@@ -13,30 +13,14 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   // Simple image selection - one image per cloud
   const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
 
+  // Generate random animation properties for more natural movement variation
+  const [animationDelay] = useState(() => Math.random() * 10);
+  const [isReverseDirection] = useState(() => Math.random() > 0.5);
+  const [animationDuration] = useState(() => 8 + Math.random() * 6); // 8-14 seconds
+
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed);
   const animationRef = React.useRef(null);
-
-  // Setup a gentle floating animation for the cloud
-  useEffect(() => {
-    const element = animationRef.current;
-
-    if (element && !cloudState?.isRevealed) {
-      // Very gentle floating animation
-      gsap.to(element, {
-        y: -5,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
-    }
-
-    return () => {
-      if (element) {
-        gsap.killTweensOf(element);
-      }
-    };
-  }, [cloudState?.isRevealed]);
+  const textContentRef = React.useRef(null);
 
   const handleAnyBlow = useCallback(() => {
     console.log('Blow detected!', { isZoomed, isRevealed: cloudState?.isRevealed, isZoomingOut });
@@ -48,26 +32,48 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
 
     console.log('Advancing cloud layer', { levelId, cloudId });
 
-    const element = animationRef.current;
+    const cloudElement = animationRef.current;
+    const textElement = textContentRef.current;
 
-    if (element) {
+    if (cloudElement) {
       // Stop any existing animation first
-      gsap.killTweensOf(element);
+      gsap.killTweensOf(cloudElement);
+      if (textElement) {
+        gsap.killTweensOf(textElement);
+      }
+
+      // Generate random direction for variety
+      const randomDirection = Math.random() > 0.5 ? 1 : -1;
+      const floatDistance = 300;
+      const horizontalDistance = 100 * randomDirection;
 
       // Animate the cloud floating away and fading out
-      gsap.to(element, {
-        y: -300,          // Float up significantly 
-        x: Math.random() > 0.5 ? 100 : -100, // Add some horizontal movement
-        opacity: 0,       // Fade out
-        scale: 0.7,       // Shrink slightly
-        duration: 1.5,    // Over 1.5 seconds
-        ease: "power2.out",
-        onComplete: () => {
-          // After animation completes, update the state
-          advanceCloudLayer(levelId, cloudId);
-          onReveal?.(cloudId);
-        }
+      gsap.to(cloudElement, {
+        y: -floatDistance,    // Float up significantly 
+        x: horizontalDistance, // Add horizontal movement
+        opacity: 0,           // Fade out
+        scale: 0.7,           // Shrink slightly
+        duration: 1.5,        // Over 1.5 seconds
+        ease: "power2.out"
       });
+
+      // Animate the text with the same movement if it exists
+      if (textElement) {
+        gsap.to(textElement, {
+          y: -floatDistance,
+          x: horizontalDistance,
+          opacity: 0,
+          scale: 0.8,
+          duration: 1.5,
+          ease: "power2.out"
+        });
+      }
+
+      // Set a timeout to update state after animation
+      setTimeout(() => {
+        advanceCloudLayer(levelId, cloudId);
+        onReveal?.(cloudId);
+      }, 1500);
     } else {
       // Fallback if ref isn't available
       advanceCloudLayer(levelId, cloudId);
@@ -147,8 +153,8 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 (positioned behind Layer 1) */}
-        {isZoomed && !isZoomingOut && isLayer3 && (
+        {/* Layer 3 (final revealed state - visible when zoomed or after reveal) */}
+        {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
           <div className={styles.textContent}>
             <p className={styles.finalLayerText}>
               {content.layer3}
@@ -156,21 +162,28 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
           </div>
         )}
 
-        {/* Layer 1 - Cloud image */}
+        {/* Layer 1 - Cloud image (only visible if not revealed or if still on layer 1) */}
         {isLayer1 && (
           <div className={styles.cloudImage}>
             <img
               ref={animationRef}
               src={cloudImage}
               alt="Cloud"
-              className={styles.floatingCloud}
+              className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
+                ? (isReverseDirection ? styles.floatingReverse : styles.floating)
+                : ''
+                }`}
+              style={{
+                '--floating-delay': `${animationDelay}s`,
+                '--floating-duration': `${animationDuration}s`
+              }}
             />
           </div>
         )}
 
         {/* Layer 1 - Text content */}
         {isZoomed && !isZoomingOut && isLayer1 && (
-          <div className={styles.textContent}>
+          <div ref={textContentRef} className={styles.textContent}>
             <p className={styles.regularLayerText}>
               {content.layer1}
             </p>

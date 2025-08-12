@@ -1,6 +1,7 @@
 .cloudContainer {
   position: absolute;
   pointer-events: auto;
+  overflow: visible;
 }
 
 .cloud {
@@ -8,7 +9,8 @@
   width: 200px;
   height: 120px;
   cursor: pointer;
-  overflow: hidden;
+    overflow: visible;
+  /* overflow: hidden; */
 }
 
 .cloud.revealed {
@@ -44,19 +46,45 @@
   background: transparent;
   /* Default state */
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, width 0.3s ease, transform 0.3s ease;
 }
 
 .cloud.zoomed .textContent {
   opacity: 1;
   pointer-events: none;
   cursor: none;
+  overflow: visible;
+  width: 60%;
+}
+
+/* Show Layer 3 content even when not zoomed, but only for revealed clouds */
+.cloud.revealed .textContent {
+  opacity: 1;
+  pointer-events: none;
+  cursor: none;
   overflow: hidden;
+  width: 90%;
+  /* Wider for smaller cloud to fit text better */
+  animation: revealedTextAppear 0.6s ease-out;
+}
+
+/* Animation for Layer 3 text appearing after cloud is revealed */
+@keyframes revealedTextAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 .regularLayerText,
 .finalLayerText {
   font-size: var(--fs-h6);
+  transition: font-size 0.3s ease;
 }
 
 .regularLayerText {
@@ -65,9 +93,94 @@
 
 .finalLayerText {
   color: var(--clr-whiteish);
-  font-weight: bold;
+  font-weight: 500;
   text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.5);
   /* Add text shadow for better visibility */
+}
+
+/* Floating animation for non-revealed, non-zoomed clouds */
+.floatingCloud.floating {
+  animation: floating 10s linear infinite alternate-reverse none;
+  animation-delay: var(--floating-delay, 0s);
+  animation-duration: var(--floating-duration, 10s);
+}
+
+.floatingCloud.floatingReverse {
+  animation: floatingReverse 10s linear infinite alternate-reverse none;
+  animation-delay: var(--floating-delay, 0s);
+  animation-duration: var(--floating-duration, 10s);
+}
+
+@keyframes floating {
+  0% {}
+
+  12% {
+    transform: translateX(-3px) translateY(2px);
+  }
+
+  24% {
+    transform: translateX(-6px) translateY(0px);
+  }
+
+  36% {
+    transform: translateX(-3px) translateY(-2px);
+  }
+
+  48% {
+    transform: translateX(0px) translateY(0px);
+  }
+
+  60% {
+    transform: translateX(3px) translateY(2px);
+  }
+
+  72% {
+    transform: translateX(6px) translateY(0px);
+  }
+
+  84% {
+    transform: translateX(3px) translateY(-2px);
+  }
+
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+@keyframes floatingReverse {
+  0% {}
+
+  12% {
+    transform: translateX(3px) translateY(-2px);
+  }
+
+  24% {
+    transform: translateX(6px) translateY(0px);
+  }
+
+  36% {
+    transform: translateX(3px) translateY(2px);
+  }
+
+  48% {
+    transform: translateX(0px) translateY(0px);
+  }
+
+  60% {
+    transform: translateX(-3px) translateY(-2px);
+  }
+
+  72% {
+    transform: translateX(-6px) translateY(0px);
+  }
+
+  84% {
+    transform: translateX(-3px) translateY(2px);
+  }
+
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
 }
 
 /* Audio level indicator */

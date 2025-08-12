@@ -42,8 +42,8 @@ const Level01 = ({ levelId }) => {
 
   return (
     <div>
-      <h3>{levelData.title}</h3>
-      <h5>Status: {isCompleted ? 'Completed' : 'In Progress'}</h5>
+      <h6>{levelData.title}</h6>
+      <p>Status: {isCompleted ? 'Completed' : 'In Progress'}</p>
 
       <div
         ref={containerRef}

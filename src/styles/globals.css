@@ -1,3 +1,7 @@
 body {
   background-color: var(--clr-bg);
+  overflow-y: hidden;
+  padding-block: min(24px, 4px + 2vw);
+  width: min(98%, 1280px);
+  margin-inline: auto;
 }
