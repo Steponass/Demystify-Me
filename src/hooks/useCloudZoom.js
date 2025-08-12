@@ -1,12 +1,13 @@
-// src/hooks/useCloudZoom.js - Based on CodePen approach
+// src/hooks/useCloudZoom.js
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Flip } from 'gsap/Flip';
 
 gsap.registerPlugin(Flip);
 
-const useCloudZoom = (cloudId) => {
+const useCloudZoom = () => {
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isZoomingOut, setIsZoomingOut] = useState(false);
   const cloudRef = useRef(null);
   const originalParent = useRef(null);
   const originalNextSibling = useRef(null);
@@ -28,7 +29,7 @@ const useCloudZoom = (cloudId) => {
       left: 0,
       width: '100%',
       height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.9)',
+      backgroundColor: 'hsla(203, 91%, 29%, 0.98)',
       zIndex: 1000,
       opacity: 0
     });
@@ -51,17 +52,14 @@ const useCloudZoom = (cloudId) => {
       xPercent: -50,
       yPercent: -50,
       width: '100%',
-      // maxWidth: '720px',
+      maxWidth: '720px',
       height: 'auto',
-      maxHeight: 'calc(720px * 9 / 16)', // Ensures 16:9 aspect ratio
-      aspectRatio: '16 / 9', // CSS property for modern browsers
+      maxHeight: 'calc(720px * 9 / 16)',
+      aspectRatio: '16 / 9',
       zIndex: 1001,
-      background: 'rgba(255, 255, 255, 0.95)',
-      borderRadius: '16px',
-      padding: '24px',
-      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+      padding: '4px',
       visibility: 'visible',
-      overflowY: 'auto'
+      overflow: 'hidden'
     });
 
     // Add class for styling
@@ -72,12 +70,9 @@ const useCloudZoom = (cloudId) => {
     Flip.from(state, {
       duration: 0.6,
       ease: "power2.inOut",
-      scale: true,
-      onComplete: () => {
-        console.log(`Zoom in animation complete for cloud ${cloudId}`);
-      }
+      scale: true
     });
-  }, [isZoomed, cloudId]);
+  }, [isZoomed]);
 
   const handleZoomOut = useCallback(() => {
     if (!isZoomed) return;
@@ -85,20 +80,13 @@ const useCloudZoom = (cloudId) => {
     const cloudElement = cloudRef.current;
     if (!cloudElement) return;
 
-    // Remove zoomed class first
-    cloudElement.classList.remove('zoomed');
+    // Set zooming out state immediately 
+    setIsZoomingOut(true);
 
-    // Capture state BEFORE any changes
-    const state = Flip.getState(cloudElement, { props: "all" });
+    // Calculate final position relative to viewport
+    const targetRect = originalParent.current.getBoundingClientRect();
 
-    // Move element back to original position in DOM
-    if (originalNextSibling.current) {
-      originalParent.current.insertBefore(cloudElement, originalNextSibling.current);
-    } else {
-      originalParent.current.appendChild(cloudElement);
-    }
-
-    // Remove overlay
+    // Remove overlay with animation
     if (overlayRef.current) {
       gsap.to(overlayRef.current, {
         opacity: 0,
@@ -111,15 +99,29 @@ const useCloudZoom = (cloudId) => {
       });
     }
 
-    // Run FLIP animation
-    Flip.from(state, {
+    // Animate directly with GSAP for more predictable results
+    gsap.to(cloudElement, {
       duration: 0.6,
       ease: "power2.inOut",
-      absolute: true,
+      width: '200px',  // Use the original cloud size from Cloud.module.css
+      height: '120px', // Use the original cloud size from Cloud.module.css
+      top: targetRect.top,
+      left: targetRect.left,
+      xPercent: 0,
+      yPercent: 0,
       onComplete: () => {
-        // Clear all inline styles only after animation completes
+        // After animation is complete, move the element back to its original DOM position
+        if (originalNextSibling.current) {
+          originalParent.current.insertBefore(cloudElement, originalNextSibling.current);
+        } else {
+          originalParent.current.appendChild(cloudElement);
+        }
+
+        // Reset the element's appearance
+        cloudElement.classList.remove('zoomed');
         gsap.set(cloudElement, { clearProps: "all" });
         setIsZoomed(false);
+        setIsZoomingOut(false);
       }
     });
   }, [isZoomed]);
@@ -142,6 +144,7 @@ const useCloudZoom = (cloudId) => {
   return {
     cloudRef,
     isZoomed,
+    isZoomingOut,
     handleZoomIn,
     handleZoomOut
   };

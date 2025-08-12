@@ -8,6 +8,7 @@
   width: 200px;
   height: 120px;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .cloud.revealed {
@@ -22,6 +23,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+  
 }
 
 .floatingCloud {
@@ -36,30 +38,29 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  width: 90%;
+  width: 60%;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  border-radius: 8px;
+  background: transparent;
   /* Default state */
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-/* Remove this style that's causing conflicts */
-/* .cloud[style*="width: 100%"] .textContent {
-  opacity: 1;
-} */
-
-/* Instead, add a class for zoomed state */
 .cloud.zoomed .textContent {
   opacity: 1;
+  pointer-events: none;
+  cursor: none;
+  overflow: hidden;
+}
+
+.regularLayerText, .finalLayerText {
+  font-size: var(--fs-h6);
 }
 
 .regularLayerText {
-  color: black;
+  color: var(--clr-blackish);
 }
 
 .finalLayerText {
-  color: blue;
+  color: var(--clr-whiteish);
 }

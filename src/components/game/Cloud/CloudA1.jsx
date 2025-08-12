@@ -1,49 +1,33 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import useCloudZoom from '@hooks/useCloudZoom';
 import useCloudAnimation from '@hooks/useCloudAnimation';
 import useBlowDetection from '@hooks/useBlowDetection';
 import useGameStore from '@store/gameStore';
+import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 
-const CloudA1 = ({ levelId = 1, cloudId, position, content, onReveal, onZoomChange }) => {
-  const { getCloudState, advanceCloudLayer, getCloudImage } = useGameStore();
+const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }) => {
+  const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
-  const { cloudRef, isZoomed, handleZoomIn } = useCloudZoom(cloudId);
+  // Simple image selection - one image per cloud
+  const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
+
+  const { cloudRef, isZoomed, isZoomingOut, handleZoomIn } = useCloudZoom();
   const { animationRef } = useCloudAnimation(cloudState?.isRevealed, cloudId);
 
-  // Get the assigned cloud image based on current layer
-  const getCloudImageForCurrentLayer = () => {
-    if (!cloudState) return null;
-
-    // Determine which image folder to use based on layer
-    let layerType = 'Regular';
-    if (cloudState.currentLayer === 2) {
-      layerType = 'Heavy'; // or whatever logic you want for layer 2
-    } else if (cloudState.currentLayer === 3) {
-      layerType = 'Light'; // or whatever logic you want for layer 3
-    }
-
-    return getCloudImage(levelId, cloudId, layerType); // TODO: Get level dynamically
-  };
-
-  const cloudImageSrc = getCloudImageForCurrentLayer();
-
-  // Handle blow detection
   const handleAnyBlow = useCallback(() => {
-    if (!isZoomed || cloudState?.isRevealed) return;
+    if (!isZoomed || cloudState?.isRevealed || isZoomingOut) return;
 
-    advanceCloudLayer(levelId, cloudId); // TODO: Get level dynamically
+    advanceCloudLayer(levelId, cloudId);
     onReveal?.(cloudId);
-  }, [isZoomed, cloudState?.isRevealed, advanceCloudLayer, cloudId, onReveal]);
+  }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
 
-  // Initialize blow detection when zoomed
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: handleAnyBlow,
   });
 
-  // Start/stop microphone based on zoom state - use useCallback to prevent re-renders
-  const handleZoomChange = useCallback(() => {
+  useEffect(() => {
     if (isZoomed) {
       startListening();
       onZoomChange?.(true);
@@ -53,18 +37,13 @@ const CloudA1 = ({ levelId = 1, cloudId, position, content, onReveal, onZoomChan
     }
   }, [isZoomed, startListening, stopListening, onZoomChange]);
 
-  // Only run when zoom state actually changes
-  useEffect(() => {
-    handleZoomChange();
-  }, [isZoomed]); // Only depend on isZoomed, not the callback
-
   if (!cloudState) return null;
 
   const getCurrentContent = () => {
     return cloudState.currentLayer === 1 ? content.layer1 : content.layer3;
   };
 
-  const hasCloudImage = cloudState.currentLayer === 1;
+  const showCloudImage = cloudState.currentLayer === 1;
 
   return (
     <div
@@ -80,33 +59,20 @@ const CloudA1 = ({ levelId = 1, cloudId, position, content, onReveal, onZoomChan
         onClick={handleZoomIn}
         data-flip-id={cloudId}
       >
-        {/* Cloud image - only visible when not zoomed or if current layer has image */}
-        {(!isZoomed || hasCloudImage) && (
+        {/* Cloud image - show on layer 1 (both zoomed and not zoomed) */}
+        {showCloudImage && (
           <div className={styles.cloudImage}>
-            {cloudImageSrc ? (
-              <img
-                ref={animationRef}
-                src={cloudImageSrc}
-                alt="Cloud"
-                className={styles.floatingCloud}
-              />
-            ) : (
-              // Fallback if no image assigned
-              <div
-                ref={animationRef}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  background: 'linear-gradient(135deg, #87CEEB, #E0F6FF)',
-                  borderRadius: '50px'
-                }}
-              />
-            )}
+            <img
+              ref={animationRef}
+              src={cloudImage}
+              alt="Cloud"
+              className={styles.floatingCloud}
+            />
           </div>
         )}
 
-        {/* Text content - only visible when zoomed */}
-        {isZoomed && (
+        {/* Text content - only when zoomed and not zooming out */}
+        {isZoomed && !isZoomingOut && (
           <div className={styles.textContent}>
             <p className={cloudState.currentLayer === 3 ? styles.finalLayerText : styles.regularLayerText}>
               {getCurrentContent()}

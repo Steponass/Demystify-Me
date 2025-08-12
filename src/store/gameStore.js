@@ -1,17 +1,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { assignLayerImages, getCloudImagePath } from '@utils/cloudImageAssignment';
 
 const initialState = {
   currentLevel: 0,
   completedLevels: [],
 
-  // Updated structure to track layer states
+  // Simple structure to track layer states
   // Format: { levelId: { cloudId: { currentLayer: 1, isRevealed: false, cloudType: 'A1' } } }
   cloudStates: {},
-
-  // New: Store cloud image assignments per level
-  cloudImageAssignments: {},
 };
 
 const useGameStore = create(
@@ -39,14 +35,10 @@ const useGameStore = create(
       },
 
       initializeClouds: (levelId, cloudConfigs) => {
-        const { cloudStates, cloudImageAssignments } = get();
+        const { cloudStates } = get();
 
         if (!cloudStates[levelId]) {
           const levelClouds = {};
-          const cloudIds = cloudConfigs.map(config => config.cloudId);
-          
-          // Assign random cloud images for all layer types
-          const imageAssignments = assignLayerImages(cloudIds);
           
           cloudConfigs.forEach(config => {
             levelClouds[config.cloudId] = {
@@ -60,10 +52,6 @@ const useGameStore = create(
             cloudStates: {
               ...cloudStates,
               [levelId]: levelClouds
-            },
-            cloudImageAssignments: {
-              ...cloudImageAssignments,
-              [levelId]: imageAssignments
             }
           });
         }
@@ -118,19 +106,6 @@ const useGameStore = create(
       getCloudState: (levelId, cloudId) => {
         const { cloudStates } = get();
         return cloudStates[levelId]?.[cloudId] || null;
-      },
-
-      // New: Get cloud image for specific level, cloud, and layer type
-      getCloudImage: (levelId, cloudId, layerType = 'Regular') => {
-        const { cloudImageAssignments } = get();
-        const levelAssignments = cloudImageAssignments[levelId];
-        
-        if (!levelAssignments || !levelAssignments[layerType]) {
-          return null;
-        }
-        
-        const filename = levelAssignments[layerType][cloudId];
-        return filename ? getCloudImagePath(filename, layerType) : null;
       },
 
       // Check if level is completed (all clouds revealed)
