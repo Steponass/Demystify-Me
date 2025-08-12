@@ -40,7 +40,7 @@ const CloudA1 = ({ cloudId, position, content, onReveal, onZoomChange }) => {
   // Only run when zoom state actually changes
   useEffect(() => {
     handleZoomChange();
-  }, [isZoomed, handleZoomChange]); // Only depend on isZoomed, not the callback
+  }, [isZoomed]); // Only depend on isZoomed, not the callback
 
   if (!cloudState) return null;
 

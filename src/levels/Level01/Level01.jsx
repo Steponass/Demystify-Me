@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
 import useLevelProgress from '@hooks/useLevelProgress';
 import useCloudLayout from '@hooks/useCloudLayout';
@@ -6,7 +6,6 @@ import levelData from '@data/levels/level-01.json';
 
 const Level01 = ({ levelId }) => {
   const containerRef = useRef(null);
-  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
   
   const cloudConfigs = levelData.clouds.map(cloud => ({
     cloudId: cloud.cloudId,
@@ -22,7 +21,6 @@ const Level01 = ({ levelId }) => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        setContainerDimensions({ width: rect.width, height: rect.height });
         updateContainerDimensions(rect.width, rect.height);
       }
     };
@@ -36,23 +34,22 @@ const Level01 = ({ levelId }) => {
     console.log(`Cloud ${cloudId} revealed!`);
   };
 
-  const handleZoomChange = (isZoomed) => {
+  const handleZoomChange = useCallback((isZoomed) => {
     console.log(`Zoom state changed: ${isZoomed}`);
-  };
+  }, []);
 
   return (
     <div>
-      <h1>{levelData.title}</h1>
-      <p>Status: {isCompleted ? 'Completed' : 'In Progress'}</p>
+      <h3>{levelData.title}</h3>
+      <h5>Status: {isCompleted ? 'Completed' : 'In Progress'}</h5>
       
       <div 
         ref={containerRef}
         style={{ 
           position: 'relative',
           width: '100%',
-          height: '70vh',
-          border: '2px dashed #ccc',
-          marginTop: '2rem'
+          height: '90vh',
+
         }}
       >
         {levelData.clouds.map((cloudData) => {
@@ -73,15 +70,6 @@ const Level01 = ({ levelId }) => {
             />
           );
         })}
-      </div>
-
-      <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f5f5f5' }}>
-        <h3>Debug Info:</h3>
-        <p>Container: {containerDimensions.width}x{containerDimensions.height}</p>
-        <p>Positioned clouds: {Object.keys(cloudPositions).length}/{levelData.clouds.length}</p>
-        <pre style={{ fontSize: '0.8rem' }}>
-          {JSON.stringify(cloudPositions, null, 2)}
-        </pre>
       </div>
     </div>
   );
