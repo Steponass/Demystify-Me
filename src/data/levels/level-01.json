@@ -1,0 +1,46 @@
+{
+  "levelId": 1,
+  "title": "Folk Wisdom",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "Everything happens for a reason",
+        "layer3": "Attaching meaning that doesn't exist"
+      }
+    },
+    {
+      "cloudId": "cloud2", 
+      "cloudType": "A1",
+      "content": {
+        "layer1": "What doesn't kill you makes you stronger",
+        "layer3": "I'm romanticizing suffering"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A1", 
+      "content": {
+        "layer1": "We only use 10% of our brains",
+        "layer3": "Repeating a catchy myth"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "A1", 
+      "content": {
+        "layer1": "If it ain't broke, don't fix it",
+        "layer3": "I'm resisting change"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "A1", 
+      "content": {
+        "layer1": "You can't teach an old dog new tricks",
+        "layer3": "A convenient excuse to stop trying"
+      }
+    }
+  ]
+}

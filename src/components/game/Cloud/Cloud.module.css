@@ -1,0 +1,91 @@
+/* src/components/game/Cloud/Cloud.module.css - Debug CSS modules */
+
+.cloudContainer {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.cloud {
+  position: relative;
+  width: 200px;
+  height: 120px;
+  cursor: pointer;
+  border: 2px solid blue;
+  background: rgba(135, 206, 235, 0.3);
+}
+
+.cloud.revealed {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Make sure this targets the right element */
+.cloud:global(.zoomed) {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 90vw !important;
+  max-width: 420px !important;
+  height: 250px !important;
+  z-index: 1000 !important;
+  background: yellow !important; /* Very obvious color for debugging */
+  border: 10px solid red !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  cursor: default !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Alternative: try without CSS modules scoping */
+:global(.zoomed) {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 90vw !important;
+  max-width: 420px !important;
+  height: 250px !important;
+  z-index: 1000 !important;
+  background: yellow !important;
+  border: 10px solid red !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  cursor: default !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8) !important;
+}
+
+.cloudImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 50%, #87CEEB 100%);
+  border-radius: 50px;
+}
+
+.textContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.textContent p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.4;
+  color: black;
+}
+
+.cloud:not(.zoomed) .textContent {
+  display: none;
+}

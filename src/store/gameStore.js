@@ -4,88 +4,122 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 const initialState = {
   currentLevel: 0,
   completedLevels: [],
-  
-  // Track revealed clouds per level
-  // Format: { levelId: [cloudId1, cloudId2, ...] }
-  revealedClouds: {},
+
+  // Updated structure to track layer states
+  // Format: { levelId: { cloudId: { currentLayer: 1, isRevealed: false, cloudType: 'A1' } } }
+  cloudStates: {},
 };
 
 const useGameStore = create(
   persist(
     (set, get) => ({
       ...initialState,
-      
+
       setCurrentLevel: (level) => set({ currentLevel: level }),
-      
+
       completeLevel: (levelId) => {
         const { completedLevels } = get();
-        
-        // Only add if not already completed
+
         if (!completedLevels.includes(levelId)) {
           set({
             completedLevels: [...completedLevels, levelId],
-            // Auto-unlock next level
             currentLevel: Math.max(get().currentLevel, levelId + 1)
           });
         }
       },
-      
+
       isLevelUnlocked: (levelId) => {
-        // Tutorial & Level 1 are always unlocked
         if (levelId === 0) return true;
         if (levelId === 1) return true;
-        // Other levels require previous level completion
         return get().completedLevels.includes(levelId - 1);
       },
-      
-      // Mark a cloud as revealed
-      revealCloud: (levelId, cloudId) => {
-        const { revealedClouds } = get();
-        
-        // Get the current revealed clouds for this level or initialize empty array
-        const levelClouds = revealedClouds[levelId] || [];
-        
-        // Only add if not already revealed
-        if (!levelClouds.includes(cloudId)) {
+
+      initializeClouds: (levelId, cloudConfigs) => {
+        const { cloudStates } = get();
+
+        if (!cloudStates[levelId]) {
+          const levelClouds = {};
+          cloudConfigs.forEach(config => {
+            levelClouds[config.cloudId] = {
+              currentLayer: 1,
+              isRevealed: false,
+              cloudType: config.cloudType
+            };
+          });
+
           set({
-            revealedClouds: {
-              ...revealedClouds,
-              [levelId]: [...levelClouds, cloudId]
+            cloudStates: {
+              ...cloudStates,
+              [levelId]: levelClouds
             }
           });
         }
       },
-      
-      // Check if a cloud is revealed
-      isCloudRevealed: (levelId, cloudId) => {
-        const { revealedClouds } = get();
-        const levelClouds = revealedClouds[levelId] || [];
-        return levelClouds.includes(cloudId);
-      },
-      
-      // Check if a level is completed (all clouds revealed)
-      isLevelCompleted: (levelId) => {
-        return get().completedLevels.includes(levelId);
-      },
-      
-      // Reset progress for a specific cloud (for the rewind feature)
-      resetCloud: (levelId, cloudId) => {
-        const { revealedClouds } = get();
-        const levelClouds = revealedClouds[levelId] || [];
-        
+
+      advanceCloudLayer: (levelId, cloudId) => {
+        const { cloudStates } = get();
+        const levelClouds = cloudStates[levelId] || {};
+        const cloudState = levelClouds[cloudId];
+
+        if (!cloudState) return;
+
+        let newLayer;
+        let isRevealed;
+
+        // A-type clouds: Layer 1 → Layer 3 (skip layer 2)
+        if (cloudState.cloudType.startsWith('A')) {
+          if (cloudState.currentLayer === 1) {
+            newLayer = 3; // Skip directly to layer 3
+            isRevealed = true;
+          } else {
+            newLayer = cloudState.currentLayer; // Already at final layer
+            isRevealed = true;
+          }
+        }
+        // B-type clouds: Layer 1 → Layer 2 → Layer 3
+        else if (cloudState.cloudType.startsWith('B')) {
+          newLayer = cloudState.currentLayer + 1;
+          isRevealed = newLayer === 3;
+        }
+        // Fallback
+        else {
+          newLayer = cloudState.currentLayer + 1;
+          isRevealed = newLayer >= 3;
+        }
+
         set({
-          revealedClouds: {
-            ...revealedClouds,
-            [levelId]: levelClouds.filter(id => id !== cloudId)
+          cloudStates: {
+            ...cloudStates,
+            [levelId]: {
+              ...levelClouds,
+              [cloudId]: {
+                ...cloudState,
+                currentLayer: newLayer,
+                isRevealed
+              }
+            }
           }
         });
       },
-      
-      // Reset all progress (for development/testing)
+
+      getCloudState: (levelId, cloudId) => {
+        const { cloudStates } = get();
+        return cloudStates[levelId]?.[cloudId] || null;
+      },
+
+      // Check if level is completed (all clouds revealed)
+      isLevelCompleted: (levelId) => {
+        const { cloudStates } = get();
+        const levelClouds = cloudStates[levelId] || {};
+        const cloudArray = Object.values(levelClouds);
+
+        return cloudArray.length > 0 && cloudArray.every(cloud => cloud.isRevealed);
+      },
+
       resetAllProgress: () => set(initialState),
     }),
     {
-      name: 'blow-it-game-storage', // unique name for localStorage
+      name: 'blow-it-game-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )
