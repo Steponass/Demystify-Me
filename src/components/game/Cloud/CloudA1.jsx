@@ -1,4 +1,3 @@
-// src/components/game/Cloud/CloudA1.jsx
 import React, { useEffect, useCallback } from 'react';
 import useCloudZoom from '@hooks/useCloudZoom';
 import useCloudAnimation from '@hooks/useCloudAnimation';
@@ -6,18 +5,35 @@ import useBlowDetection from '@hooks/useBlowDetection';
 import useGameStore from '@store/gameStore';
 import styles from './Cloud.module.css';
 
-const CloudA1 = ({ cloudId, position, content, onReveal, onZoomChange }) => {
-  const { getCloudState, advanceCloudLayer } = useGameStore();
-  const cloudState = getCloudState(1, cloudId); // TODO: Get level dynamically
-  
+const CloudA1 = ({ levelId = 1, cloudId, position, content, onReveal, onZoomChange }) => {
+  const { getCloudState, advanceCloudLayer, getCloudImage } = useGameStore();
+  const cloudState = getCloudState(levelId, cloudId);
+
   const { cloudRef, isZoomed, handleZoomIn } = useCloudZoom(cloudId);
   const { animationRef } = useCloudAnimation(cloudState?.isRevealed, cloudId);
+
+  // Get the assigned cloud image based on current layer
+  const getCloudImageForCurrentLayer = () => {
+    if (!cloudState) return null;
+
+    // Determine which image folder to use based on layer
+    let layerType = 'Regular';
+    if (cloudState.currentLayer === 2) {
+      layerType = 'Heavy'; // or whatever logic you want for layer 2
+    } else if (cloudState.currentLayer === 3) {
+      layerType = 'Light'; // or whatever logic you want for layer 3
+    }
+
+    return getCloudImage(levelId, cloudId, layerType); // TODO: Get level dynamically
+  };
+
+  const cloudImageSrc = getCloudImageForCurrentLayer();
 
   // Handle blow detection
   const handleAnyBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed) return;
-    
-    advanceCloudLayer(1, cloudId); // TODO: Get level dynamically
+
+    advanceCloudLayer(levelId, cloudId); // TODO: Get level dynamically
     onReveal?.(cloudId);
   }, [isZoomed, cloudState?.isRevealed, advanceCloudLayer, cloudId, onReveal]);
 
@@ -32,7 +48,7 @@ const CloudA1 = ({ cloudId, position, content, onReveal, onZoomChange }) => {
       startListening();
       onZoomChange?.(true);
     } else {
-      stopListening();  
+      stopListening();
       onZoomChange?.(false);
     }
   }, [isZoomed, startListening, stopListening, onZoomChange]);
@@ -51,35 +67,41 @@ const CloudA1 = ({ cloudId, position, content, onReveal, onZoomChange }) => {
   const hasCloudImage = cloudState.currentLayer === 1;
 
   return (
-    <div 
+    <div
       className={styles.cloudContainer}
       style={{
         left: position?.x,
         top: position?.y
       }}
     >
-      <div 
+      <div
         ref={cloudRef}
-        className={`${styles.cloud} ${cloudState.isRevealed ? styles.revealed : ''}`}
+        className={`${styles.cloud} ${cloudState.isRevealed ? styles.revealed : ''} ${isZoomed ? styles.zoomed : ''}`}
         onClick={handleZoomIn}
         data-flip-id={cloudId}
       >
         {/* Cloud image - only visible when not zoomed or if current layer has image */}
         {(!isZoomed || hasCloudImage) && (
           <div className={styles.cloudImage}>
-            {/* Use public path for Vite, add fallback */}
-            <img 
-              ref={animationRef}
-              src={`/assets/clouds/cloud_reg_${cloudId}.webp`}
-              alt="Cloud"
-              className={styles.floatingCloud}
-              onError={(e) => {
-                // Fallback to a solid background if image doesn't exist
-                e.target.style.display = 'none';
-                e.target.parentElement.style.background = 'linear-gradient(135deg, #87CEEB, #E0F6FF)';
-                e.target.parentElement.style.borderRadius = '50px';
-              }}
-            />
+            {cloudImageSrc ? (
+              <img
+                ref={animationRef}
+                src={cloudImageSrc}
+                alt="Cloud"
+                className={styles.floatingCloud}
+              />
+            ) : (
+              // Fallback if no image assigned
+              <div
+                ref={animationRef}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(135deg, #87CEEB, #E0F6FF)',
+                  borderRadius: '50px'
+                }}
+              />
+            )}
           </div>
         )}
 

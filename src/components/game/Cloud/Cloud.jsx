@@ -11,7 +11,8 @@ const Cloud = ({
   cloudType,
   content,
   onReveal,
-  onZoomChange 
+  onZoomChange,
+  levelId 
 }) => {
   // Route to appropriate cloud component based on type
   const CloudComponent = {
@@ -34,6 +35,7 @@ const Cloud = ({
       content={content}
       onReveal={onReveal}
       onZoomChange={onZoomChange}
+      levelId={levelId}
     />
   );
 };

@@ -67,6 +67,7 @@ const Level01 = ({ levelId }) => {
               content={cloudData.content}
               onReveal={handleCloudReveal}
               onZoomChange={handleZoomChange}
+              levelId={levelId}
             />
           );
         })}
