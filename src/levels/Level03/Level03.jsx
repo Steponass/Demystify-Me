@@ -2,10 +2,10 @@ import React, { useRef, useEffect, useCallback } from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
 import useLevelProgress from '@hooks/useLevelProgress';
 import useCloudLayout from '@hooks/useCloudLayout';
-import levelData from '@data/levels/level-01.json';
+import levelData from '@data/levels/level-03.json';
 import styles from '@levels/Level.module.css'
 
-const Level01 = ({ levelId }) => {
+const Level03 = ({ levelId }) => {
   const containerRef = useRef(null);
 
   const cloudConfigs = levelData.clouds.map(cloud => ({
@@ -31,16 +31,15 @@ const Level01 = ({ levelId }) => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, [updateContainerDimensions]);
 
-  const handleCloudReveal = (cloudId) => {
-    console.log(`Cloud ${cloudId} revealed!`);
-  };
+  // Enhanced cloud reveal handler for mixed-type levels
+  // This version could track which interaction types users try first
+  const handleCloudReveal = useCallback((cloudId) => {
+    const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
+    console.log(`Level 3: ${revealedCloud?.cloudType} cloud "${cloudId}" revealed!`);
+  }, []);
 
-  // Handle zoom state changes for the entire level
-  // Useful for managing things like background audio or UI overlays
-  // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
   const handleZoomChange = useCallback((isZoomed) => {
-    // Only log when debugging is needed
-    // console.log(`Zoom state changed: ${isZoomed}`);
   }, []);
 
   return (
@@ -48,13 +47,10 @@ const Level01 = ({ levelId }) => {
       <h6>{levelData.title}</h6>
       <p>Status: {isCompleted ? 'Completed' : 'In Progress'}</p>
 
-      <div className={styles.cloud_layout}
-        ref={containerRef}
-      >
+      <div className={styles.cloud_layout} ref={containerRef}>
         {levelData.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];
 
-          // Don't render until we have position data
           if (!position) return null;
 
           return (
@@ -75,4 +71,4 @@ const Level01 = ({ levelId }) => {
   );
 };
 
-export default Level01;
+export default Level03;

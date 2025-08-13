@@ -28,10 +28,19 @@ const useGameStore = create(
         }
       },
 
-      isLevelUnlocked: (levelId) => {
-        if (levelId === 0) return true;
-        if (levelId === 1) return true;
-        return get().completedLevels.includes(levelId - 1);
+      // isLevelUnlocked: (levelId) => {
+      //   if (levelId === 0) return true;
+      //   if (levelId === 1) return true;
+      //   return get().completedLevels.includes(levelId - 1);
+      // },
+
+      isLevelUnlocked: () => {
+        // TEMPORARY: Always return true for testing purposes
+        // Original code:
+        // if (levelId === 0) return true;
+        // if (levelId === 1) return true;
+        // return get().completedLevels.includes(levelId - 1);
+        return true;
       },
 
       initializeClouds: (levelId, cloudConfigs) => {
@@ -39,7 +48,7 @@ const useGameStore = create(
 
         if (!cloudStates[levelId]) {
           const levelClouds = {};
-          
+
           cloudConfigs.forEach(config => {
             levelClouds[config.cloudId] = {
               currentLayer: 1,
@@ -62,13 +71,13 @@ const useGameStore = create(
         const levelClouds = cloudStates[levelId] || {};
         const cloudState = levelClouds[cloudId];
 
-  console.log('Current cloud state:', { levelId, cloudId, cloudState });
+        console.log('Current cloud state:', { levelId, cloudId, cloudState });
 
 
-          if (!cloudState) {
-    console.warn('Cloud state not found:', { levelId, cloudId });
-    return;
-  }
+        if (!cloudState) {
+          console.warn('Cloud state not found:', { levelId, cloudId });
+          return;
+        }
 
         let newLayer;
         let isRevealed;
@@ -107,10 +116,10 @@ const useGameStore = create(
             }
           }
 
-          
+
         });
 
-        
+
       },
 
       getCloudState: (levelId, cloudId) => {

@@ -24,7 +24,11 @@
   height: 100%;
   pointer-events: none;
   z-index: 5;
-  /* Add z-index to ensure cloud image is above Layer 3 content */
+}
+
+.translucentCloudImage {
+  opacity: 0.6;
+  z-index: 7;
 }
 
 .floatingCloud {

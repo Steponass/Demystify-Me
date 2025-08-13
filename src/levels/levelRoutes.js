@@ -1,10 +1,10 @@
 import { lazy } from 'react';
 
 const TutorialLevel = lazy(() => import('./Tutorial/TutorialLevel'));
-const Level01 = lazy(() => import('./Level01/Level01'));
-const Level02 = lazy(() => import('./Level02/Level02'));
-// const Level03 = lazy(() => import('./Level02/Level03'));
-// const Level04 = lazy(() => import('./Level02/Level04'));
+const Level01 = lazy(() => import('@levels/Level01/Level01'));
+const Level02 = lazy(() => import('@levels/Level02/Level02'));
+const Level03 = lazy(() => import('@levels/Level03/Level03'));
+const Level04 = lazy(() => import('@levels/Level04/Level04'));
 // const Level05 = lazy(() => import('./Level02/Level05'));
 // const Level06 = lazy(() => import('./Level02/Level06'));
 // const Level07 = lazy(() => import('./Level02/Level07'));
@@ -17,8 +17,8 @@ const levelComponents = {
   0: TutorialLevel,
   1: Level01,
   2: Level02,
-  // 3: Level03,
-  // 4: Level04,
+  3: Level03,
+  4: Level04,
   // 5: Level05,
   // 6: Level06,
   // 7: Level07,
@@ -37,8 +37,8 @@ export {
   TutorialLevel, 
   Level01, 
   Level02, 
-  // Level03,
-  // Level04,
+  Level03,
+  Level04,
   // Level05,
   // Level06,
   // Level07,
