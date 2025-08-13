@@ -6,40 +6,40 @@
       "cloudId": "cloud1",
       "cloudType": "A1",
       "content": {
-        "layer1": "Everything happens for a reason",
-        "layer3": "Attaching meaning that doesn't exist"
-      }
-    },
-    {
-      "cloudId": "cloud2", 
-      "cloudType": "A1",
-      "content": {
         "layer1": "What doesn't kill you makes you stronger",
-        "layer3": "I'm romanticizing suffering"
+        "layer3": "Survival masquerading as empowerment"
       }
     },
     {
-      "cloudId": "cloud3",
-      "cloudType": "A1", 
+      "cloudId": "cloud2",
+      "cloudType": "A1",
       "content": {
         "layer1": "We only use 10% of our brains",
         "layer3": "Repeating a catchy myth"
       }
     },
     {
+      "cloudId": "cloud3",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "Everything happens for a reason",
+        "layer3": "Let's make up reasons to feel better"
+      }
+    },
+    {
       "cloudId": "cloud4",
-      "cloudType": "A1", 
+      "cloudType": "A1",
       "content": {
         "layer1": "If it ain't broke, don't fix it",
-        "layer3": "I'm resisting change"
+        "layer3": "I prefer safe mediocrity over risk"
       }
     },
     {
       "cloudId": "cloud5",
-      "cloudType": "A1", 
+      "cloudType": "A1",
       "content": {
-        "layer1": "You can't teach an old dog new tricks",
-        "layer3": "A convenient excuse to stop trying"
+        "layer1": "History repeats itself",
+        "layer3": "Patterns justify our lack of foresight"
       }
     }
   ]

@@ -1,0 +1,54 @@
+{
+  "levelId": 2,
+  "title": "Nothing Personal",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "I didn't have a choice",
+        "layer3": "I had a choice but didn't like the options"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "That's so me!",
+        "layer3": "It's convenient for my ego"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "It's for the best",
+        "layer3": "I'm lying to myself to feel better"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "It's a blessing in disguise",
+        "layer3": "I'd rather sugarcoat pain with false hope"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "This is for the greater good",
+        "layer3": "Justifying harm with noble words"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "I'm a realist, not a pessimist",
+        "layer3": "I rebrand negativity as realism"
+      }
+    }
+  ]
+}

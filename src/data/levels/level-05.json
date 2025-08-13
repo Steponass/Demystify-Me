@@ -1,0 +1,57 @@
+{
+  "levelId": 5,
+  "title": "Werk Werk",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "We're moving fast and breaking things",
+        "layer3": "We're disorganized and hoping for luck"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "We're evolving the business model",
+        "layer3": "Throwing spaghetti at the wall"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "We're pivoting",
+        "layer3": "Our last plan flopped"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "We create engaging content",
+        "layer2": "People click on it",
+        "layer3": "And then the paywall greets them warmly"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "Authentic brand voice",
+        "layer2": "We sound real",
+        "layer3": "Carefully scripted real"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "Failure is feedback",
+        "layer2": "Learn from mistakes",
+        "layer3": "Then package it as a motivational anecdote"
+      }
+    }
+  ]
+}

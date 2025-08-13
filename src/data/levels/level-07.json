@@ -1,0 +1,56 @@
+{
+  "levelId": 7,
+  "title": "Self-Defense",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "Not everyone gets it",
+        "layer3": "I like feeling smarter than most"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "At least I have integrity",
+        "layer3": "I comfort myself with moral high ground"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "That's nothing compared to…",
+        "layer3": "I one up others to raise my self-esteem"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "People are fake, so trust no one",
+        "layer3": "Cynicism feels safer than trust"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "I could do that easily if I wanted to",
+        "layer2": "I'm afraid to try and fail",
+        "layer3": "But why bother when I can complain?"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "Don't dwell on the negative",
+        "layer2": "Ignore bad feelings",
+        "layer3": "Let them fester quietly"
+      }
+    }
+  ]
+}

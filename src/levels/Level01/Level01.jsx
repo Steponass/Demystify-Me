@@ -3,6 +3,7 @@ import Cloud from '@components/game/Cloud/Cloud';
 import useLevelProgress from '@hooks/useLevelProgress';
 import useCloudLayout from '@hooks/useCloudLayout';
 import levelData from '@data/levels/level-01.json';
+import styles from '@levels/Level.module.css'
 
 const Level01 = ({ levelId }) => {
   const containerRef = useRef(null);
@@ -41,18 +42,12 @@ const Level01 = ({ levelId }) => {
   }, []);
 
   return (
-    <div>
+    <main>
       <h6>{levelData.title}</h6>
       <p>Status: {isCompleted ? 'Completed' : 'In Progress'}</p>
 
-      <div
+      <div className={styles.cloud_layout}
         ref={containerRef}
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '90vh',
-
-        }}
       >
         {levelData.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];
@@ -74,7 +69,7 @@ const Level01 = ({ levelId }) => {
           );
         })}
       </div>
-    </div>
+    </main>
   );
 };
 

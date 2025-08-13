@@ -1,0 +1,57 @@
+{
+  "levelId": 9,
+  "title": "Me TV",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "Not everyone can handle the truth",
+        "layer3": "Which is why I lie more often"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "Good for you! I just have higher standards",
+        "layer3": "I nitpick to feel superior"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "Everything I've faced made me who I am",
+        "layer3": "My story conveniently validates me"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "B2",
+      "content": {
+        "layer1": "You attract what you are",
+        "layer2": "Like attracts like",
+        "layer3": "Perfect for guilt-tripping you about bad luck"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "Everything you need is already inside you",
+        "layer2": "You have the inner resources to succeed",
+        "layer3": "Which is why we're selling you this $499 course"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "B2",
+      "content": {
+        "layer1": "Follow your passion",
+        "layer2": "Do what moves you",
+        "layer3": "Until passion becomes unpaid labor"
+      }
+    }
+  ]
+}

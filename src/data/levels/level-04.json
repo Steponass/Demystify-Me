@@ -1,0 +1,51 @@
+{
+  "levelId": 4,
+  "title": "Werk",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "Data-driven insights",
+        "layer2": "Numbers inform our choices",
+        "layer3": "And justify whatever we'd already decided"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "We're empowering our employees",
+        "layer2": "Delegating decisions to teams",
+        "layer3": "Until they decide wrong"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "We're fostering innovation",
+        "layer2": "We encourage new ideas",
+        "layer3": "Unless they threaten leadership"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "We're unlocking new revenue streams",
+        "layer2": "Seeking new growth channels",
+        "layer3": "ie inventing fees for what was free"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "We are fully committed to sustainability",
+        "layer2": "We made the recycling bin bigger",
+        "layer3": "And printed more brochures about it"
+      }
+    }
+  ]
+}

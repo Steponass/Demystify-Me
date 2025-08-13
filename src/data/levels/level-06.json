@@ -1,0 +1,66 @@
+{
+  "levelId": 6,
+  "title": "Help Yourself",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "If they did it, you can too",
+        "layer3": "Oversimplifying complex success"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "People like us don't need to prove anything",
+        "layer3": "But we do it anyway"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "People love to criticize what they don't understand",
+        "layer3": "So here I am, criticising"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "B2",
+      "content": {
+        "layer1": "Your only limit is yourself",
+        "layer2": "Self-doubt holds you back",
+        "layer3": "So if you fail — it's on you, champ"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "B2",
+      "content": {
+        "layer1": "Take the high road",
+        "layer2": "Act with integrity",
+        "layer3": "While quietly cataloguing grudges"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "B2",
+      "content": {
+        "layer1": "Be your authentic self",
+        "layer2": "Show your true colors",
+        "layer3": "Unless authenticity costs the paycheck"
+      }
+    },
+    {
+      "cloudId": "cloud7",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "Release what no longer serves you",
+        "layer2": "Let go of the past",
+        "layer3": "Or just ghost people"
+      }
+    }
+  ]
+}

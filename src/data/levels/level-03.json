@@ -1,0 +1,62 @@
+{
+  "levelId": 3,
+  "title": "Unbiased",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "Everyone's talking about it",
+        "layer3": "I heard it twice"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "Everyone's doing it now",
+        "layer3": "My friends are doing it"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "We tried that once",
+        "layer3": "In 1997"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "This is happening everywhere",
+        "layer3": "I saw one news story"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "Good things happen to good people",
+        "layer3": "Justice is a comforting myth"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "They got what they deserved",
+        "layer3": "I need to believe life is fair"
+      }
+    },
+    {
+      "cloudId": "cloud7",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "Look at the success stories!",
+        "layer3": "Don't look at the graveyard"
+      }
+    }
+  ]
+}

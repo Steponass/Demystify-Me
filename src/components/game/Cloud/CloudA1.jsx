@@ -5,6 +5,7 @@ import useBlowDetection from '@hooks/useBlowDetection';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
+import AudioLevelIndicator from './AudioLevelIndicator';
 
 const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
@@ -42,7 +43,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
 
       // Animate the cloud floating away and fading out
       gsap.to(cloudElement, {
-        y: -300, 
+        y: -300,
         x: horizontalDistance,
         opacity: 0,
         scale: 0.8,
@@ -52,12 +53,15 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
 
       // Animate the text with the same movement if it exists
       if (textElement) {
+        // Clear any CSS transitions first
+        textElement.style.transition = 'none';
+
         gsap.to(textElement, {
           y: -300,
           x: horizontalDistance,
           opacity: 0,
           scale: 0.8,
-          duration: 0.5,
+          duration: 0.6,
           ease: "sine.inOut"
         });
       }
@@ -66,7 +70,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
       setTimeout(() => {
         advanceCloudLayer(levelId, cloudId);
         onReveal?.(cloudId);
-      }, 1500);
+      }, 1000);
     } else {
       // Fallback if ref isn't available
       advanceCloudLayer(levelId, cloudId);
@@ -87,20 +91,19 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   const prevRevealedRef = React.useRef(cloudState?.isRevealed);
 
   useEffect(() => {
-    // Only run when zoom state or revealed state actually changes
+    // Only run when zoom state or revealed state changes
     const currentRevealed = cloudState?.isRevealed;
 
     if (prevZoomedRef.current !== isZoomed || prevRevealedRef.current !== currentRevealed) {
       prevZoomedRef.current = isZoomed;
       prevRevealedRef.current = currentRevealed;
 
-      // Microphone should be active only when zoomed AND not revealed
+      // Microphone active only when zoomed AND not revealed
       const shouldListen = isZoomed && !currentRevealed;
 
       if (shouldListen) {
-        console.log('Cloud zoomed in and not revealed - activating blow detection');
 
-        // Add a slight delay before activating blow detection to ensure the audio context is ready
+        // Delay before activating blow detection to ensure audio context is ready
         const timeoutId = setTimeout(() => {
           startListening().then(success => {
             if (success) {
@@ -117,7 +120,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
           clearTimeout(timeoutId);
         };
       } else {
-        console.log('Cloud zoomed out or revealed - deactivating blow detection');
         stopListening();
         if (!isZoomed) {
           onZoomChange?.(false);
@@ -128,7 +130,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
 
   if (!cloudState) return null;
 
-  // Determine if we should show Layer 1 or Layer 3
   const isLayer1 = cloudState.currentLayer === 1;
   const isLayer3 = cloudState.currentLayer === 3;
 
@@ -179,19 +180,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
             <p className={styles.regularLayerText}>
               {content.layer1}
             </p>
-            {/* Audio level indicator */}
-            <div className={styles.audioLevelContainer}>
-              <div
-                className={styles.audioLevelBar}
-                style={{
-                  width: `${Math.min(audioLevel * 100, 100)}%`,
-                  backgroundColor: audioLevel > 0.28 ? '#28a745' : '#007bff'
-                }}
-              />
-              <span className={styles.audioLevelText}>
-                {audioLevel > 0.05 ? 'Mic active' : 'Blow to reveal'}
-              </span>
-            </div>
+            <AudioLevelIndicator audioLevel={audioLevel} />
           </div>
         )}
       </div>

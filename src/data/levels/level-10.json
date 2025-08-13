@@ -1,0 +1,55 @@
+{
+  "levelId": 10,
+  "title": "Last fluff",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "It's a gray area",
+        "layer3": "I pretend uncertainty makes me wise"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "We're leveraging synergies",
+        "layer3": "We're doing the same thing twice"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "Success is all about hard work",
+        "layer3": "Luck dressed up as diligence"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "We learned a lot from this experience",
+        "layer3": "We learned how to shift blame without blinking"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "I have no regrets",
+        "layer3": "I bury doubts under fake confidence"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "B1",
+      "content": {
+        "layer1": "I'm just really honest, I say things how they are",
+        "layer2": "I'm excusing rudeness",
+        "layer3": "So I don't have to self-reflect"
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "levelId": 8,
+  "title": "We the Sheeple",
+  "clouds": [
+    {
+      "cloudId": "cloud1",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "That's just how it's done",
+        "layer3": "We use tradition to dodge change"
+      }
+    },
+    {
+      "cloudId": "cloud2",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "Encouraging dialogue",
+        "layer3": "Talking until you give up"
+      }
+    },
+    {
+      "cloudId": "cloud3",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "We speak for the silent majority",
+        "layer3": "We're projecting our views onto others"
+      }
+    },
+    {
+      "cloudId": "cloud4",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "Defending our values",
+        "layer3": "Arguing loudly over dinner"
+      }
+    },
+    {
+      "cloudId": "cloud5",
+      "cloudType": "A3",
+      "content": {
+        "layer1": "People are poor because they choose to be so",
+        "layer3": "Blaming victims saves us from guilt"
+      }
+    }
+  ]
+}
