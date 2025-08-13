@@ -11,51 +11,51 @@ const BlowDetectionTest = () => {
   const [customThreshold, setCustomThreshold] = useState(0.28);
   const [peakLevel, setPeakLevel] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
-  
+
   // Reset peak level periodically
   useEffect(() => {
     const resetPeakInterval = setInterval(() => {
       setPeakLevel(prev => prev * 0.8); // Gradually lower the peak
     }, 5000);
-    
+
     return () => clearInterval(resetPeakInterval);
   }, []);
-  
+
   // Update peak level when current level exceeds it
   useEffect(() => {
     if (currentLevel > peakLevel) {
       setPeakLevel(currentLevel);
     }
   }, [currentLevel, peakLevel]);
-  
+
   // Define callbacks for each blow type
   const handleAnyBlow = useCallback(() => {
     setAnyBlowCount(prev => prev + 1);
     setLastBlowType('Any Blow');
   }, []);
-  
+
   const handleDoubleBlow = useCallback(() => {
     setDoubleBlowCount(prev => prev + 1);
     setLastBlowType('Double Blow');
   }, []);
-  
+
   const handleLongBlow = useCallback(() => {
     setLongBlowCount(prev => prev + 1);
     setLastBlowType('Long Blow');
   }, []);
-  
+
   const handleXLBlow = useCallback(() => {
     setXLBlowCount(prev => prev + 1);
     setLastBlowType('XL Blow');
   }, []);
-  
+
   // Level change callback to update audio level display
   const handleLevelChange = useCallback((level) => {
     setCurrentLevel(level);
   }, []);
-  
+
   // Initialize the blow detection hook
-  const { 
+  const {
     permissionStatus,
     isListening,
     isBlowing,
@@ -74,7 +74,7 @@ const BlowDetectionTest = () => {
     xlBlowThreshold: 1400,
     doubleBlowMaxGap: 650
   });
-  
+
   // Handle starting/stopping microphone
   const toggleListening = async () => {
     if (isListening) {
@@ -86,7 +86,7 @@ const BlowDetectionTest = () => {
       startListening();
     }
   };
-  
+
   // Reset counters
   const resetCounters = () => {
     setAnyBlowCount(0);
@@ -96,7 +96,7 @@ const BlowDetectionTest = () => {
     setLastBlowType(null);
     setPeakLevel(0);
   };
-  
+
   // Color calculation based on threshold
   const getLevelColor = (level) => {
     if (level >= customThreshold * 1.5) return '#4CAF50'; // Well above threshold - green
@@ -104,13 +104,13 @@ const BlowDetectionTest = () => {
     if (level >= customThreshold * 0.7) return '#FFC107'; // Approaching threshold - yellow
     return '#E0E0E0'; // Below threshold - gray
   };
-  
+
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
       <h1>Blow Detection Test</h1>
-      
-      <div style={{ 
-        marginBottom: '1.5rem', 
+
+      <div style={{
+        marginBottom: '1.5rem',
         padding: '1rem',
         backgroundColor: '#f8f8f8',
         borderRadius: '8px'
@@ -120,9 +120,9 @@ const BlowDetectionTest = () => {
           <div>
             <p>
               <strong>Permission:</strong>{' '}
-              <span style={{ 
-                color: permissionStatus === 'granted' ? 'green' : 
-                      permissionStatus === 'denied' ? 'red' : 'orange'
+              <span style={{
+                color: permissionStatus === 'granted' ? 'green' :
+                  permissionStatus === 'denied' ? 'red' : 'orange'
               }}>
                 {permissionStatus}
               </span>
@@ -140,11 +140,11 @@ const BlowDetectionTest = () => {
               </span>
             </p>
           </div>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
-              onClick={toggleListening} 
-              style={{ 
+            <button
+              onClick={toggleListening}
+              style={{
                 padding: '0.5rem 1rem',
                 backgroundColor: isListening ? '#ff4d4d' : '#4CAF50',
                 color: 'white',
@@ -155,10 +155,10 @@ const BlowDetectionTest = () => {
             >
               {isListening ? 'Stop Microphone' : 'Start Microphone'}
             </button>
-            
-            <button 
+
+            <button
               onClick={resetCounters}
-              style={{ 
+              style={{
                 padding: '0.5rem 1rem',
                 backgroundColor: '#2196F3',
                 color: 'white',
@@ -169,10 +169,10 @@ const BlowDetectionTest = () => {
             >
               Reset Counters
             </button>
-            
-            <button 
+
+            <button
               onClick={() => setShowDetails(!showDetails)}
-              style={{ 
+              style={{
                 padding: '0.5rem 1rem',
                 backgroundColor: '#9E9E9E',
                 color: 'white',
@@ -186,9 +186,9 @@ const BlowDetectionTest = () => {
           </div>
         </div>
       </div>
-      
-      <div style={{ 
-        marginBottom: '1.5rem', 
+
+      <div style={{
+        marginBottom: '1.5rem',
         padding: '1rem',
         backgroundColor: '#f8f8f8',
         borderRadius: '8px'
@@ -198,12 +198,12 @@ const BlowDetectionTest = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
             <label htmlFor="threshold-slider">Threshold: </label>
             <strong>{customThreshold.toFixed(2)}</strong>
-            <input 
+            <input
               id="threshold-slider"
-              type="range" 
-              min="0.05" 
-              max="0.5" 
-              step="0.01" 
+              type="range"
+              min="0.05"
+              max="0.5"
+              step="0.01"
               value={customThreshold}
               onChange={(e) => setCustomThreshold(parseFloat(e.target.value))}
               style={{ flex: 1 }}
@@ -214,7 +214,7 @@ const BlowDetectionTest = () => {
             Decrease it if blowing isn't being detected.
           </p>
         </div>
-        
+
         <div style={{ marginTop: '1rem' }}>
           <h3>Current Audio Level: {(currentLevel * 100).toFixed(1)}%</h3>
           <div style={{
@@ -233,7 +233,7 @@ const BlowDetectionTest = () => {
               backgroundColor: getLevelColor(currentLevel),
               transition: 'width 0.1s, background-color 0.2s',
             }} />
-            
+
             {/* Peak indicator */}
             <div style={{
               position: 'absolute',
@@ -245,7 +245,7 @@ const BlowDetectionTest = () => {
               transform: 'translateX(-1px)'
             }} />
           </div>
-          
+
           <div style={{
             height: '30px',
             width: '100%',
@@ -274,16 +274,16 @@ const BlowDetectionTest = () => {
           </div>
         </div>
       </div>
-      
-      <div style={{ 
-        marginBottom: '1.5rem', 
+
+      <div style={{
+        marginBottom: '1.5rem',
         padding: '1rem',
         backgroundColor: '#f8f8f8',
         borderRadius: '8px'
       }}>
         <h2>Detection Results</h2>
-        <div style={{ 
-          display: 'grid', 
+        <div style={{
+          display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
           gap: '1rem'
         }}>
@@ -308,10 +308,10 @@ const BlowDetectionTest = () => {
           <strong>Last Detected:</strong> {lastBlowType || 'None'}
         </p>
       </div>
-      
+
       {showDetails && (
-        <div style={{ 
-          marginBottom: '1.5rem', 
+        <div style={{
+          marginBottom: '1.5rem',
           padding: '1rem',
           backgroundColor: '#f8f8f8',
           borderRadius: '8px'
@@ -324,7 +324,7 @@ const BlowDetectionTest = () => {
             <li><strong>XL Blow:</strong> Blow for at least 1.4 seconds</li>
           </ul>
           <p><strong>Note:</strong> Multiple detections can trigger from a single blow. For example, an XL blow will also count as a Long blow and an Any blow.</p>
-          
+
           <h3 style={{ marginTop: '1rem' }}>Troubleshooting</h3>
           <ul style={{ paddingLeft: '1.5rem' }}>
             <li>If normal sounds are triggering blows, increase the threshold</li>

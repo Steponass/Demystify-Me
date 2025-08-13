@@ -4,6 +4,51 @@
 --clr-bg:       oklch(0.4483 0.1098 245.05);
 --clr-whiteish: oklch(0.9851 0      0     );
 --clr-blackish: oklch(0.133  0.0021 196.91);
+  
+--gradient-1: linear-gradient(
+    115deg,
+    hsl(203deg 91% 29%) 0%,
+    hsl(204deg 91% 29%) 26%,
+    hsl(205deg 91% 29%) 43%,
+    hsl(206deg 91% 29%) 58%,
+    hsl(207deg 91% 29%) 74%,
+    hsl(208deg 91% 29%) 100%);
+
+--gradient-2: linear-gradient(
+    115deg,
+    hsl(203deg 91% 29%) 0%,
+    hsl(203deg 88% 28%) 26%,
+    hsl(203deg 86% 27%) 43%,
+    hsl(203deg 82% 27%) 58%,
+    hsl(203deg 80% 26%) 74%,
+    hsl(203deg 78% 25%) 100%);
+  
+--gradient-3: linear-gradient(
+    115deg,
+    hsl(203deg 91% 29%) 0%,
+    hsl(204deg 89% 29%) 26%,
+    hsl(205deg 86% 29%) 43%,
+    hsl(206deg 85% 29%) 58%,
+    hsl(207deg 82% 29%) 74%,
+    hsl(208deg 81% 29%) 100%);
+
+--gradient-4: linear-gradient(
+    115deg,
+    hsl(203deg 91% 29%) 0%,
+    hsl(205deg 89% 28%) 26%,
+    hsl(206deg 87% 27%) 43%,
+    hsl(207deg 85% 26%) 58%,
+    hsl(209deg 83% 26%) 74%,
+    hsl(210deg 81% 25%) 100%);
+
+--gradient-5: linear-gradient(
+    115deg,
+    hsl(203deg 91% 29%) 0%,
+    hsl(207deg 80% 29%) 26%,
+    hsl(211deg 71% 29%) 43%,
+    hsl(214deg 60% 30%) 58%,
+    hsl(218deg 50% 30%) 74%,
+    hsl(221deg 40% 30%) 100%);    
 
 /* SPACING */
 --space-4px:   4px;

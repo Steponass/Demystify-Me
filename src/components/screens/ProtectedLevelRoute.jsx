@@ -10,24 +10,24 @@ import useGameStore from '@store/gameStore';
 const ProtectedLevelRoute = () => {
   const { levelId } = useParams();
   const { isLevelUnlocked, currentLevel } = useGameStore();
-  
+
   // Convert to number (params are strings)
   const numericLevelId = parseInt(levelId, 10);
-  
+
   // Check if level is valid and unlocked
   const isValid = !isNaN(numericLevelId) && numericLevelId >= 0;
   const isUnlocked = isValid && isLevelUnlocked(numericLevelId);
-  
+
   if (!isValid) {
     // Invalid level ID - redirect to the current level
     return <Navigate to={`/level/${currentLevel}`} replace />;
   }
-  
+
   if (!isUnlocked) {
     // Level not unlocked - redirect to the highest unlocked level
     return <Navigate to={`/level/${currentLevel}`} replace />;
   }
-  
+
   // Level is valid and unlocked
   return <Outlet />;
 };

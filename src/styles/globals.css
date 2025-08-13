@@ -1,5 +1,5 @@
 body {
-  background-color: var(--clr-bg);
+  background-image: var(--gradient-1);
   overflow-y: hidden;
   padding-block: min(24px, 4px + 2vw);
   width: min(98%, 1280px);

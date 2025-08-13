@@ -287,18 +287,8 @@ const useBlowDetection = ({
 
   // Stop listening for blows
   const stopListening = useCallback(() => {
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-
-    isBlowingRef.current = false;
-    blowStartTimeRef.current = null;
-    setIsListening(false);
-
-    // Reset level when stopped
-    onLevelChange(0);
-  }, [onLevelChange]);
+    cleanupAudio();
+  }, [cleanupAudio]);
 
   // Cleanup when component unmounts
   useEffect(() => {

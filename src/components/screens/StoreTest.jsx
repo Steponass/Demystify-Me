@@ -3,8 +3,8 @@ import React from 'react';
 import useGameStore from '@store/gameStore';
 
 const StoreTest = () => {
-  const { 
-    currentLevel, 
+  const {
+    currentLevel,
     completedLevels,
     cloudStates,
     setCurrentLevel,
@@ -16,7 +16,7 @@ const StoreTest = () => {
     getCloudState,
     isLevelCompleted
   } = useGameStore();
-  
+
   // Sample cloud configs for testing
   const testCloudConfigs = [
     { cloudId: 'cloud1', cloudType: 'A1' },
@@ -35,11 +35,11 @@ const StoreTest = () => {
   const getTestCloudState = (cloudId) => {
     return getCloudState(1, cloudId);
   };
-  
+
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Game Store Test</h1>
-      
+
       <div>
         <h2>Current State</h2>
         <p>Current Level: {currentLevel}</p>
@@ -53,7 +53,7 @@ const StoreTest = () => {
           {JSON.stringify(cloudStates, null, 2)}
         </pre>
       </div>
-      
+
       <div style={{ marginTop: '2rem' }}>
         <h2>Level Status</h2>
         {[0, 1, 2, 3, 4, 5].map((level) => (
@@ -62,10 +62,10 @@ const StoreTest = () => {
           </div>
         ))}
       </div>
-      
+
       <div style={{ marginTop: '2rem' }}>
         <h2>Cloud Management</h2>
-        <button 
+        <button
           onClick={initializeTestClouds}
           style={{ margin: '0.5rem', padding: '0.5rem 1rem' }}
         >
@@ -82,7 +82,7 @@ const StoreTest = () => {
                 {cloudState ? (
                   <>
                     <p>Layer: {cloudState.currentLayer} | Revealed: {cloudState.isRevealed ? 'Yes' : 'No'}</p>
-                    <button 
+                    <button
                       onClick={() => advanceTestCloud(cloudId)}
                       style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
                       disabled={cloudState.isRevealed}
@@ -98,32 +98,32 @@ const StoreTest = () => {
           })}
         </div>
       </div>
-      
+
       <div style={{ marginTop: '2rem' }}>
         <h2>Original Actions</h2>
-        <button 
-          onClick={() => completeLevel(0)} 
+        <button
+          onClick={() => completeLevel(0)}
           style={{ margin: '0.5rem' }}
         >
           Complete Tutorial
         </button>
-        
-        <button 
-          onClick={() => completeLevel(1)} 
+
+        <button
+          onClick={() => completeLevel(1)}
           style={{ margin: '0.5rem' }}
         >
           Complete Level 1
         </button>
-        
-        <button 
-          onClick={() => setCurrentLevel(2)} 
+
+        <button
+          onClick={() => setCurrentLevel(2)}
           style={{ margin: '0.5rem' }}
         >
           Set Current Level to 2
         </button>
-        
-        <button 
-          onClick={resetAllProgress} 
+
+        <button
+          onClick={resetAllProgress}
           style={{ margin: '0.5rem', backgroundColor: '#ff4d4d', color: 'white', border: 'none', padding: '0.5rem' }}
         >
           Reset All Progress

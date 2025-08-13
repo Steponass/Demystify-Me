@@ -11,8 +11,6 @@ const Level02 = lazy(() => import('./Level02/Level02'));
 // const Level08 = lazy(() => import('./Level02/Level08'));
 // const Level09 = lazy(() => import('./Level02/Level09'));
 // const Level10 = lazy(() => import('./Level02/Level10'));
-// const Level11 = lazy(() => import('./Level02/Level11'));
-// const Level12 = lazy(() => import('./Level02/Level12'));
 
 // Map level IDs to components
 const levelComponents = {
@@ -27,8 +25,6 @@ const levelComponents = {
   // 8: Level08,
   // 9: Level09,
   // 10: Level10,
-  // 11: Level11,
-  // 12: Level12,
 };
 
 // Helper to get component for a level ID
@@ -49,6 +45,4 @@ export {
   // Level08,
   // Level09,
   // Level10,
-  // Level11,
-  // Level12
 };

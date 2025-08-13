@@ -10,10 +10,9 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
-  // Simple image selection - one image per cloud
   const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
 
-  // Generate random animation properties for more natural movement variation
+  // Generate random animation properties for movement variation
   const [animationDelay] = useState(() => Math.random() * 10);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6); // 8-14 seconds
@@ -23,14 +22,9 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   const textContentRef = React.useRef(null);
 
   const handleAnyBlow = useCallback(() => {
-    console.log('Blow detected!', { isZoomed, isRevealed: cloudState?.isRevealed, isZoomingOut });
-
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
-      console.log('Ignoring blow due to state conditions');
       return;
     }
-
-    console.log('Advancing cloud layer', { levelId, cloudId });
 
     const cloudElement = animationRef.current;
     const textElement = textContentRef.current;
@@ -44,28 +38,27 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
 
       // Generate random direction for variety
       const randomDirection = Math.random() > 0.5 ? 1 : -1;
-      const floatDistance = 300;
-      const horizontalDistance = 100 * randomDirection;
+      const horizontalDistance = 50 * randomDirection;
 
       // Animate the cloud floating away and fading out
       gsap.to(cloudElement, {
-        y: -floatDistance,    // Float up significantly 
-        x: horizontalDistance, // Add horizontal movement
-        opacity: 0,           // Fade out
-        scale: 0.7,           // Shrink slightly
-        duration: 1.5,        // Over 1.5 seconds
-        ease: "power2.out"
+        y: -300, 
+        x: horizontalDistance,
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.6,
+        ease: "sine.inOut"
       });
 
       // Animate the text with the same movement if it exists
       if (textElement) {
         gsap.to(textElement, {
-          y: -floatDistance,
+          y: -300,
           x: horizontalDistance,
           opacity: 0,
           scale: 0.8,
-          duration: 1.5,
-          ease: "power2.out"
+          duration: 0.5,
+          ease: "sine.inOut"
         });
       }
 
@@ -89,7 +82,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
     onLevelChange: setAudioLevel,
   });
 
-  // Track zoom state changes more efficiently
+  // Track zoom state changes
   const prevZoomedRef = React.useRef(isZoomed);
   const prevRevealedRef = React.useRef(cloudState?.isRevealed);
 
@@ -168,7 +161,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
             <img
               ref={animationRef}
               src={cloudImage}
-              alt="Cloud"
               className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
                 ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                 : ''

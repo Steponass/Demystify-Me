@@ -1,4 +1,3 @@
-// src/hooks/useCloudZoom.js
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Flip } from 'gsap/Flip';
@@ -17,7 +16,6 @@ const useCloudZoom = (isRevealed = false) => {
     const cloudElement = cloudRef.current;
     if (!cloudElement) return;
 
-    // Create overlay
     const overlay = document.createElement('div');
     overlayRef.current = overlay;
     document.body.appendChild(overlay);
@@ -32,14 +30,11 @@ const useCloudZoom = (isRevealed = false) => {
       opacity: 0
     });
 
-    // Position cloud on top of itself (scaled to fit original position)
-    Flip.fit(cloudElement, cloudElement, { scale: true });
 
     // Record the current state
     const state = Flip.getState(cloudElement);
 
     // Set final zoomed state
-    gsap.set(cloudElement, { clearProps: true });
     gsap.set(cloudElement, {
       position: 'fixed',
       top: '50%',
@@ -69,7 +64,7 @@ const useCloudZoom = (isRevealed = false) => {
     });
 
     // Fade in overlay
-    gsap.to(overlay, { opacity: 1, duration: 0.6, ease: "power2.inOut" });
+    gsap.to(overlay, { opacity: 1, duration: 0.4, ease: "sine.inOut" });
 
   }, [isZoomed]);
 
@@ -93,7 +88,7 @@ const useCloudZoom = (isRevealed = false) => {
       gsap.to(overlayRef.current, {
         opacity: 0,
         duration: 0.6,
-        ease: "power2.inOut",
+        ease: "sine.inOut",
         onComplete: () => {
           overlayRef.current?.remove();
           overlayRef.current = null;
@@ -103,9 +98,9 @@ const useCloudZoom = (isRevealed = false) => {
 
     // Animate back to original state
     Flip.from(state, {
-      duration: 0.6,
-      ease: "power2.inOut",
-      scale: true,
+      duration: 0.8,
+      ease: "sine.inOut",
+      scale: false,
       onComplete: () => {
         cloudElement.classList.remove('zoomed');
         setIsZoomed(false);

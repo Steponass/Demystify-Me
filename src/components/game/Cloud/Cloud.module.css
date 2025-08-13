@@ -9,12 +9,10 @@
   width: 200px;
   height: 120px;
   cursor: pointer;
-    overflow: visible;
-  /* overflow: hidden; */
+  overflow: visible;
 }
 
 .cloud.revealed {
-  /* opacity: 0.6; */
   cursor: default;
 }
 
