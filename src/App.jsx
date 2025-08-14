@@ -25,9 +25,6 @@ function App() {
             {/* Home route - shows MainMenu */}
             <Route path="/" element={<MainMenu />} />
 
-            {/* Tutorial route */}
-            <Route path="/tutorial" element={<TutorialLevel levelId={0} />} />
-
             {/* Level routes with protection */}
             <Route path="/level/:levelId" element={<ProtectedLevelRoute />}>
               <Route index element={<LevelRouter />} />

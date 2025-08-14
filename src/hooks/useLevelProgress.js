@@ -12,7 +12,8 @@ const useLevelProgress = (levelId, cloudConfigs = []) => {
     advanceCloudLayer,
     getCloudState,
     isLevelCompleted,
-    isLevelCompletedBefore
+    isLevelCompletedBefore,
+    completeLevel
   } = useGameStore();
 
   const isUnlocked = isLevelUnlocked(levelId);
@@ -31,6 +32,14 @@ const useLevelProgress = (levelId, cloudConfigs = []) => {
       navigate(`/level/${currentLevel}`);
     }
   }, [isUnlocked, levelId, navigate, currentLevel]);
+
+  // Call completeLevel when the level is completed for the first time
+  useEffect(() => {
+    if (isCompleted && !wasCompletedBefore) {
+      console.log(`Level ${levelId} completed!`);
+      completeLevel(levelId);
+    }
+  }, [isCompleted, wasCompletedBefore, levelId, completeLevel]);
 
   // Note: Auto-routing on level completion removed as requested
 

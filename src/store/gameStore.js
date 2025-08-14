@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 const initialState = {
-  currentLevel: 0,
+  currentLevel: 1,
   completedLevels: [],
   cloudStates: {},
   seenCloudTypes: [],
@@ -20,17 +20,22 @@ const useGameStore = create(
       setCurrentLevel: (level) => set({ currentLevel: level }),
 
       completeLevel: (levelId) => {
-        const { completedLevels } = get();
+        const { completedLevels, currentLevel } = get();
 
         // Only update state if this is the first completion
         const isFirstTimeCompletion = !completedLevels.includes(levelId);
 
         if (isFirstTimeCompletion) {
+          const newCurrentLevel = Math.max(currentLevel, levelId + 1);
+          console.log(`Completing level ${levelId}. Current level will be: ${newCurrentLevel}`);
+
           set({
             completedLevels: [...completedLevels, levelId],
-            currentLevel: Math.max(get().currentLevel, levelId + 1)
+            currentLevel: newCurrentLevel
             // isLevelTransitioning removed as requested
           });
+        } else {
+          console.log(`Level ${levelId} was already completed before`);
         }
       }, isLevelCompletedBefore: (levelId) => {
         const { completedLevels } = get();
@@ -46,11 +51,22 @@ const useGameStore = create(
       },
 
       isLevelUnlocked: (levelId) => {
-        // Tutorial and Level 1 are always unlocked
-        if (levelId === 0 || levelId === 1) return true;
+        const { completedLevels } = get();
+
+        // Only Level 1 is always unlocked, tutorial (level 0) is never allowed
+        if (levelId === 1) {
+          console.log(`Level ${levelId} is always unlocked`);
+          return true;
+        }
+        if (levelId === 0) {
+          console.log(`Level ${levelId} (tutorial) is never allowed`);
+          return false; // Never allow tutorial level
+        }
 
         // Other levels require the previous level to be completed
-        return get().completedLevels.includes(levelId - 1);
+        const isUnlocked = completedLevels.includes(levelId - 1);
+        console.log(`Level ${levelId} unlock check: previous level (${levelId - 1}) completed: ${isUnlocked}. Completed levels: [${completedLevels.join(', ')}]`);
+        return isUnlocked;
 
         // TEMPORARY: Uncomment below for testing (unlocks all levels)
         // return true;
