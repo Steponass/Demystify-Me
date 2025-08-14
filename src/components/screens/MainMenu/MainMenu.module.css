@@ -1,0 +1,49 @@
+.mainMenu {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mainMenu_container {
+  width: min(100%, 1280px);
+}
+
+.menuContent {
+  text-align: center;
+}
+
+.currentProgress {
+  margin-bottom: var(--space-24-32px);
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4-8px);
+  align-items: center;
+  margin-top: var(--space-12-16px)
+}
+
+.button {
+  padding: var(--space-12-16px) var(--space-24-32px);
+  border: none;
+  cursor: pointer;
+  min-width: 128px;
+}
+
+/* Level selection grid for completed game state */
+.levelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-4-8px);
+}
+
+.levelButton {
+  padding: var(--space-12-16px);
+  border: 1px solid #ccc;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4px);
+}

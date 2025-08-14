@@ -4,15 +4,18 @@ import useGameStore from '@store/gameStore';
 const useHintDisplay = (levelId, cloudId, isZoomed, isRevealed) => {
   const { isHintVisible, hideHint, clearHint, showHint, getCloudState } = useGameStore();
 
-  // Show hint when cloud is zoomed and not revealed
-  useEffect(() => {
-    if (isZoomed && !isRevealed && cloudId && levelId !== undefined) {
-      const cloudState = getCloudState(levelId, cloudId);
-      if (cloudState?.cloudType) {
+useEffect(() => {
+  if (isZoomed && !isRevealed && cloudId && levelId !== undefined) {
+    const cloudState = getCloudState(levelId, cloudId);
+    if (cloudState?.cloudType) {
+      const hintTimer = setTimeout(() => {
         showHint(cloudState.cloudType);
-      }
+      }, 800); // MUST BE longer than longest mic init delay (300ms)
+      
+      return () => clearTimeout(hintTimer);
     }
-  }, [isZoomed, isRevealed, cloudId, levelId, showHint, getCloudState]);
+  }
+}, [isZoomed, isRevealed, cloudId, levelId, showHint, getCloudState]);
 
   // Handle hiding hints after a duration
   useEffect(() => {
