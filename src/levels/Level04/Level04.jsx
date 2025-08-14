@@ -35,7 +35,6 @@ const Level04 = ({ levelId }) => {
   const handleCloudReveal = useCallback((cloudId) => {
     // eslint-disable-next-line no-unused-vars
     const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
-    console.log(`Level 4: B1 cloud "${cloudId}" completed three-layer sequence!`);
   }, []);
 
     // eslint-disable-next-line no-unused-vars

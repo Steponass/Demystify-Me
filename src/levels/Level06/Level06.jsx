@@ -4,7 +4,6 @@ import useLevelProgress from '@hooks/useLevelProgress';
 import useCloudLayout from '@hooks/useCloudLayout';
 import levelData from '@data/levels/level-06.json';
 import styles from '@levels/Level.module.css'
-import SvgMorphTest from './svgMorphTest';
 
 const Level06 = ({ levelId }) => {
   const containerRef = useRef(null);
@@ -55,7 +54,6 @@ const Level06 = ({ levelId }) => {
 
           return (
             <>            
-            {/* <SvgMorphTest /> */}
             <Cloud
               key={cloudData.cloudId}
               cloudId={cloudData.cloudId}

@@ -16,7 +16,6 @@ const RewindButton = ({ levelId }) => {
       onClick={handleRewind}
       aria-label="Reset level - replay all clouds"
     >
-      {/* You can put your SVG icon here or use the ResetIcon component */}
       <RewindIcon />
     </button>
   );

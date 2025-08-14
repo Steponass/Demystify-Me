@@ -1,11 +1,11 @@
-.rewindButton {
+.menuButton {
   background-color: transparent;
   border: none;
   color: var(--clr-whiteish);
   cursor: pointer;
-  padding: var(--space-4px);
+  padding: var(--space-8px);
 }
 
-.rewindButton svg {
+.menuButton svg {
   filter: drop-shadow(0.5px 0.5px 1.5px var(--clr-whiteish));
 }

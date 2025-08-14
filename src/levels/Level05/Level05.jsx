@@ -31,19 +31,13 @@ const Level05 = ({ levelId }) => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, [updateContainerDimensions]);
 
-  // Enhanced reveal handler for mixed-type levels with B1 complexity
   const handleCloudReveal = useCallback((cloudId) => {
     const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
     console.log(`Level 5: ${revealedCloud?.cloudType} cloud "${cloudId}" revealed!`);
-    
-    // Level 5 has a good mix: 2 A1 (simple), 1 A2 (double blow), 3 B1 (sequential)
-    // This creates varied engagement patterns within a single level
   }, []);
 
   // eslint-disable-next-line no-unused-vars
   const handleZoomChange = useCallback((isZoomed) => {
-    // In mixed-complexity levels, could track which interaction types 
-    // users struggle with for adaptive difficulty in future levels
   }, []);
 
   return (

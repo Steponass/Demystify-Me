@@ -2,7 +2,7 @@
 
 import React from "react";
 
-const RewindIcon = ({ size = 40, color = "currentColor" }) =>
+const RewindIcon = ({ size = 28, color = "currentColor" }) =>
 
 (<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
   fill="none"

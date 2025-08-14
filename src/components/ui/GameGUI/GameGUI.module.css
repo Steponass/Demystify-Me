@@ -18,8 +18,8 @@
 
 .controlsSection {
   position: absolute;
-  top: clamp(1rem, 3vh, 2rem);
-  right: clamp(1rem, 3vw, 2rem);
+  top: clamp(var(--space-4-8px), 1.5vw, var(--space-8-12px));
+  /* right: clamp(var(--space-4-8px), 1.5vw, var(--space-8-12px)); */
   pointer-events: auto;
   cursor: pointer;
 }

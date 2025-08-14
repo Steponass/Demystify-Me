@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useRef, useEffect, useCallback } from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
 import useLevelProgress from '@hooks/useLevelProgress';
@@ -38,6 +37,7 @@ const Level07 = ({ levelId }) => {
     
   }, []);
 
+  // eslint-disable-next-line no-unused-vars
   const handleZoomChange = useCallback((isZoomed) => {
   }, []);
 

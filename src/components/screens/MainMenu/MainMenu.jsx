@@ -27,13 +27,13 @@ const MainMenu = () => {
   };
 
   const handleResumeGame = () => {
-    const destination = currentLevel === 0 ? '/tutorial' : `/level/${currentLevel}`;
+    const destination = currentLevel === 0 ? '/level/1' : `/level/${currentLevel}`;
     navigate(destination);
   };
 
   const handleStartOver = () => {
     resetAllProgress();
-    navigate('/tutorial');
+    navigate('/level/1');
   };
 
   const handleLevelSelect = (levelPath) => {

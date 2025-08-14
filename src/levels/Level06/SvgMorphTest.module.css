@@ -1,9 +1,0 @@
-.svg_morph_container {
-  padding-top: 5rem;
-}
-
-.svg_morph_text {
-  color: var(--clr-whiteish);
-      transform-origin: center center;
-    will-change: transform;
-}

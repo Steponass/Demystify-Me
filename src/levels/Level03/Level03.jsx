@@ -32,7 +32,6 @@ const Level03 = ({ levelId }) => {
   }, [updateContainerDimensions]);
 
   // Enhanced cloud reveal handler for mixed-type levels
-  // This version could track which interaction types users try first
   const handleCloudReveal = useCallback((cloudId) => {
     const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
     console.log(`Level 3: ${revealedCloud?.cloudType} cloud "${cloudId}" revealed!`);
