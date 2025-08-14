@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { gsap } from 'gsap';
 import useCloudZoom from '@hooks/useCloudZoom';
 import useBlowDetection from '@hooks/useBlowDetection';
+import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import AudioLevelIndicator from './AudioLevelIndicator';
 
 const CloudA2 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }) => {
+  // Add the hint functionality 
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
@@ -21,6 +23,9 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed);
+
+  // Use the centralized hint display system
+  useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
 
   // Separate refs for different cloud elements
   const regularCloudRef = useRef(null);
@@ -149,6 +154,8 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
       }
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening, onZoomChange]);
+
+  // Hint handling is now done by useHintDisplay hook
 
   if (!cloudState) return null;
 

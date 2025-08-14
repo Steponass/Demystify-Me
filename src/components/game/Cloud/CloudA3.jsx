@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { gsap } from 'gsap';
 import useCloudZoom from '@hooks/useCloudZoom';
 import useBlowDetection from '@hooks/useBlowDetection';
+import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
@@ -18,6 +19,10 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed);
+
+  // Use the centralized hint display system
+  useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
+
   const animationRef = useRef(null);
   const textContentRef = useRef(null);
 
@@ -129,6 +134,8 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
     onLevelChange: setAudioLevel,
   });
 
+  // Hint handling is now done by useHintDisplay hook
+
   // Microphone management
   const prevZoomedRef = useRef(isZoomed);
   const prevRevealedRef = useRef(cloudState?.isRevealed);
@@ -166,6 +173,10 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
       }
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening, onZoomChange]);
+
+  // We don't need to repeatedly reactivate the microphone
+  // The primary useEffect above already handles the microphone activation
+  // Remove this additional effect to prevent the constant reactivation during hint displays
 
   if (!cloudState) return null;
 
@@ -219,7 +230,7 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
                 className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
                   ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                   : ''
-                }`}
+                  }`}
                 style={{
                   '--floating-delay': `${animationDelay}s`,
                   '--floating-duration': `${animationDuration}s`

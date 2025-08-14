@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
 import useCloudZoom from '@hooks/useCloudZoom';
 import useBlowDetection from '@hooks/useBlowDetection';
+import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
@@ -19,6 +20,10 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   const [animationDuration] = useState(() => 8 + Math.random() * 6); // 8-14 seconds
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed);
+
+  // Use the centralized hint display system
+  useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
+
   const animationRef = React.useRef(null);
   const textContentRef = React.useRef(null);
 
@@ -102,7 +107,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
       const shouldListen = isZoomed && !currentRevealed;
 
       if (shouldListen) {
-
         // Delay before activating blow detection to ensure audio context is ready
         const timeoutId = setTimeout(() => {
           startListening().then(success => {
@@ -128,10 +132,16 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening, onZoomChange]);
 
+  // We don't need to repeatedly reactivate the microphone
+  // The primary useEffect above already handles the microphone activation
+  // Remove this additional effect to prevent the constant reactivation during hint displays
+
   if (!cloudState) return null;
 
   const isLayer1 = cloudState.currentLayer === 1;
   const isLayer3 = cloudState.currentLayer === 3;
+
+
 
   return (
     <div

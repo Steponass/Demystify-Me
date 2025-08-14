@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 import useCloudZoom from '@hooks/useCloudZoom';
 import useBlowDetection from '@hooks/useBlowDetection';
+import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
@@ -25,6 +26,9 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed);
+
+  // Use the centralized hint display system
+  useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
 
   // Refs for managing visual elements
   const lightCloudRef = useRef(null);
@@ -187,6 +191,10 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
       onZoomChange?.(false);
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening, onZoomChange]);
+
+  // We don't need to repeatedly reactivate the microphone
+  // The primary useEffect above already handles the microphone activation
+  // Remove this additional effect to prevent the constant reactivation during hint displays
 
   if (!cloudState) return null;
 

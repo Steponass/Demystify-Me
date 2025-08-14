@@ -1,0 +1,21 @@
+.hintContainer {
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--clr-whiteish);
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+  border-radius: var(--radius-4px);
+  text-align: center;
+  max-width: min(400px, 90vw);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hidden {
+  opacity: 0;
+  transform: translateY(10px);
+}

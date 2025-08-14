@@ -26,7 +26,7 @@ const useCloudZoom = (isRevealed = false) => {
       width: '100%',
       height: '100%',
       backgroundColor: 'hsla(203, 91%, 29%, 0.98)',
-      zIndex: 1000,
+      zIndex: 100,
       opacity: 0
     });
 

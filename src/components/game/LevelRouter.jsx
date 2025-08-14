@@ -2,10 +2,12 @@ import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { getLevelComponent } from '@levels/levelRoutes';
 import useGameStore from '@store/gameStore';
+import GameGUI from '@components/ui/GameGUI/GameGUI';
 
 const LevelRouter = () => {
   const { levelId } = useParams();
   const { isLevelUnlocked, currentLevel } = useGameStore();
+  const [showHint, setShowHint] = React.useState(null);
   
   // Convert to number (params are strings)
   const numericLevelId = parseInt(levelId, 10);
@@ -27,7 +29,12 @@ const LevelRouter = () => {
     return <Navigate to="/" replace />;
   }
   
-  return <LevelComponent levelId={numericLevelId} />;
+  return (
+    <>
+      <LevelComponent levelId={numericLevelId} showHint={showHint} />
+      <GameGUI levelId={numericLevelId} onShowHint={setShowHint} />
+    </>
+  );
 };
 
 export default LevelRouter;
