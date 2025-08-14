@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedLevelRoute from '@components/screens/ProtectedLevelRoute';
 import LevelRouter from '@components/game/LevelRouter';
+import LevelSplashManager from '@components/game/LevelSplashManager';
 import { TutorialLevel } from '@levels/levelRoutes';
 import MainMenu from '@components/screens/MainMenu/MainMenu';
 
@@ -19,26 +20,28 @@ function App() {
   return (
     <BrowserRouter>
       <Suspense fallback={<LoadingScreen />}>
-        <Routes>
-          {/* Home route - shows MainMenu */}
-          <Route path="/" element={<MainMenu />} />
+        <LevelSplashManager>
+          <Routes>
+            {/* Home route - shows MainMenu */}
+            <Route path="/" element={<MainMenu />} />
 
-          {/* Tutorial route */}
-          <Route path="/tutorial" element={<TutorialLevel levelId={0} />} />
+            {/* Tutorial route */}
+            <Route path="/tutorial" element={<TutorialLevel levelId={0} />} />
 
-          {/* Level routes with protection */}
-          <Route path="/level/:levelId" element={<ProtectedLevelRoute />}>
-            <Route index element={<LevelRouter />} />
-          </Route>
+            {/* Level routes with protection */}
+            <Route path="/level/:levelId" element={<ProtectedLevelRoute />}>
+              <Route index element={<LevelRouter />} />
+            </Route>
 
-          {/* TESTING STUFF */}
-          {/* Test route - for development only */}
-          <Route path="/test-blow" element={<BlowDetectionTest />} />
-          {/* END OF TESTING STUFF */}
+            {/* TESTING STUFF */}
+            {/* Test route - for development only */}
+            <Route path="/test-blow" element={<BlowDetectionTest />} />
+            {/* END OF TESTING STUFF */}
 
-          {/* Catch-all route - redirect to home (MainMenu) */}
-          <Route path="*" element={<MainMenu />} />
-        </Routes>
+            {/* Catch-all route - redirect to home (MainMenu) */}
+            <Route path="*" element={<MainMenu />} />
+          </Routes>
+        </LevelSplashManager>
       </Suspense>
     </BrowserRouter>
   );

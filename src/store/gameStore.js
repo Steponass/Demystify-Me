@@ -8,6 +8,8 @@ const initialState = {
   seenCloudTypes: [],
   currentHint: null,
   isHintVisible: false,
+  isLevelTransitioning: false,
+  shouldShowSplash: false,
 };
 
 const useGameStore = create(
@@ -20,26 +22,38 @@ const useGameStore = create(
       completeLevel: (levelId) => {
         const { completedLevels } = get();
 
-        if (!completedLevels.includes(levelId)) {
+        // Only update state if this is the first completion
+        const isFirstTimeCompletion = !completedLevels.includes(levelId);
+
+        if (isFirstTimeCompletion) {
           set({
             completedLevels: [...completedLevels, levelId],
             currentLevel: Math.max(get().currentLevel, levelId + 1)
+            // isLevelTransitioning removed as requested
           });
         }
+      }, isLevelCompletedBefore: (levelId) => {
+        const { completedLevels } = get();
+        return completedLevels.includes(levelId);
       },
 
-      // isLevelUnlocked: (levelId) => {
-      //   if (levelId === 0) return true;
-      //   if (levelId === 1) return true;
-      //   return get().completedLevels.includes(levelId - 1);
-      // },
-      isLevelUnlocked: () => {
-        // TEMPORARY: Always return true for testing purposes
-        // Original code:
-        // if (levelId === 0) return true;
-        // if (levelId === 1) return true;
-        // return get().completedLevels.includes(levelId - 1);
-        return true;
+      setLevelTransitioning: (isTransitioning) => {
+        set({ isLevelTransitioning: isTransitioning });
+      },
+
+      setShouldShowSplash: (shouldShow) => {
+        set({ shouldShowSplash: shouldShow });
+      },
+
+      isLevelUnlocked: (levelId) => {
+        // Tutorial and Level 1 are always unlocked
+        if (levelId === 0 || levelId === 1) return true;
+
+        // Other levels require the previous level to be completed
+        return get().completedLevels.includes(levelId - 1);
+
+        // TEMPORARY: Uncomment below for testing (unlocks all levels)
+        // return true;
       },
 
       initializeClouds: (levelId, cloudConfigs) => {

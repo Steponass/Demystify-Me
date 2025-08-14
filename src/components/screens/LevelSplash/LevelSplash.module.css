@@ -1,0 +1,69 @@
+/* Level Splash Screen Styles */
+.splashOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  /* Initially hidden, GSAP will control visibility */
+}
+
+.splashContent {
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  padding: 2rem;
+}
+
+.levelNumber {
+  font-family: 'Crimson Pro', serif;
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  opacity: 0;
+  letter-spacing: 0.05em;
+}
+
+.levelTitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  opacity: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .levelNumber {
+    font-size: 2.5rem;
+  }
+
+  .levelTitle {
+    font-size: 2rem;
+  }
+
+  .splashContent {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .levelNumber {
+    font-size: 2rem;
+  }
+
+  .levelTitle {
+    font-size: 1.5rem;
+  }
+
+  .splashContent {
+    padding: 1rem;
+  }
+}
