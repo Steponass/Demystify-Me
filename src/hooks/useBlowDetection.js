@@ -230,10 +230,13 @@ const useBlowDetection = ({
               // Call appropriate callbacks based on blow duration
               onAnyBlow();
 
+              // Separate long blow and XL blow conditions
+              if (blowDuration >= longBlowThreshold) {
+                onLongBlow();
+              }
+
               if (blowDuration >= xlBlowThreshold) {
                 onXLBlow();
-              } else if (blowDuration >= longBlowThreshold) {
-                onLongBlow();
               }
 
               // Check for double blow pattern

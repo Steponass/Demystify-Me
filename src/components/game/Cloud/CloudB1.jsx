@@ -7,7 +7,6 @@ import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import AudioLevelIndicator from './AudioLevelIndicator';
 
-// Extract magic numbers as constants for better maintainability
 const ANIMATION_DURATION = 0.6;
 const TRANSITION_SETTLE_TIME = 300;
 const MICROPHONE_START_DELAY = 100;
@@ -120,7 +119,6 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
       }
     },
     onDoubleBlow: handleLayer2Feedback,
-    onXLBlow: handleLayer2Feedback,
     onLevelChange: setAudioLevel
   });
 

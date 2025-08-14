@@ -17,6 +17,7 @@ export const CLOUD_IMAGES = {
     '/images/clouds/Regular/Cloud_Reg_8.webp',
     '/images/clouds/Regular/Cloud_Reg_8_flipped.webp',
     '/images/clouds/Regular/Cloud_Reg_9.webp',
+    '/images/clouds/Regular/Cloud_Reg_9_flipped.webp',
     '/images/clouds/Regular/Cloud_Reg_10.webp',
     '/images/clouds/Regular/Cloud_Reg_10_flipped.webp',
     '/images/clouds/Regular/Cloud_Reg_11.webp',
@@ -45,7 +46,8 @@ export const CLOUD_IMAGES = {
     '/images/clouds/Light/Cloud_Light_6.webp',
     '/images/clouds/Light/Cloud_Light_6_flipped.webp',
     '/images/clouds/Light/Cloud_Light_7.webp',
-    '/images/clouds/Light/Cloud_Light_8.webp'
+    '/images/clouds/Light/Cloud_Light_8.webp',
+    '/images/clouds/Light/Cloud_Light_8_flipped.webp'
   ]
 };
 
