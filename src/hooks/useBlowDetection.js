@@ -19,7 +19,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 const useBlowDetection = ({
   anyBlowMinDuration = 200,
   longBlowThreshold = 700,
-  xlBlowThreshold = 1700,
+  xlBlowThreshold = 1300,
   doubleBlowMaxGap = 650,
   blowThreshold = 0.28,
   onAnyBlow = () => { },

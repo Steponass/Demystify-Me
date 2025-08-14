@@ -1,7 +1,7 @@
 import React from 'react';
 import CloudA1 from './CloudA1';
 import CloudA2 from './CloudA2';
-// import CloudA3 from './CloudA3';
+import CloudA3 from './CloudA3';
 import CloudB1 from './CloudB1';
 import CloudB2 from './CloudB2';
 
@@ -18,7 +18,7 @@ const Cloud = ({
   const CloudComponent = {
     'A1': CloudA1,
     'A2': CloudA2,
-    // 'A3': CloudA3,
+    'A3': CloudA3,
     'B1': CloudB1,
     'B2': CloudB2
   }[cloudType];
