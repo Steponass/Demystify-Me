@@ -12,6 +12,20 @@
   overflow: visible;
 }
 
+/* For CloudB2 */
+.overlayCloud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.morphingSVG {
+  width: clamp(200px, 80%, 400px);
+  height: clamp(120px, 40%, 240px);
+}
+
+
 .cloud.revealed {
   cursor: default;
 }
@@ -24,6 +38,15 @@
   height: 100%;
   pointer-events: none;
   z-index: 5;
+}
+
+/* Layer positioning classes */
+.topLayer {
+  z-index: 8;
+}
+
+.underLayer {
+  z-index: 4;
 }
 
 .translucentCloudImage {
@@ -43,6 +66,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+  justify-items: center;
   width: 60%;
   z-index: 10;
   background: transparent;

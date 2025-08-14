@@ -3,7 +3,7 @@ import CloudA1 from './CloudA1';
 import CloudA2 from './CloudA2';
 // import CloudA3 from './CloudA3';
 import CloudB1 from './CloudB1';
-// import CloudB2 from './CloudB2';
+import CloudB2 from './CloudB2';
 
 const Cloud = ({ 
   cloudId, 
@@ -20,7 +20,7 @@ const Cloud = ({
     'A2': CloudA2,
     // 'A3': CloudA3,
     'B1': CloudB1,
-    // 'B2': CloudB2
+    'B2': CloudB2
   }[cloudType];
 
   if (!CloudComponent) {
