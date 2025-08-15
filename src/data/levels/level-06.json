@@ -6,16 +6,16 @@
       "cloudId": "cloud1",
       "cloudType": "A1",
       "content": {
-        "layer1": "If they did it, you can too",
-        "layer3": "Oversimplifying complex success"
+        "layer1": "If you believe it, you can achieve it!",
+        "layer3": "Just ignore statistics and luck"
       }
     },
     {
       "cloudId": "cloud2",
       "cloudType": "A2",
       "content": {
-        "layer1": "People like us don't need to prove anything",
-        "layer3": "But we do it anyway"
+        "layer1": "It’s all about mindset",
+        "layer3": "I’m ignoring your circumstances"
       }
     },
     {
@@ -36,7 +36,7 @@
       "viewBox": "-1 -1 205 20",
       "morphOptions": {
         "map": "position",
-        "duration": 0.8
+        "duration": 1.2
       }
     },
         "layer3": "So if you fail — it's on you, champ"
@@ -52,7 +52,7 @@
       "viewBox": "-1 -1 155 20",
       "morphOptions": {
         "map": "position",
-        "duration": 0.8
+        "duration": 1.2
       }
     },
         "layer3": "While quietly cataloguing grudges"
@@ -68,7 +68,7 @@
       "viewBox": "-1 -1 175 20",
       "morphOptions": {
         "map": "position",
-        "duration": 0.8
+        "duration": 1.2
       }
     },
         "layer3": "Unless authenticity costs the paycheck"

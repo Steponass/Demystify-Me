@@ -36,10 +36,6 @@ const Level05 = ({ levelId }) => {
     console.log(`Level 5: ${revealedCloud?.cloudType} cloud "${cloudId}" revealed!`);
   }, []);
 
-  // eslint-disable-next-line no-unused-vars
-  const handleZoomChange = useCallback((isZoomed) => {
-  }, []);
-
   return (
     <main>
       <h6>{levelData.title}</h6>
@@ -59,7 +55,6 @@ const Level05 = ({ levelId }) => {
               position={position}
               content={cloudData.content}
               onReveal={handleCloudReveal}
-              onZoomChange={handleZoomChange}
               levelId={levelId}
             />
           );

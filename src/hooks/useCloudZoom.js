@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Flip } from 'gsap/Flip';
+import useGameStore from '@store/gameStore';
 
 gsap.registerPlugin(Flip);
 
@@ -9,6 +10,8 @@ const useCloudZoom = (isRevealed = false) => {
   const [isZoomingOut, setIsZoomingOut] = useState(false);
   const cloudRef = useRef(null);
   const overlayRef = useRef(null);
+
+  const { setZoomState } = useGameStore();
 
   const handleZoomIn = useCallback(() => {
     if (isZoomed) return;
@@ -53,6 +56,7 @@ const useCloudZoom = (isRevealed = false) => {
 
     cloudElement.classList.add('zoomed');
     setIsZoomed(true);
+    setZoomState(true);
 
     // Animate from original state to zoomed state
     Flip.from(state, {
@@ -66,7 +70,7 @@ const useCloudZoom = (isRevealed = false) => {
     // Fade in overlay
     gsap.to(overlay, { opacity: 1, duration: 0.4, ease: "sine.inOut" });
 
-  }, [isZoomed]);
+  }, [isZoomed, setZoomState]);
 
   const handleZoomOut = useCallback(() => {
     if (!isZoomed) return;
@@ -105,10 +109,11 @@ const useCloudZoom = (isRevealed = false) => {
         cloudElement.classList.remove('zoomed');
         setIsZoomed(false);
         setIsZoomingOut(false);
+        setZoomState(false);
       }
     });
 
-  }, [isZoomed]);
+  }, [isZoomed, setZoomState]);
 
   const handleScreenTap = useCallback(() => {
     if (!isZoomed || !isRevealed) return;

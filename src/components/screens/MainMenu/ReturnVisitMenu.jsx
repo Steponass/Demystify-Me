@@ -1,4 +1,5 @@
 import React from 'react';
+import ActionButton from '@components/ui/ActionButton/ActionButton';
 import styles from './MainMenu.module.css';
 
 const ReturnVisitMenu = ({ currentLevel, onResume, onStartOver }) => {
@@ -19,19 +20,19 @@ const ReturnVisitMenu = ({ currentLevel, onResume, onStartOver }) => {
       </div>
       
       <div className={styles.buttonContainer}>
-        <button 
-          className={`${styles.button} ${styles.primaryButton}`}
+        <ActionButton 
+          variant="primary"
           onClick={onResume}
         >
           Resume
-        </button>
+        </ActionButton>
         
-        <button 
-          className={`${styles.button} ${styles.secondaryButton}`}
+        <ActionButton 
+          variant="secondary"
           onClick={onStartOver}
         >
           Start again
-        </button>
+        </ActionButton>
       </div>
     </div>
   );

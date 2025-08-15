@@ -8,7 +8,7 @@ import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import AudioLevelIndicator from './AudioLevelIndicator';
 
-const CloudA2 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }) => {
+const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
   // Add the hint functionality 
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
@@ -141,19 +141,15 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
           });
         }, 300);
 
-        onZoomChange?.(true);
-
         return () => {
           clearTimeout(timeoutId);
         };
       } else {
         stopListening();
-        if (!isZoomed) {
-          onZoomChange?.(false);
-        }
+
       }
     }
-  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening, onZoomChange]);
+  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
   // Hint handling is now done by useHintDisplay hook
 

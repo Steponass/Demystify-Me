@@ -1,4 +1,5 @@
 import React from 'react';
+import ActionButton from '@components/ui/ActionButton/ActionButton';
 import styles from './MainMenu.module.css';
 
 const FirstVisitMenu = ({ onStart }) => {
@@ -7,12 +8,12 @@ const FirstVisitMenu = ({ onStart }) => {
       <h1 className={styles.title}>Mystify Me</h1>
       
       <div className={styles.buttonContainer}>
-        <button 
-          className={`${styles.button} ${styles.primaryButton}`}
+        <ActionButton 
+          variant="primary"
           onClick={onStart}
         >
           Start
-        </button>
+        </ActionButton>
       </div>
     </div>
   );

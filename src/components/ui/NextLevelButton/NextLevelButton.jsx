@@ -14,8 +14,6 @@ const NextLevelButton = ({ levelId }) => {
     if (nextLevelId <= 10 && isLevelUnlocked(nextLevelId)) {
       console.log(`Navigating to level ${nextLevelId}`);
       navigate(`/level/${nextLevelId}`);
-    } else {
-      console.log(`Level ${nextLevelId} is not unlocked or doesn't exist`);
     }
   };
 

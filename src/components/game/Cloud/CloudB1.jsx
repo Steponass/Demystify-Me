@@ -12,7 +12,7 @@ const ANIMATION_DURATION = 0.6;
 const TRANSITION_SETTLE_TIME = 300;
 const MICROPHONE_START_DELAY = 100;
 
-const CloudB1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }) => {
+const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
@@ -136,13 +136,11 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
         startListening();
       }, MICROPHONE_START_DELAY);
 
-      onZoomChange?.(true);
       return () => clearTimeout(timeoutId);
     } else {
       stopListening();
-      onZoomChange?.(false);
     }
-  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening, onZoomChange]);
+  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
   // Hint handling is now done by useHintDisplay hook
 

@@ -8,7 +8,7 @@ import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import AudioLevelIndicator from './AudioLevelIndicator';
 
-const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }) => {
+const CloudA1 = ({ levelId, cloudId, position, content, onReveal }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
@@ -118,30 +118,19 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, onZoomChange }
           });
         }, 300);
 
-        onZoomChange?.(true);
-
         return () => {
           clearTimeout(timeoutId);
         };
       } else {
         stopListening();
-        if (!isZoomed) {
-          onZoomChange?.(false);
-        }
       }
     }
-  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening, onZoomChange]);
-
-  // We don't need to repeatedly reactivate the microphone
-  // The primary useEffect above already handles the microphone activation
-  // Remove this additional effect to prevent the constant reactivation during hint displays
+  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
   if (!cloudState) return null;
 
   const isLayer1 = cloudState.currentLayer === 1;
   const isLayer3 = cloudState.currentLayer === 3;
-
-
 
   return (
     <div

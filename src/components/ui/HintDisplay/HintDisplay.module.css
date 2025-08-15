@@ -1,5 +1,5 @@
 .hintContainer {
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--clr-overlay-hint);
   color: var(--clr-whiteish);
   padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
   border-radius: var(--radius-4px);

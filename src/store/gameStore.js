@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 const initialState = {
-  currentLevel: 1,
+  currentLevel: 0,
   completedLevels: [],
   cloudStates: {},
   seenCloudTypes: [],
@@ -10,6 +10,7 @@ const initialState = {
   isHintVisible: false,
   isLevelTransitioning: false,
   shouldShowSplash: false,
+  isZoomed: false,
 };
 
 const useGameStore = create(
@@ -40,6 +41,14 @@ const useGameStore = create(
       }, isLevelCompletedBefore: (levelId) => {
         const { completedLevels } = get();
         return completedLevels.includes(levelId);
+      },
+
+      setZoomState: (isZoomed) => {
+        set({ isZoomed });
+      },
+
+      getZoomState: () => {
+        return get().isZoomed;
       },
 
       setLevelTransitioning: (isTransitioning) => {
@@ -221,11 +230,15 @@ const useGameStore = create(
     {
       name: 'blow-it-game-storage',
       storage: createJSONStorage(() => localStorage),
-      // Add this to handle migration/merging properly
+      partialize: (state) => ({
+        currentLevel: state.currentLevel,
+        completedLevels: state.completedLevels,
+        cloudStates: state.cloudStates,
+        seenCloudTypes: state.seenCloudTypes,
+      }),
       merge: (persistedState, currentState) => ({
         ...currentState,
         ...persistedState,
-        // Ensure seenCloudTypes is always an array
         seenCloudTypes: Array.isArray(persistedState?.seenCloudTypes) ? persistedState.seenCloudTypes : [],
       }),
     }

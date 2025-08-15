@@ -23,7 +23,7 @@
       "cloudType": "A2",
       "content": {
         "layer1": "Success is all about hard work",
-        "layer3": "Luck dressed up as diligence"
+        "layer3": "Let’s ignore systemic factors"
       }
     },
     {
@@ -61,7 +61,7 @@
       "viewBox": "-1 -1 190 20",
       "morphOptions": {
         "map": "position",
-        "duration": 0.8
+        "duration": 1.2
       }
     },
         "layer3": "So for now, I’ll fake closure"

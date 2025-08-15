@@ -1,5 +1,6 @@
 import React from 'react';
 import { LEVEL_METADATA } from './levelMetadata';
+import ActionButton from '@components/ui/ActionButton/ActionButton';
 import styles from './MainMenu.module.css';
 
 const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
@@ -10,24 +11,24 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
       
       <div className={styles.levelGrid}>
         {LEVEL_METADATA.map((level) => (
-          <button
-            key={level.id}
-            className={`${styles.levelButton}`}
+          <ActionButton
+            key={level.title}
+            className={styles.levelButton}
             onClick={() => onLevelSelect(level.path)}
+            variant="level"
           >
-            <span className={styles.levelNumber}>Level {level.id}</span>
-            <span className={styles.levelTitle}>{level.title}</span>
-          </button>
+            <p className={styles.levelTitle}>{level.title}</p>
+          </ActionButton>
         ))}
       </div>
       
       <div className={styles.freshStartContainer}>
-        <button 
-          className={`${styles.button} ${styles.tertiaryButton}`}
+        <ActionButton 
+          variant="secondary"
           onClick={onStartFresh}
         >
           Start Fresh
-        </button>
+        </ActionButton>
       </div>
     </div>
   );

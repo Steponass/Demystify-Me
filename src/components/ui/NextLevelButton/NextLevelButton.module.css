@@ -3,16 +3,19 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--clr-accent);
+
+  background-color: var(--clr-overlay-hint);
   color: var(--clr-whiteish);
+  font-size: var(--fs-h6);
+
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-8px);
   padding: var(--space-8-12px) var(--space-16-24px);
-  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  z-index: 1100;
+  pointer-events: auto;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000000;
 }
 
 .nextLevelButton:hover {

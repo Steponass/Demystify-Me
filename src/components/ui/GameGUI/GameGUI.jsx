@@ -7,8 +7,7 @@ import RewindButton from '@components/ui/RewindButton/RewindButton';
 import NextLevelButton from '@components/ui/NextLevelButton/NextLevelButton';
 
 const GameGUI = ({ levelId }) => {
-  const { currentHint, isHintVisible, isLevelCompleted } = useGameStore();
-  // Removed useHintDisplay() - now handled in individual cloud components
+  const { currentHint, isHintVisible, isLevelCompleted, isZoomed } = useGameStore();
 
   const isCompleted = isLevelCompleted(levelId);
 
@@ -26,10 +25,8 @@ const GameGUI = ({ levelId }) => {
         )}
       </div>
 
-      {isCompleted && (
-        <div className={styles.nextLevelSection}>
+      {isCompleted && !isZoomed && (
           <NextLevelButton levelId={levelId} />
-        </div>
       )}
     </div>
   );
