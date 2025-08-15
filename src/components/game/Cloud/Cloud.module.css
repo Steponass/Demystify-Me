@@ -28,6 +28,7 @@
   height: 100%;
   pointer-events: none;
   z-index: 5;
+    overflow: visible;
 }
 
 /* For CloudB2 */
@@ -52,6 +53,7 @@
 .translucentCloudImage {
   opacity: 0.6;
   z-index: 7;
+    overflow: visible;
 }
 
 .underLayer {
@@ -61,7 +63,7 @@
 .floatingCloud {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: fill;
 }
 
 .textContent {

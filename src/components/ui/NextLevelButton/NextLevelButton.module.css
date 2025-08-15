@@ -13,9 +13,22 @@
   padding: var(--space-8-12px) var(--space-16-24px);
   cursor: pointer;
   pointer-events: auto;
+  opacity: 0;
   transition: all 0.25s ease-in-out;
+  animation: delayedEntry 0.3s ease-out 2s forwards;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 10000000;
+  z-index: 1003;
+}
+
+@keyframes delayedEntry {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 .nextLevelButton:hover {

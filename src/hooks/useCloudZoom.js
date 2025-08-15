@@ -33,7 +33,6 @@ const useCloudZoom = (isRevealed = false) => {
       opacity: 0
     });
 
-
     // Record the current state
     const state = Flip.getState(cloudElement);
 
@@ -119,12 +118,30 @@ const useCloudZoom = (isRevealed = false) => {
     if (!isZoomed || !isRevealed) return;
     handleZoomOut();
   }, [isZoomed, isRevealed, handleZoomOut]);
+
   useEffect(() => {
     if (isZoomed && isRevealed) {
       document.addEventListener('click', handleScreenTap);
       return () => document.removeEventListener('click', handleScreenTap);
     }
   }, [isZoomed, isRevealed, handleScreenTap]);
+
+  // Cleanup only on component unmount while zoomed
+  useEffect(() => {
+    return () => {
+      // Only cleanup if component unmounts while still zoomed
+      // This handles the case where user navigates away via menu button
+      if (overlayRef.current) {
+        gsap.killTweensOf(overlayRef.current);
+        overlayRef.current.remove();
+        overlayRef.current = null;
+      }
+      // Reset zoom state in store if unmounting while zoomed
+      if (isZoomed) {
+        setZoomState(false);
+      }
+    };
+  }, []); // Empty dependency array - only runs on unmount
 
   return {
     cloudRef,

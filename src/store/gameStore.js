@@ -105,11 +105,10 @@ const useGameStore = create(
 
         if (!seenCloudTypes.includes(cloudType)) {
           const hints = {
-            'A1': 'Blow to reveal the truth',
-            'A2': 'Try blowing twice with a pause',
-            'A3': 'This cloud is resistant - try a longer, stronger blow',
-            'B1': 'Blow to continue through multiple layers',
-            'B2': 'Blow to continue and watch the transformation'
+            'A1': 'Blow into the microphone',
+            'A2': 'Blow twice',
+            'A3': 'A stubborn one! Try a longer blow',
+            'B1': 'This one has 2 layers',
           };
 
           const hintText = hints[cloudType] || 'Blow into your microphone to interact';
