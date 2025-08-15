@@ -2,29 +2,19 @@
   position: absolute;
   pointer-events: auto;
   overflow: visible;
+  width: var(--cloud-size);
+  height: calc(var(--cloud-size) * 0.6); /* Maintain aspect ratio */
 }
 
 .cloud {
   position: relative;
-  width: 200px;
-  height: 120px;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
   overflow: visible;
+  min-width: 120px;
+  min-height: 72px;
 }
-
-/* For CloudB2 */
-.overlayCloud {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-}
-
-.morphingSVG {
-  width: clamp(200px, 80%, 400px);
-  height: clamp(120px, 40%, 240px);
-}
-
 
 .cloud.revealed {
   cursor: default;
@@ -40,18 +30,32 @@
   z-index: 5;
 }
 
+/* For CloudB2 */
+.overlayCloud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.morphingSVG {
+  width: 100%;
+  height: 100%;
+  max-width: clamp(150px, 20vw, 400px);
+  max-height: clamp(90px, 12vw, 240px);
+}
+
 /* Layer positioning classes */
 .topLayer {
   z-index: 8;
 }
-
-.underLayer {
-  z-index: 4;
-}
-
 .translucentCloudImage {
   opacity: 0.6;
   z-index: 7;
+}
+
+.underLayer {
+  z-index: 4;
 }
 
 .floatingCloud {
@@ -67,7 +71,7 @@
   transform: translate(-50%, -50%);
   text-align: center;
   justify-items: center;
-  width: 80%;
+  width: 100%;
   z-index: 10;
   background: transparent;
   /* Default state */
@@ -80,17 +84,17 @@
   pointer-events: none;
   cursor: none;
   overflow: visible;
-  width: 80%;
+  width: 100%;
 }
 
-/* Show Layer 3 content even when not zoomed, but only for revealed clouds */
+/* Show Layer 3 content for revealed clouds */
 .cloud.revealed .textContent {
   opacity: 1;
   pointer-events: none;
   cursor: none;
   overflow: hidden;
   width: 100%;
-  animation: revealedTextAppear 0.6s ease-out;
+  animation: revealedTextAppear 0.3s ease-out;
 }
 
 /* Animation for Layer 3 text appearing after cloud is revealed */
@@ -108,7 +112,8 @@
 
 .regularLayerText,
 .finalLayerText {
-  font-size: var(--fs-h6);
+  /* Responsive font sizing */
+  font-size: clamp(var(--fs-p), 2.5vw, var(--fs-h6));
   transition: font-size 0.3s ease;
 }
 
@@ -118,7 +123,6 @@
 
 .finalLayerText {
   color: var(--clr-whiteish);
-  font-weight: 400;
   text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -132,77 +136,35 @@
 .floatingCloud.floatingReverse {
   animation: floatingReverse 10s linear infinite alternate-reverse none;
   animation-delay: var(--floating-delay, 0s);
-  animation-duration: var(--floating-duration, 10s);
+  animation-duration: var(--floating-duration, 12s);
 }
 
 @keyframes floating {
-  0% {}
-
-  12% {
-    transform: translateX(-3px) translateY(2px);
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
   }
-
-  24% {
-    transform: translateX(-6px) translateY(0px);
+  33% {
+    transform: translate(15px, -15px) rotate(1deg);
   }
-
-  36% {
-    transform: translateX(-3px) translateY(-2px);
+  66% {
+    transform: translate(-10px, 10px) rotate(-1deg);
   }
-
-  48% {
-    transform: translateX(0px) translateY(0px);
-  }
-
-  60% {
-    transform: translateX(3px) translateY(2px);
-  }
-
-  72% {
-    transform: translateX(6px) translateY(0px);
-  }
-
-  84% {
-    transform: translateX(3px) translateY(-2px);
-  }
-
   100% {
-    transform: translateX(0px) translateY(0px);
+    transform: translate(0px, 0px) rotate(0deg);
   }
 }
 
 @keyframes floatingReverse {
-  0% {}
-
-  12% {
-    transform: translateX(3px) translateY(-2px);
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
   }
-
-  24% {
-    transform: translateX(6px) translateY(0px);
+  33% {
+    transform: translate(-15px, 15px) rotate(-1deg);
   }
-
-  36% {
-    transform: translateX(3px) translateY(2px);
+  66% {
+    transform: translate(10px, -10px) rotate(1deg);
   }
-
-  48% {
-    transform: translateX(0px) translateY(0px);
-  }
-
-  60% {
-    transform: translateX(-3px) translateY(-2px);
-  }
-
-  72% {
-    transform: translateX(-6px) translateY(0px);
-  }
-
-  84% {
-    transform: translateX(-3px) translateY(2px);
-  }
-
   100% {
-    transform: translateX(0px) translateY(0px);
+    transform: translate(0px, 0px) rotate(0deg);
   }
 }

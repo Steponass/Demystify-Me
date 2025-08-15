@@ -6,6 +6,7 @@
   padding: var(--space-8px);
 }
 
-.menuButton svg {
+.menuButton:hover {
   filter: drop-shadow(0.5px 0.5px 1.5px var(--clr-whiteish));
+  transform: translateY(-0.5px);
 }

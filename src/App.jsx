@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedLevelRoute from '@components/screens/ProtectedLevelRoute';
 import LevelRouter from '@components/game/LevelRouter';
 import LevelSplashManager from '@components/game/LevelSplashManager';
-import { TutorialLevel } from '@levels/levelRoutes';
 import MainMenu from '@components/screens/MainMenu/MainMenu';
 
 const LoadingScreen = () => (

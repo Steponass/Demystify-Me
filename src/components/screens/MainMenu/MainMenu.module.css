@@ -11,6 +11,7 @@
 
 .menuContent {
   text-align: center;
+  color: var(--clr-whiteish);
 }
 
 .currentProgress {
@@ -22,7 +23,7 @@
   flex-direction: column;
   gap: var(--space-4-8px);
   align-items: center;
-  margin-top: var(--space-12-16px)
+  margin-top: var(--space-24-32px)
 }
 
 /* Level selection grid for completed game state */

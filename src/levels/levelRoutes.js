@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 
-const TutorialLevel = lazy(() => import('./Tutorial/TutorialLevel'));
 const Level01 = lazy(() => import('@levels/Level01/Level01'));
 const Level02 = lazy(() => import('@levels/Level02/Level02'));
 const Level03 = lazy(() => import('@levels/Level03/Level03'));
@@ -14,7 +13,6 @@ const Level10 = lazy(() => import('@levels/Level10/Level10'));
 
 // Map level IDs to components
 const levelComponents = {
-  0: TutorialLevel,
   1: Level01,
   2: Level02,
   3: Level03,
@@ -34,7 +32,6 @@ export const getLevelComponent = (levelId) => {
 };
 
 export {  
-  TutorialLevel, 
   Level01, 
   Level02, 
   Level03,

@@ -13,7 +13,8 @@ const Level04 = ({ levelId }) => {
     cloudType: cloud.cloudType
   }));
 
-  const { isCompleted } = useLevelProgress(levelId, cloudConfigs);
+  useLevelProgress(levelId, cloudConfigs);
+
   const { cloudPositions, updateContainerDimensions } = useCloudLayout(
     cloudConfigs.map(config => config.cloudId)
   );
@@ -40,9 +41,6 @@ const Level04 = ({ levelId }) => {
 
   return (
     <main>
-      <h6>{levelData.title}</h6>
-      <p>Status: {isCompleted ? 'Completed' : 'In Progress'}</p>
-
       <div className={styles.cloud_layout} ref={containerRef}>
         {levelData.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];

@@ -90,4 +90,19 @@
 --cloud-size: clamp(var(--cloud-size-mobile), 15vw, var(--cloud-size-desktop));
 
 
+  /* Z-index scale */
+  --z-cloud-under: 1;
+  --z-cloud-base: 2;
+  --z-cloud-translucent: 3;
+  --z-cloud-top: 4;
+  --z-cloud-overlay: 5;
+  
+  --z-gui: 100;
+  --z-next-button: 150;
+  
+  --z-zoom-overlay: 200;
+  --z-zoom-content: 201;
+  
+  --z-splash: 300;
+
 }

@@ -4,19 +4,16 @@ import styles from './MainMenu.module.css';
 
 const ReturnVisitMenu = ({ currentLevel, onResume, onStartOver }) => {
   const getLevelText = () => {
-    if (currentLevel === 0) {
-      return 'Tutorial';
-    }
     return `Level ${currentLevel}`;
   };
 
   return (
     <div className={styles.menuContent}>
       <h1 className={styles.title}>Mystify Me</h1>
-      <hh6 className={styles.subtitle}>Welcome back!</hh6>
+      <h6 className={styles.subtitle}>Welcome back!</h6>
       
       <div className={styles.currentProgress}>
-        Current progress: {getLevelText()}
+        <p>Current progress: {getLevelText()}</p>
       </div>
       
       <div className={styles.buttonContainer}>

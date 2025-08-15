@@ -64,21 +64,14 @@ const useGameStore = create(
 
         // Only Level 1 is always unlocked, tutorial (level 0) is never allowed
         if (levelId === 1) {
-          console.log(`Level ${levelId} is always unlocked`);
+
           return true;
-        }
-        if (levelId === 0) {
-          console.log(`Level ${levelId} (tutorial) is never allowed`);
-          return false; // Never allow tutorial level
         }
 
         // Other levels require the previous level to be completed
         const isUnlocked = completedLevels.includes(levelId - 1);
-        console.log(`Level ${levelId} unlock check: previous level (${levelId - 1}) completed: ${isUnlocked}. Completed levels: [${completedLevels.join(', ')}]`);
         return isUnlocked;
 
-        // TEMPORARY: Uncomment below for testing (unlocks all levels)
-        // return true;
       },
 
       initializeClouds: (levelId, cloudConfigs) => {
