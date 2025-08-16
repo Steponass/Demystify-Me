@@ -25,6 +25,7 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
 
   const animationRef = useRef(null);
   const textContentRef = useRef(null);
+  const layer3TextRef = useRef(null); // Add ref for layer 3 content
 
   // Handle the correct blow pattern (XL blow for A3)
   const handleXLBlow = useCallback(() => {
@@ -34,53 +35,71 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
 
     const cloudElement = animationRef.current;
     const textElement = textContentRef.current;
+    const layer3Element = layer3TextRef.current;
+
+    // Create a GSAP timeline for coordinated animations
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        // Update state after animation completes
+        advanceCloudLayer(levelId, cloudId);
+        onReveal?.(cloudId);
+      }
+    });
+
+    // First, make Layer 3 visible but initially transparent
+    if (layer3Element) {
+      gsap.set(layer3Element, { 
+        opacity: 0, 
+        display: 'block', 
+        visibility: 'visible',
+        zIndex: 10 // Above other elements
+      });
+      
+      // Fade in Layer 3 immediately
+      timeline.to(layer3Element, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "sine.in"
+      }, 0); // Start at the beginning of the timeline
+    }
 
     if (cloudElement) {
       // Stop any existing animation first
       gsap.killTweensOf(cloudElement);
-      if (textElement) {
-        gsap.killTweensOf(textElement);
-      }
-
+      
       // Generate random direction for variety
       const randomDirection = Math.random() > 0.5 ? 1 : -1;
       const horizontalDistance = 25 * randomDirection;
 
-      // Animate the cloud floating away and fading out
-      gsap.to(cloudElement, {
+      // Add cloud animation to the timeline
+      timeline.to(cloudElement, {
         y: -300,
         x: horizontalDistance,
         opacity: 0,
         scale: 0.8,
         duration: 0.6,
         ease: "sine.inOut"
-      });
-
-      // Animate the text with the same movement if it exists
-      if (textElement) {
-        // Clear any CSS transitions first
-        textElement.style.transition = 'none';
-
-        gsap.to(textElement, {
-          y: -300,
-          x: horizontalDistance,
-          opacity: 0,
-          scale: 0.8,
-          duration: 0.6,
-          ease: "sine.inOut"
-        });
-      }
-
-      // Set a timeout to update state after animation
-      setTimeout(() => {
-        advanceCloudLayer(levelId, cloudId);
-        onReveal?.(cloudId);
-      }, 1000);
-    } else {
-      // Fallback if ref isn't available
-      advanceCloudLayer(levelId, cloudId);
-      onReveal?.(cloudId);
+      }, 0); // Start at the beginning of the timeline
     }
+
+    // Animate the text with the same movement if it exists
+    if (textElement) {
+      // Clear any CSS transitions first
+      textElement.style.transition = 'none';
+      gsap.killTweensOf(textElement);
+
+      // Add text animation to the timeline
+      timeline.to(textElement, {
+        y: -300,
+        x: 25, // Match the cloud movement
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.6,
+        ease: "sine.inOut"
+      }, 0); // Start at the beginning of the timeline
+    }
+
+    // No need for setTimeout as the timeline handles the callback
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
 
   // Handle incorrect blow patterns - creates the feedback wiggle
@@ -134,8 +153,6 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
     onLevelChange: setAudioLevel,
   });
 
-  // Hint handling is now done by useHintDisplay hook
-
   // Microphone management
   const prevZoomedRef = useRef(isZoomed);
   const prevRevealedRef = useRef(cloudState?.isRevealed);
@@ -169,10 +186,6 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
-  // We don't need to repeatedly reactivate the microphone
-  // The primary useEffect above already handles the microphone activation
-  // Remove this additional effect to prevent the constant reactivation during hint displays
-
   if (!cloudState) return null;
 
   const isLayer1 = cloudState.currentLayer === 1;
@@ -192,14 +205,26 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 - Final revealed state */}
-        {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
-          <div className={styles.textContent}>
-            <p className={styles.finalLayerText}>
-              {content.layer3}
-            </p>
-          </div>
-        )}
+<div 
+  ref={layer3TextRef} 
+  className={`${styles.textContent} ${isLayer3 ? styles.visible : ''}`}
+  style={{ 
+    opacity: isLayer3 ? 1 : 0,
+    visibility: isLayer3 ? 'visible' : 'hidden',
+    zIndex: isZoomed ? 10 : 3, // Higher z-index when zoomed, lower when in grid view
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isZoomed ? '100%' : 'clamp(80%, 90%, 95%)', // Responsive width
+    textAlign: 'center',
+    pointerEvents: isZoomed ? 'auto' : 'none' // Prevent interaction when in grid view
+  }}
+>
+  <p className={styles.finalLayerText}>
+    {content.layer3}
+  </p>
+</div>
 
         {/* Layer 1 - Initial state with resistant cloud */}
         {isLayer1 && (

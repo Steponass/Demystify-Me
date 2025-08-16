@@ -103,28 +103,50 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
 
     isTransitioning.current = true;
 
+    // Create a GSAP timeline for coordinated animations
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        advanceCloudLayer(levelId, cloudId);
+        onReveal?.(cloudId);
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, TRANSITION_SETTLE_TIME);
+      }
+    });
+
+    // First, make Layer 3 visible but initially transparent
+    if (layer3TextRef.current) {
+      gsap.set(layer3TextRef.current, { 
+        opacity: 0, 
+        display: 'block', 
+        visibility: 'visible',
+        zIndex: 10 // Above other elements
+      });
+      
+      // Fade in Layer 3 immediately
+      timeline.to(layer3TextRef.current, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "sine.in"
+      }, 0); // Start at the beginning of the timeline
+    }
+
     // Heavy cloud + SVG disappear together
     const elements = [heavyCloudRef, svgPathRef];
     elements.forEach(element => {
       if (element.current) {
         element.current.style.transition = 'none';
-        gsap.to(element.current, {
+        timeline.to(element.current, {
           y: -300,
           opacity: 0,
           scale: 0.8,
           duration: ANIMATION_DURATION,
           ease: "sine.out"
-        });
+        }, 0); // Start at the beginning of the timeline
       }
     });
 
-    setTimeout(() => {
-      advanceCloudLayer(levelId, cloudId);
-      onReveal?.(cloudId);
-      setTimeout(() => {
-        isTransitioning.current = false;
-      }, TRANSITION_SETTLE_TIME);
-    }, ANIMATION_DURATION * 1000);
+    // No need for setTimeout as the timeline handles the callback
   }, [isZoomed, isZoomingOut, advanceCloudLayer, levelId, cloudId, onReveal]);
 
   const handleLayer2Feedback = useCallback(() => {
@@ -170,8 +192,6 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
       if (heavyCloudRef.current) {
         gsap.set(heavyCloudRef.current, { opacity: 1 });
       }
-
-
     }
   }, [cloudState?.currentLayer, isZoomed, content.svgMorph]);
 
@@ -189,10 +209,6 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
       stopListening();
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
-
-  // We don't need to repeatedly reactivate the microphone
-  // The primary useEffect above already handles the microphone activation
-  // Remove this additional effect to prevent the constant reactivation during hint displays
 
   if (!cloudState) return null;
 
@@ -220,14 +236,26 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 - Final revealed state */}
-        {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
-          <div ref={layer3TextRef} className={styles.textContent}>
-            <p className={styles.finalLayerText}>
-              {content.layer3}
-            </p>
-          </div>
-        )}
+<div 
+  ref={layer3TextRef} 
+  className={`${styles.textContent} ${isLayer3 ? styles.visible : ''}`}
+  style={{ 
+    opacity: isLayer3 ? 1 : 0,
+    visibility: isLayer3 ? 'visible' : 'hidden',
+    zIndex: isZoomed ? 10 : 3, // Higher z-index when zoomed, lower when in grid view
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100%',
+    textAlign: 'center',
+    pointerEvents: isZoomed ? 'auto' : 'none' // Prevent interaction when in grid view
+  }}
+>
+  <p className={styles.finalLayerText}>
+    {content.layer3}
+  </p>
+</div>
 
         {/* Layer 2 Base: Heavy cloud + SVG (always present for Layers 1 & 2) */}
         {(isLayer1 || isLayer2) && content.svgMorph && (

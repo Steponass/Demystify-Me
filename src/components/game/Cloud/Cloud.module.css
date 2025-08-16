@@ -85,7 +85,7 @@
   pointer-events: none;
   cursor: none;
   overflow: hidden;
-  width: 100%;
+  width: 30ch;
   animation: revealedTextAppear 0.3s ease-out;
 }
 

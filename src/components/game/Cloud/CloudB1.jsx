@@ -43,30 +43,55 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
     currentLayerRef.current = cloudState?.currentLayer;
   }, [cloudState?.currentLayer]);
 
-  // Simplified transition function that works for both layers
+
   const animateElementsOut = useCallback((elements, onComplete) => {
+    // Create a GSAP timeline for coordinated animations
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        onComplete();
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, TRANSITION_SETTLE_TIME);
+      }
+    });
+
+    // First, ensure Layer 3 is visible immediately
+    if (layer3TextRef.current && !cloudState?.isRevealed) {
+      // Make Layer 3 visible with initial opacity 0
+      gsap.set(layer3TextRef.current, {
+        opacity: 0,
+        display: 'block',
+        visibility: 'visible',
+        zIndex: 3
+      });
+
+      // Fade in Layer 3 immediately as other layers start to disappear
+      timeline.to(layer3TextRef.current, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "sine.in"
+      }, 0); // Start at the beginning of the timeline
+    }
+
+    // Animate out all provided elements
     elements.forEach(element => {
       if (element.current) {
         // Clear any CSS transitions first
         element.current.style.transition = 'none';
-        gsap.to(element.current, {
+
+        // Add to the timeline (starting at the same time as Layer 3 fade in)
+        timeline.to(element.current, {
           y: -300,
           opacity: 0,
           scale: 0.8,
           duration: ANIMATION_DURATION,
           ease: "sine.out"
-        });
+        }, 0); // Start at the beginning of the timeline
       }
     });
 
-    setTimeout(() => {
-      onComplete();
-      setTimeout(() => {
-        isTransitioning.current = false;
-      }, TRANSITION_SETTLE_TIME);
-    }, ANIMATION_DURATION * 1000);
-  }, []);
-
+    // Don't use setTimeout anymore - GSAP timeline handles this
+  }, [cloudState?.isRevealed]);
   const handleLayer1Blow = useCallback(() => {
     if (!isZoomed || isZoomingOut || isTransitioning.current || currentLayerRef.current !== 1) {
       return;
@@ -170,14 +195,26 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 - Final revealed state */}
-        {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
-          <div ref={layer3TextRef} className={styles.textContent}>
-            <p className={styles.finalLayerText}>
-              {content.layer3}
-            </p>
-          </div>
-        )}
+<div 
+  ref={layer3TextRef} 
+  className={`${styles.textContent} ${isLayer3 ? styles.visible : ''}`}
+  style={{ 
+    opacity: isLayer3 ? 1 : 0,
+    visibility: isLayer3 ? 'visible' : 'hidden',
+    zIndex: isZoomed ? 10 : 3, // Higher z-index when zoomed, lower when in grid view
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isZoomed ? '100%' : 'clamp(80%, 90%, 95%)', // Responsive width
+    textAlign: 'center',
+    pointerEvents: isZoomed ? 'auto' : 'none' // Prevent interaction when in grid view
+  }}
+>
+  <p className={styles.finalLayerText}>
+    {content.layer3}
+  </p>
+</div>
 
         {/* Layer 2 - Intermediate state with Heavy cloud */}
         {/* Show Layer 2 when zoomed and not yet blown away (currentLayer <= 2) */}

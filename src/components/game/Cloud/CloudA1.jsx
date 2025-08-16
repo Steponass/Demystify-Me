@@ -26,6 +26,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal }) => {
 
   const animationRef = React.useRef(null);
   const textContentRef = React.useRef(null);
+  const layer3TextRef = React.useRef(null); // Add ref for layer 3 content
 
   const handleAnyBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
@@ -34,53 +35,76 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal }) => {
 
     const cloudElement = animationRef.current;
     const textElement = textContentRef.current;
+    const layer3Element = layer3TextRef.current;
+
+    // Create a GSAP timeline for coordinated animations
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        // Update state after animation completes
+        advanceCloudLayer(levelId, cloudId);
+        onReveal?.(cloudId);
+      }
+    });
+
+if (layer3Element) {
+  // Use set for positioning to avoid any movement
+  gsap.set(layer3Element, { 
+    opacity: 0, 
+    display: 'block', 
+    visibility: 'visible',
+    // Don't change position properties during animation
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 10
+  });
+  
+  // Only animate opacity, not position
+  timeline.to(layer3Element, {
+    opacity: 1,
+    duration: 0.3,
+    ease: "sine.in"
+  }, 0);
+}
 
     if (cloudElement) {
       // Stop any existing animation first
       gsap.killTweensOf(cloudElement);
-      if (textElement) {
-        gsap.killTweensOf(textElement);
-      }
-
+      
       // Generate random direction for variety
       const randomDirection = Math.random() > 0.5 ? 1 : -1;
       const horizontalDistance = 50 * randomDirection;
 
-      // Animate the cloud floating away and fading out
-      gsap.to(cloudElement, {
+      // Add cloud animation to the timeline
+      timeline.to(cloudElement, {
         y: -300,
         x: horizontalDistance,
         opacity: 0,
         scale: 0.8,
         duration: 0.6,
         ease: "sine.inOut"
-      });
-
-      // Animate the text with the same movement if it exists
-      if (textElement) {
-        // Clear any CSS transitions first
-        textElement.style.transition = 'none';
-
-        gsap.to(textElement, {
-          y: -300,
-          x: horizontalDistance,
-          opacity: 0,
-          scale: 0.8,
-          duration: 0.6,
-          ease: "sine.inOut"
-        });
-      }
-
-      // Set a timeout to update state after animation
-      setTimeout(() => {
-        advanceCloudLayer(levelId, cloudId);
-        onReveal?.(cloudId);
-      }, 1000);
-    } else {
-      // Fallback if ref isn't available
-      advanceCloudLayer(levelId, cloudId);
-      onReveal?.(cloudId);
+      }, 0); // Start at the beginning of the timeline
     }
+
+    // Animate the text with the same movement if it exists
+    if (textElement) {
+      // Clear any CSS transitions first
+      textElement.style.transition = 'none';
+      gsap.killTweensOf(textElement);
+
+      // Add text animation to the timeline
+      timeline.to(textElement, {
+        y: -300,
+        x: 50, // Match the cloud movement
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.6,
+        ease: "sine.inOut"
+      }, 0); // Start at the beginning of the timeline
+    }
+
+    // No need for setTimeout as the timeline handles the callback
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
 
   // Add audio level state to visualize microphone input
@@ -146,14 +170,26 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 (final revealed state - visible when zoomed or after reveal) */}
-        {isLayer3 && (cloudState?.isRevealed) && !isZoomingOut && (
-          <div className={styles.textContent}>
-            <p className={styles.finalLayerText}>
-              {content.layer3}
-            </p>
-          </div>
-        )}
+<div 
+  ref={layer3TextRef} 
+  className={`${styles.textContent} ${isLayer3 ? styles.visible : ''}`}
+  style={{ 
+    opacity: isLayer3 ? 1 : 0,
+    visibility: isLayer3 ? 'visible' : 'hidden',
+    zIndex: isZoomed ? 10 : 3, // Higher z-index when zoomed, lower when in grid view
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isZoomed ? '100%' : 'clamp(80%, 90%, 95%)', // Responsive width
+    textAlign: 'center',
+    pointerEvents: isZoomed ? 'auto' : 'none' // Prevent interaction when in grid view
+  }}
+>
+  <p className={styles.finalLayerText}>
+    {content.layer3}
+  </p>
+</div>
 
         {/* Layer 1 - Cloud image (only visible if not revealed or if still on layer 1) */}
         {isLayer1 && (
