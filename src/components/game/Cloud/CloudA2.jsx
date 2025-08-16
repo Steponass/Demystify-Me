@@ -26,6 +26,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
   const regularCloudRef = useRef(null);
   const lightCloudRef = useRef(null);
   const textContentRef = useRef(null);
+  const layer3TextRef = useRef(null); // Add ref for layer 3 content
 
   // Track blow attempts to differentiate anyblow from double blow
   const lastBlowTimeRef = useRef(null);
@@ -46,6 +47,33 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
     const regularCloudElement = regularCloudRef.current;
     const lightCloudElement = lightCloudRef.current;
     const textElement = textContentRef.current;
+    const layer3Element = layer3TextRef.current;
+
+    // Create a GSAP timeline for coordinated animations
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        // Update state after animation completes
+        advanceCloudLayer(levelId, cloudId);
+        onReveal?.(cloudId);
+      }
+    });
+
+    // First, make Layer 3 visible but initially transparent
+    if (layer3Element) {
+      gsap.set(layer3Element, { 
+        opacity: 0, 
+        display: 'block', 
+        visibility: 'visible',
+        zIndex: 10 // Above other elements
+      });
+      
+      // Fade in Layer 3 immediately
+      timeline.to(layer3Element, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "sine.in"
+      }, 0); // Start at the beginning of the timeline
+    }
 
     gsap.killTweensOf([regularCloudElement, lightCloudElement, textElement].filter(Boolean));
 
@@ -56,32 +84,28 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
     // Animate both cloud elements floating away together
     const cloudElements = [regularCloudElement, lightCloudElement].filter(Boolean);
 
-    gsap.to(cloudElements, {
+    timeline.to(cloudElements, {
       y: -300,
       x: horizontalDistance,
       opacity: 0,
       scale: 0.8,
       duration: 0.6,
       ease: "sine.inOut"
-    });
+    }, 0); // Start at the beginning of the timeline
 
     if (textElement) {
       textElement.style.transition = 'none';
-      gsap.to(textElement, {
+      timeline.to(textElement, {
         y: -300,
         x: horizontalDistance,
         opacity: 0,
         scale: 0.8,
         duration: 0.6,
         ease: "sine.inOut"
-      });
+      }, 0); // Start at the beginning of the timeline
     }
 
-    // Update state after animation completes
-    setTimeout(() => {
-      advanceCloudLayer(levelId, cloudId);
-      onReveal?.(cloudId);
-    }, 1000);
+    // No need for setTimeout as the timeline handles the callback
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
 
   // Smart blow tracking: waits to see if it's part of a pattern
@@ -160,11 +184,6 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
       } else {
         stopListening();
 
-        // Clean up feedback timeout when stopping listening
-        if (feedbackTimeoutRef.current) {
-          clearTimeout(feedbackTimeoutRef.current);
-          feedbackTimeoutRef.current = null;
-        }
       }
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
@@ -197,7 +216,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 */}
+        {/* Layer 3 - Final revealed state */}
         {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
           <div className={styles.textContent}>
             <p className={styles.finalLayerText}>

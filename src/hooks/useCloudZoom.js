@@ -72,47 +72,52 @@ const useCloudZoom = (isRevealed = false) => {
   }, [isZoomed, setZoomState]);
 
   const handleZoomOut = useCallback(() => {
-    if (!isZoomed) return;
+  if (!isZoomed) return;
 
-    const cloudElement = cloudRef.current;
-    if (!cloudElement) return;
+  const cloudElement = cloudRef.current;
+  if (!cloudElement) return;
 
-    setIsZoomingOut(true);
-    gsap.set(cloudElement, { overflow: "hidden" });
+  setIsZoomingOut(true);
 
-    // Record current zoomed state
-    const state = Flip.getState(cloudElement);
+  gsap.killTweensOf(cloudElement);
 
-    // Reset to original size and position (Flip will animate back)
-    gsap.set(cloudElement, { clearProps: true });
-
-    // Remove overlay
-    if (overlayRef.current) {
-      gsap.to(overlayRef.current, {
-        opacity: 0,
-        duration: 0.6,
-        ease: "sine.inOut",
-        onComplete: () => {
-          overlayRef.current?.remove();
-          overlayRef.current = null;
-        }
-      });
+  gsap.to(cloudElement, {
+    opacity: 0,
+    duration: 0.6,
+    ease: "sine.out",
+    onComplete: () => {
+      // Reset all zoom styles
+      gsap.set(cloudElement, { clearProps: true });
+      cloudElement.classList.remove('zoomed');
+      
+      // If revealed, show Layer 3 in original position
+      if (isRevealed) {
+        cloudElement.classList.add('revealed');
+        gsap.set(cloudElement, { opacity: 1 });
+      } else {
+        gsap.set(cloudElement, { opacity: 1 });
+      }
+      
+      setIsZoomed(false);
+      setIsZoomingOut(false);
+      setZoomState(false);
     }
+  });
 
-    // Animate back to original state
-    Flip.from(state, {
-      duration: 0.8,
-      ease: "sine.inOut",
-      scale: false,
+  // Remove overlay
+  if (overlayRef.current) {
+    gsap.to(overlayRef.current, {
+      opacity: 0,
+      duration: 0.6,
+      ease: "sine.out",
       onComplete: () => {
-        cloudElement.classList.remove('zoomed');
-        setIsZoomed(false);
-        setIsZoomingOut(false);
-        setZoomState(false);
+        overlayRef.current?.remove();
+        overlayRef.current = null;
       }
     });
+  }
 
-  }, [isZoomed, setZoomState]);
+}, [isZoomed, isRevealed, setZoomState]);
 
   const handleScreenTap = useCallback(() => {
     if (!isZoomed || !isRevealed) return;
@@ -126,7 +131,6 @@ const useCloudZoom = (isRevealed = false) => {
     }
   }, [isZoomed, isRevealed, handleScreenTap]);
 
-  // Cleanup only on component unmount while zoomed
   useEffect(() => {
     return () => {
       // Only cleanup if component unmounts while still zoomed
