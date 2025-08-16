@@ -1,9 +1,8 @@
 .cloudContainer {
   position: absolute;
   pointer-events: auto;
-  overflow: visible;
   width: var(--cloud-size);
-  height: calc(var(--cloud-size) * 0.6); /* Maintain aspect ratio */
+  height: calc(var(--cloud-size) * 0.6);
 }
 
 .cloud {
@@ -11,13 +10,11 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  overflow: visible;
-  min-width: 120px;
-  min-height: 72px;
 }
 
 .cloud.revealed {
   cursor: default;
+  pointer-events: none;
 }
 
 .cloudImage {
@@ -28,7 +25,6 @@
   height: 100%;
   pointer-events: none;
   z-index: 5;
-    overflow: visible;
 }
 
 /* For CloudB2 */
@@ -63,7 +59,7 @@
 .floatingCloud {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
 }
 
 .textContent {
@@ -73,20 +69,14 @@
   transform: translate(-50%, -50%);
   text-align: center;
   justify-items: center;
-  width: 100%;
   z-index: 10;
   background: transparent;
-  /* Default state */
-  opacity: 0;
-  transition: opacity 0.3s ease, width 0.3s ease, transform 0.3s ease;
 }
 
 .cloud.zoomed .textContent {
-  opacity: 1;
   pointer-events: none;
   cursor: none;
-  overflow: visible;
-  width: 100%;
+  width: 32ch;
 }
 
 /* Show Layer 3 content for revealed clouds */
@@ -99,24 +89,40 @@
   animation: revealedTextAppear 0.3s ease-out;
 }
 
-/* Animation for Layer 3 text appearing after cloud is revealed */
-@keyframes revealedTextAppear {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
+  /* Improve mobile performance during zoom */
+.cloud.zoomed {
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /* Ensure GSAP can control opacity */
+  opacity: 1 !important;
+}
 
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+/* Reduce motion for better mobile performance */
+@media (prefers-reduced-motion: reduce) {
+  .cloud.zoomed {
+    transition: none !important;
+  }
+}
+
+/* iOS specific optimizations to attempt to remove the "jerky" zoom in on my iPhone 13 mini*/
+@supports (-webkit-touch-callout: none) {
+  .cloud {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  .cloud.zoomed {
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
   }
 }
 
 .regularLayerText,
 .finalLayerText {
-  /* Responsive font sizing */
-  font-size: clamp(var(--fs-p), 2.5vw, var(--fs-h6));
-  transition: font-size 0.3s ease;
+  font-size: var(--fs-h6);
+  pointer-events: none;
 }
 
 .regularLayerText {

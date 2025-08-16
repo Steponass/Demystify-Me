@@ -147,7 +147,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal }) => {
         data-flip-id={cloudId}
       >
         {/* Layer 3 (final revealed state - visible when zoomed or after reveal) */}
-        {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
+        {isLayer3 && (cloudState?.isRevealed) && !isZoomingOut && (
           <div className={styles.textContent}>
             <p className={styles.finalLayerText}>
               {content.layer3}
