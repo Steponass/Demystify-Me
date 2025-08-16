@@ -9,45 +9,49 @@ import styles from './Cloud.module.css';
 import AudioLevelIndicator from './AudioLevelIndicator';
 
 const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
-  // Add the hint functionality 
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
-  // CloudA2 uses both regular and light cloud images
   const [regularCloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
   const [lightCloudImage] = useState(() => getRandomCloudImages(1, 'Light')[0]);
 
-  // Animation properties for movement variation
   const [animationDelay] = useState(() => Math.random() * 10);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed);
 
-  // Use the centralized hint display system
   useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
 
-  // Separate refs for different cloud elements
   const regularCloudRef = useRef(null);
   const lightCloudRef = useRef(null);
   const textContentRef = useRef(null);
 
-  // Handle the correct blow pattern (double blow for A2)
+  // Track blow attempts to differentiate anyblow from double blow
+  const lastBlowTimeRef = useRef(null);
+  const feedbackTimeoutRef = useRef(null);
+
+  // Handle the correct blow pattern (for A2: double blow)
   const handleDoubleBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
       return;
+    }
+
+    // Clear any pending incorrect feedback if user succeeded
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+      feedbackTimeoutRef.current = null;
     }
 
     const regularCloudElement = regularCloudRef.current;
     const lightCloudElement = lightCloudRef.current;
     const textElement = textContentRef.current;
 
-    // Stop any existing animations
     gsap.killTweensOf([regularCloudElement, lightCloudElement, textElement].filter(Boolean));
 
     // Generate random direction for variety
     const randomDirection = Math.random() > 0.5 ? 1 : -1;
-    const horizontalDistance = 50 * randomDirection;
+    const horizontalDistance = 25 * randomDirection;
 
     // Animate both cloud elements floating away together
     const cloudElements = [regularCloudElement, lightCloudElement].filter(Boolean);
@@ -61,7 +65,6 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
       ease: "sine.inOut"
     });
 
-    // Animate the text with the same movement
     if (textElement) {
       textElement.style.transition = 'none';
       gsap.to(textElement, {
@@ -81,43 +84,59 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
     }, 1000);
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
 
-  // Handle incorrect blow patterns - this creates the feedback wiggle
-  const handleIncorrectBlow = useCallback(() => {
+  // Smart blow tracking: waits to see if it's part of a pattern
+  const handleAnyBlowDetected = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
       return;
     }
 
-    const lightCloudElement = lightCloudRef.current;
-    if (!lightCloudElement) return;
+    lastBlowTimeRef.current = Date.now();
 
-    // Stop any existing wiggle animations
-    gsap.killTweensOf(lightCloudElement);
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
 
-    // Create a subtle wiggle animation to indicate wrong blow type
-    gsap.timeline()
-      .to(lightCloudElement, {
-        y: -150,
-        duration: 0.35,
-        ease: "sine.inOut"
-      })
-      .to(lightCloudElement, {
-        y: 0,
-        duration: 0.35,
-        ease: "bounce.out"
-      });
+    // Set a timeout to show incorrect feedback, but only if no correct pattern is detected
+    // This gives the user time to complete a double blow pattern
+    feedbackTimeoutRef.current = setTimeout(() => {
+      // Only show incorrect feedback if we're still in the same state
+      if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
+        return;
+      }
+
+      const lightCloudElement = lightCloudRef.current;
+      if (!lightCloudElement) return;
+
+      gsap.killTweensOf(lightCloudElement);
+
+      // Create a subtle wiggle animation to indicate wrong blow type
+      gsap.timeline()
+        .to(lightCloudElement, {
+          y: -155,
+          duration: 0.35,
+          ease: "sine.inOut"
+        })
+        .to(lightCloudElement, {
+          y: 0,
+          duration: 0.25,
+          ease: "bounce.out"
+        });
+
+      feedbackTimeoutRef.current = null;
+    }, 1200); // Wait 1.2 secs - time window for user to complete double blow
+
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed]);
 
   const [audioLevel, setAudioLevel] = useState(0);
 
   const { startListening, stopListening } = useBlowDetection({
-    onDoubleBlow: handleDoubleBlow, // This is the correct blow pattern for A2
-    onAnyBlow: handleIncorrectBlow,  // Wrong pattern - triggers feedback
-    onLongBlow: handleIncorrectBlow, // Wrong pattern - triggers feedback
-    onXLBlow: handleIncorrectBlow,   // Wrong pattern - triggers feedback
+    onDoubleBlow: handleDoubleBlow,
+    onAnyBlow: handleAnyBlowDetected,
+    onLongBlow: () => { },
+    onXLBlow: () => { },
     onLevelChange: setAudioLevel,
   });
 
-  // Microphone management (same as CloudA1)
   const prevZoomedRef = useRef(isZoomed);
   const prevRevealedRef = useRef(cloudState?.isRevealed);
 
@@ -132,13 +151,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
 
       if (shouldListen) {
         const timeoutId = setTimeout(() => {
-          startListening().then(success => {
-            if (success) {
-              console.log('Double blow detection activated for CloudA2');
-            } else {
-              console.error('Failed to activate blow detection');
-            }
-          });
+          startListening();
         }, 300);
 
         return () => {
@@ -147,11 +160,23 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
       } else {
         stopListening();
 
+        // Clean up feedback timeout when stopping listening
+        if (feedbackTimeoutRef.current) {
+          clearTimeout(feedbackTimeoutRef.current);
+          feedbackTimeoutRef.current = null;
+        }
       }
     }
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
-  // Hint handling is now done by useHintDisplay hook
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (feedbackTimeoutRef.current) {
+        clearTimeout(feedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!cloudState) return null;
 
@@ -172,7 +197,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 - Final revealed state */}
+        {/* Layer 3 */}
         {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
           <div className={styles.textContent}>
             <p className={styles.finalLayerText}>
@@ -184,7 +209,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
         {/* Layer 1 - The "sandwich" structure with 3 elements */}
         {isLayer1 && (
           <>
-            {/* Top layer: Light cloud (this is what wiggles on incorrect blow) */}
+            {/* Top layer: Light cloud (wiggles on incorrect blow) */}
             <div className={`${styles.cloudImage} ${styles.translucentCloudImage}`}>
               <img
                 ref={lightCloudRef}
@@ -223,7 +248,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
                   : ''
                   }`}
                 style={{
-                  '--floating-delay': `${animationDelay + 1}s`, // Slight offset for visual variety
+                  '--floating-delay': `${animationDelay}s`,
                   '--floating-duration': `${animationDuration}s`
                 }}
               />

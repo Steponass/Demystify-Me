@@ -1,26 +1,10 @@
-// src/hooks/useBlowDetection.js
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-/**
- * Hook for detecting different blow patterns using the microphone
- * @param {Object} options - Configuration options
- * @param {number} options.anyBlowMinDuration - Minimum duration for an "any blow" detection (ms)
- * @param {number} options.longBlowThreshold - Duration threshold for "long blow" detection (ms)
- * @param {number} options.xlBlowThreshold - Duration threshold for "XL blow" detection (ms)
- * @param {number} options.doubleBlowMaxGap - Maximum gap between blows for "double blow" detection (ms)
- * @param {number} options.blowThreshold - Audio amplitude threshold to detect a blow
- * @param {Function} options.onAnyBlow - Callback when any blow is detected
- * @param {Function} options.onDoubleBlow - Callback when double blow is detected
- * @param {Function} options.onLongBlow - Callback when long blow is detected
- * @param {Function} options.onXLBlow - Callback when XL blow is detected
- * @param {Function} options.onLevelChange - Callback to report current audio level (0-1)
- * @returns {Object} - Blow detection state and controls
- */
 const useBlowDetection = ({
-  anyBlowMinDuration = 250,
+  anyBlowMinDuration = 300,
   longBlowThreshold = 700,
-  xlBlowThreshold = 1300,
-  doubleBlowMaxGap = 800,
+  xlBlowThreshold = 1200,
+  doubleBlowMaxGap = 1200,
   blowThreshold = 0.28,
   onAnyBlow = () => { },
   onDoubleBlow = () => { },
@@ -28,91 +12,73 @@ const useBlowDetection = ({
   onXLBlow = () => { },
   onLevelChange = () => { },
 } = {}) => {
-  // Permission and microphone state
-  const [permissionStatus, setPermissionStatus] = useState('prompt'); // 'prompt', 'granted', 'denied'
+
   const [isListening, setIsListening] = useState(false);
 
-  // Audio processing references
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const microphoneStreamRef = useRef(null);
   const animationFrameRef = useRef(null);
-
-  // Blow detection state
-  const isBlowingRef = useRef(false);
-  const blowStartTimeRef = useRef(null);
-  const lastBlowEndTimeRef = useRef(null);
   const dataArrayRef = useRef(null);
 
-  // Cleanup function for audio resources
-  const cleanupAudio = useCallback(() => {
+  const isBlowingRef = useRef(false);
+  const blowStartTimeRef = useRef(null);
+  
+  // Track when last blow ended to measure gaps for double blow
+  const lastBlowEndTimeRef = useRef(null);
+
+  const cleanupAudioResources = useCallback(() => {
+    // Cancel any pending animation frames
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
     }
 
     if (microphoneStreamRef.current) {
-      const tracks = microphoneStreamRef.current.getTracks();
-      tracks.forEach(track => track.stop());
+      const microphoneTracks = microphoneStreamRef.current.getTracks();
+      microphoneTracks.forEach(track => track.stop());
       microphoneStreamRef.current = null;
     }
 
-    // Make sure we don't re-create AudioContext objects unnecessarily
-    if (audioContextRef.current) {
-      if (audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close().catch(error => {
-          console.error('Error closing AudioContext:', error);
-        });
-      }
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close();
       audioContextRef.current = null;
       analyserRef.current = null;
     }
 
     isBlowingRef.current = false;
     blowStartTimeRef.current = null;
-    setIsListening(false);
+    lastBlowEndTimeRef.current = null;
 
-    // Reset level when stopped
+    setIsListening(false);
     onLevelChange(0);
   }, [onLevelChange]);
 
-  // Request microphone access
   const requestMicrophoneAccess = useCallback(async () => {
     try {
-      // Check if we already have a stream
+      // Return early if we already have a stream
       if (microphoneStreamRef.current) {
         return true;
       }
 
       // Clean up any existing audio context that might be in a bad state
       if (audioContextRef.current) {
-        try {
-          if (audioContextRef.current.state !== 'closed') {
-            await audioContextRef.current.close();
-          }
-        } catch (err) {
-          console.warn('Error closing existing AudioContext:', err);
+        if (audioContextRef.current.state !== 'closed') {
+          await audioContextRef.current.close();
         }
         audioContextRef.current = null;
       }
 
-      // Create a fresh audio context
-      console.log('Creating new AudioContext');
+      // Create a fresh audio context for blow detection
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
 
-      // If context is in suspended state (common in some browsers), try to resume it
+      // Resume context if it's in suspended state (common browser behavior)
       if (audioContextRef.current.state === 'suspended') {
-        try {
-          await audioContextRef.current.resume();
-          console.log('AudioContext resumed from suspended state');
-        } catch (err) {
-          console.warn('Could not resume AudioContext:', err);
-        }
+        await audioContextRef.current.resume();
       }
 
-      // Request microphone access
-      console.log('Requesting microphone access...');
-      const stream = await navigator.mediaDevices.getUserMedia({
+      // Request mic access with settings optimized for breath detection
+      const microphoneStream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: false,
           noiseSuppression: false,
@@ -120,117 +86,107 @@ const useBlowDetection = ({
         }
       });
 
-      microphoneStreamRef.current = stream;
-      setPermissionStatus('granted');
-      console.log('Microphone access granted');
-
+      microphoneStreamRef.current = microphoneStream;
       return true;
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-      setPermissionStatus(error.name === 'NotAllowedError' ? 'denied' : 'error');
+    } catch {
+      // Return false on any microphone access failure
       return false;
     }
   }, []);
 
-  // Initialize audio processing
+
   const initializeAudioProcessing = useCallback(async () => {
     try {
+      // Ensure there's microphone access
       if (!microphoneStreamRef.current) {
-        const hasAccess = await requestMicrophoneAccess();
-        if (!hasAccess) return false;
+        const hasMicrophoneAccess = await requestMicrophoneAccess();
+        if (!hasMicrophoneAccess) return false;
       }
 
-      // Double check that the audio context exists before proceeding
+      // Ensure audio context exists and is ready
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
       }
 
-      // Ensure the audio context is in the running state
+      // Resume context if needed (browser security requirement)
       if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
       }
 
-      // Set up analyzer
+      // Set up audio analyzer with settings for breath detection
       analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 256;
+      analyserRef.current.fftSize = 256; // Good balance of frequency resolution and performance. 512 didn't improve anything, at least not on PC
 
-      // Connect microphone to analyzer
-      const source = audioContextRef.current.createMediaStreamSource(microphoneStreamRef.current);
-      source.connect(analyserRef.current);
+      const microphoneSourceNode = audioContextRef.current.createMediaStreamSource(microphoneStreamRef.current);
+      microphoneSourceNode.connect(analyserRef.current);
 
-      // Create data array for analyzer
+      // Create data array for frequency analysis
       const bufferLength = analyserRef.current.frequencyBinCount;
       dataArrayRef.current = new Uint8Array(bufferLength);
 
       return true;
-    } catch (error) {
-      console.error('Error initializing audio processing:', error);
+    } catch {
       return false;
     }
-  }, [requestMicrophoneAccess]);  // Start listening for blows
+  }, [requestMicrophoneAccess]);
+
+
   const startListening = useCallback(async () => {
     try {
-      // Don't restart if already listening
+      // Prevent restart if already listening
       if (isListening) return true;
 
-      console.log('Starting blow detection');
-
-      const ready = await initializeAudioProcessing();
-      if (!ready) {
-        console.error('Failed to initialize audio processing');
+      const audioProcessingReady = await initializeAudioProcessing();
+      if (!audioProcessingReady) {
         return false;
       }
 
-      // Recent amplitude history for smoother detection
-      const recentAmplitudes = [];
-      const MAX_HISTORY = 3;
-
-      // Start analyzing audio data
-      const analyzeAudio = () => {
+      // Start analyzing audio data in real-time
+      const analyzeAudioData = () => {
         try {
           if (!analyserRef.current || !dataArrayRef.current) {
-            console.warn('Analyzer or data array is not available');
             return;
           }
 
           analyserRef.current.getByteFrequencyData(dataArrayRef.current);
 
           // Calculate average amplitude
-          const average = dataArrayRef.current.reduce((sum, value) => sum + value, 0) /
-            dataArrayRef.current.length / 255; // Normalize to 0-1
+          const averageAmplitude = dataArrayRef.current.reduce((sum, value) => sum + value, 0) /
+            dataArrayRef.current.length / 255; // Normalize to 0-1 range
 
-          // Report current level
-          onLevelChange(average);
+          // Report current audio level for UI feedback
+          onLevelChange(averageAmplitude);
 
-          // Keep track of recent amplitudes for smoother detection
-          recentAmplitudes.push(average);
-          if (recentAmplitudes.length > MAX_HISTORY) {
-            recentAmplitudes.shift();
-          }
 
-          // Calculate smoothed average
-          const smoothedAverage = recentAmplitudes.reduce((sum, val) => sum + val, 0) / recentAmplitudes.length;
+          const currentTime = Date.now();
 
-          const now = Date.now();
-
-          // Detect blow start
-          if (smoothedAverage > blowThreshold && !isBlowingRef.current) {
+          // BLOW START DETECTION: When amplitude crosses threshold
+          if (averageAmplitude > blowThreshold && !isBlowingRef.current) {
             isBlowingRef.current = true;
-            blowStartTimeRef.current = now;
-            console.log('Blow started, level:', smoothedAverage);
+            blowStartTimeRef.current = currentTime;
           }
-          // Detect blow end
-          else if (smoothedAverage <= blowThreshold * 0.8 && isBlowingRef.current) {
-            const blowDuration = now - blowStartTimeRef.current;
+          // BLOW END DETECTION: When amplitude drops below threshold with hysteresis
+          else if (averageAmplitude <= blowThreshold * 0.8 && isBlowingRef.current) {
+            const blowDuration = currentTime - blowStartTimeRef.current;
 
-            // Only process blows longer than minimum duration
+            // Only process blows longer than minimum duration (filters out noise spikes)
             if (blowDuration >= anyBlowMinDuration) {
-              console.log('Blow ended, duration:', blowDuration);
+              
+              // DOUBLE BLOW DETECTION: Measure gap between blows
+              if (lastBlowEndTimeRef.current) {
+                // Calculate silence gap: from when last blow ended to when current blow started
+                const actualGapBetweenBlows = blowStartTimeRef.current - lastBlowEndTimeRef.current;
+                
+                if (actualGapBetweenBlows <= doubleBlowMaxGap) {
+                  onDoubleBlow();
+                }
+              }
 
-              // Call appropriate callbacks based on blow duration
+              // Update the timestamp for when this blow ended (for next gap calculation)
+              lastBlowEndTimeRef.current = currentTime;
+
               onAnyBlow();
 
-              // Separate long blow and XL blow conditions
               if (blowDuration >= longBlowThreshold) {
                 onLongBlow();
               }
@@ -238,38 +194,29 @@ const useBlowDetection = ({
               if (blowDuration >= xlBlowThreshold) {
                 onXLBlow();
               }
-
-              // Check for double blow pattern
-              if (lastBlowEndTimeRef.current &&
-                (now - lastBlowEndTimeRef.current) <= doubleBlowMaxGap) {
-                onDoubleBlow();
-              }
-
-              lastBlowEndTimeRef.current = now;
             }
 
+            // Reset blow detection state for next blow
             isBlowingRef.current = false;
             blowStartTimeRef.current = null;
           }
 
-          // Continue analyzing in next frame
+          // Continue analyzing in next animation frame
           if (animationFrameRef.current) {
-            animationFrameRef.current = requestAnimationFrame(analyzeAudio);
+            animationFrameRef.current = requestAnimationFrame(analyzeAudioData);
           }
-        } catch (error) {
-          console.error('Error in audio analysis loop:', error);
-          cleanupAudio();
+        } catch {
+          // If analysis fails for any reason, cleanup gracefully
+          cleanupAudioResources();
         }
       };
 
-      // Start the analysis loop
-      animationFrameRef.current = requestAnimationFrame(analyzeAudio);
+      // Start the audio analysis loop
+      animationFrameRef.current = requestAnimationFrame(analyzeAudioData);
       setIsListening(true);
-      console.log('Blow detection started successfully');
 
       return true;
-    } catch (error) {
-      console.error('Error starting listening:', error);
+    } catch {
       return false;
     }
   }, [
@@ -285,51 +232,27 @@ const useBlowDetection = ({
     onLongBlow,
     onXLBlow,
     onLevelChange,
-    cleanupAudio
+    cleanupAudioResources
   ]);
 
-  // Stop listening for blows
   const stopListening = useCallback(() => {
-    cleanupAudio();
-  }, [cleanupAudio]);
+    cleanupAudioResources();
+  }, [cleanupAudioResources]);
 
-  // Cleanup when component unmounts
   useEffect(() => {
-    // Check for browser microphone support
+    // Check for browser microphone support on mount
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setPermissionStatus('unsupported');
       return;
     }
 
-    // Check current permission status
-    if (navigator.permissions && navigator.permissions.query) {
-      navigator.permissions.query({ name: 'microphone' })
-        .then(result => {
-          setPermissionStatus(result.state);
-
-          // Listen for permission changes
-          result.onchange = () => {
-            setPermissionStatus(result.state);
-          };
-        })
-        .catch(error => {
-          console.error('Error querying permission status:', error);
-        });
-    }
-
-    // Cleanup on unmount
     return () => {
-      cleanupAudio();
+      cleanupAudioResources();
     };
-  }, [cleanupAudio]);
+  }, [cleanupAudioResources]);
 
   return {
-    // Status
-    permissionStatus,
     isListening,
     isBlowing: isBlowingRef.current,
-
-    // Controls
     requestMicrophoneAccess,
     startListening,
     stopListening,
