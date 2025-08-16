@@ -16,18 +16,19 @@
   
 }
 
-.primaryButton:hover:not(:disabled) {
+.actionButton:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
-.primaryButton:active:not(:disabled) {
+.actionButton:active:not(:disabled) {
   transform: translateY(1px);
 }
 
 .secondaryButton {
   background-color: transparent;
   color: var(--clr-whiteish);
-  border: 1px solid var(--clr-whiteish);
+  border: 2px solid var(--clr-whiteish);
+  font-size: var(--fs-h6);
 }
 
 .secondaryButton:hover:not(:disabled) {
@@ -36,10 +37,7 @@
 }
 
 .levelButton {
-  padding: var(--space-4-8px) var(--space-8-12px);
-  border: 1px solid var(--clr-overlay-hint);
-  display: flex;
-  font-size: var(--fs-s);
-  flex-direction: column;
-  gap: var(--space-4px);
+  padding: var(--space-8-12px) var(--space-12-16px);
+  font-size: var(--fs-h6);
+  max-width: 240px;
 }

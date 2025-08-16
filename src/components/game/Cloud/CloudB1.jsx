@@ -40,6 +40,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
   const [audioLevel, setAudioLevel] = useState(0);
   const isTransitioning = useRef(false);
   const currentLayerRef = useRef(cloudState?.currentLayer);
+  const transitioningFromLayer = useRef(null);
 
   // Update layer ref when state changes
   useEffect(() => {
@@ -47,16 +48,29 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
   }, [cloudState?.currentLayer]);
 
 
-  const animateElementsOut = useCallback((elements, onComplete) => {
-    const timeline = createLayer3Timeline(
-      layer3TextRef.current,
-      () => {
-        onComplete();
-        setTimeout(() => {
-          isTransitioning.current = false;
-        }, TRANSITION_SETTLE_TIME);
-      }
-    );
+  const animateElementsOut = useCallback((elements, onComplete, shouldShowLayer3 = false) => {
+    let timeline;
+    
+    if (shouldShowLayer3) {
+      timeline = createLayer3Timeline(
+        layer3TextRef.current,
+        () => {
+          onComplete();
+          setTimeout(() => {
+            isTransitioning.current = false;
+          }, TRANSITION_SETTLE_TIME);
+        }
+      );
+    } else {
+      timeline = gsap.timeline({
+        onComplete: () => {
+          onComplete();
+          setTimeout(() => {
+            isTransitioning.current = false;
+          }, TRANSITION_SETTLE_TIME);
+        }
+      });
+    }
 
     elements.forEach(element => {
       if (element.current) {
@@ -79,9 +93,21 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
     }
 
     isTransitioning.current = true;
+    transitioningFromLayer.current = 1; // Remember we're transitioning from Layer 1
+    
+    // Advance layer immediately to show Layer 2 behind Layer 1
+    advanceCloudLayer(levelId, cloudId);
+    
     animateElementsOut(
       [layer1CloudRef, layer1TextRef],
-      () => advanceCloudLayer(levelId, cloudId)
+      () => {
+        // Animation complete, cleanup
+        setTimeout(() => {
+          isTransitioning.current = false;
+          transitioningFromLayer.current = null;
+        }, TRANSITION_SETTLE_TIME);
+      },
+      false // Don't show Layer 3 when transitioning to Layer 2
     );
   }, [isZoomed, isZoomingOut, advanceCloudLayer, levelId, cloudId, animateElementsOut]);
 
@@ -96,7 +122,8 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
       () => {
         advanceCloudLayer(levelId, cloudId);
         onReveal?.(cloudId);
-      }
+      },
+      true // Show Layer 3 when transitioning from Layer 2 to final revealed state
     );
   }, [isZoomed, isZoomingOut, advanceCloudLayer, levelId, cloudId, onReveal, animateElementsOut]);
 
@@ -205,7 +232,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
         )}
 
         {/* Layer 1 - Initial state with Regular cloud */}
-        {isLayer1 && (
+        {(isLayer1 || (isTransitioning.current && transitioningFromLayer.current === 1)) && (
           <>
             <div className={`${styles.cloudImage} ${styles.topLayer}`}>
               <img
@@ -222,7 +249,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
               />
             </div>
 
-            {isZoomed && !isZoomingOut && (
+            {isZoomed && !isZoomingOut && (isLayer1 || (isTransitioning.current && transitioningFromLayer.current === 1)) && (
               <div ref={layer1TextRef} className={styles.textContent}>
                 <p className={styles.regularLayerText}>
                   {content.layer1}

@@ -9,7 +9,7 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
       <h1 className={styles.title}>Mystify Me</h1>
       <h6 className={styles.subtitle}>You've completed all the levels!</h6>
       
-      <div className={styles.levelGrid}>
+      <div className={styles.levelSelection}>
         {LEVEL_METADATA.map((level) => (
           <ActionButton
             key={level.title}

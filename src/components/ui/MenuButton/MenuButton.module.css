@@ -4,6 +4,12 @@
   color: var(--clr-whiteish);
   cursor: pointer;
   padding: var(--space-8px);
+  width: var(--space-48-64px);
+}
+
+.menuButton svg {
+  width: 100%;
+  height: 100%;
 }
 
 .menuButton:hover {

@@ -81,28 +81,38 @@ const useCloudZoom = (isRevealed = false) => {
 
     gsap.killTweensOf(cloudElement);
 
-    // Record the current zoomed state
-    const state = Flip.getState(cloudElement);
-
-    // Set target (original) state
-    gsap.set(cloudElement, { clearProps: true });
-    cloudElement.classList.remove('zoomed');
-    
-    // If revealed, add the revealed class to show Layer 3
-    if (isRevealed) {
-      cloudElement.classList.add('revealed');
-    }
-
-    // Animate from zoomed state back to original state
-    Flip.from(state, {
-      duration: 0.8,
+    // Simple fade out and scale down in zoomed position
+    gsap.to(cloudElement, {
+      opacity: 0,
+      scale: 0,
+      duration: 0.6,
       ease: "sine.inOut",
-      scale: false,
-      absolute: true,
       onComplete: () => {
-        setIsZoomed(false);
-        setIsZoomingOut(false);
-        setZoomState(false);
+        // Reset to original position and styling
+        gsap.set(cloudElement, { clearProps: true });
+        cloudElement.classList.remove('zoomed');
+        
+        // If revealed, add the revealed class to show Layer 3
+        if (isRevealed) {
+          cloudElement.classList.add('revealed');
+        }
+
+        // Fade in and scale up in original grid position
+        gsap.fromTo(cloudElement, 
+          { opacity: 0, scale: 0.3 },
+          { 
+            opacity: 1, 
+            scale: 1,
+            delay: 0.2,
+            duration: 0.6,
+            ease: "sine.inOut",
+            onComplete: () => {
+              setIsZoomed(false);
+              setIsZoomingOut(false);
+              setZoomState(false);
+            }
+          }
+        );
       }
     });
 
@@ -110,7 +120,7 @@ const useCloudZoom = (isRevealed = false) => {
     if (overlayRef.current) {
       gsap.to(overlayRef.current, {
         opacity: 0,
-        duration: 0.8,
+        duration: 0.4,
         ease: "sine.inOut",
         onComplete: () => {
           overlayRef.current?.remove();
