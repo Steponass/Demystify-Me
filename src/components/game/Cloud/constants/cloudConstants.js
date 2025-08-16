@@ -1,0 +1,8 @@
+export const ANIMATION_DURATION = 0.6;
+export const TRANSITION_SETTLE_TIME = 300;
+export const MICROPHONE_START_DELAY = 2000;
+export const HORIZONTAL_DISTANCE = 25;
+export const FEEDBACK_TIMEOUT_DELAY = 1200;
+export const LAYER3_FADE_DURATION = 0.3;
+export const CLOUD_FLOAT_Y_DISTANCE = -300;
+export const CLOUD_SCALE_FACTOR = 0.8;

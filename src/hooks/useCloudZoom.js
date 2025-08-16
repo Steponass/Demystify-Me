@@ -72,52 +72,54 @@ const useCloudZoom = (isRevealed = false) => {
   }, [isZoomed, setZoomState]);
 
   const handleZoomOut = useCallback(() => {
-  if (!isZoomed) return;
+    if (!isZoomed) return;
 
-  const cloudElement = cloudRef.current;
-  if (!cloudElement) return;
+    const cloudElement = cloudRef.current;
+    if (!cloudElement) return;
 
-  setIsZoomingOut(true);
+    setIsZoomingOut(true);
 
-  gsap.killTweensOf(cloudElement);
+    gsap.killTweensOf(cloudElement);
 
-  gsap.to(cloudElement, {
-    opacity: 0,
-    duration: 0.6,
-    ease: "sine.out",
-    onComplete: () => {
-      // Reset all zoom styles
-      gsap.set(cloudElement, { clearProps: true });
-      cloudElement.classList.remove('zoomed');
-      
-      // If revealed, show Layer 3 in original position
-      if (isRevealed) {
-        cloudElement.classList.add('revealed');
-        gsap.set(cloudElement, { opacity: 1 });
-      } else {
-        gsap.set(cloudElement, { opacity: 1 });
-      }
-      
-      setIsZoomed(false);
-      setIsZoomingOut(false);
-      setZoomState(false);
+    // Record the current zoomed state
+    const state = Flip.getState(cloudElement);
+
+    // Set target (original) state
+    gsap.set(cloudElement, { clearProps: true });
+    cloudElement.classList.remove('zoomed');
+    
+    // If revealed, add the revealed class to show Layer 3
+    if (isRevealed) {
+      cloudElement.classList.add('revealed');
     }
-  });
 
-  // Remove overlay
-  if (overlayRef.current) {
-    gsap.to(overlayRef.current, {
-      opacity: 0,
-      duration: 0.6,
-      ease: "sine.out",
+    // Animate from zoomed state back to original state
+    Flip.from(state, {
+      duration: 0.8,
+      ease: "sine.inOut",
+      scale: false,
+      absolute: true,
       onComplete: () => {
-        overlayRef.current?.remove();
-        overlayRef.current = null;
+        setIsZoomed(false);
+        setIsZoomingOut(false);
+        setZoomState(false);
       }
     });
-  }
 
-}, [isZoomed, isRevealed, setZoomState]);
+    // Remove overlay
+    if (overlayRef.current) {
+      gsap.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.8,
+        ease: "sine.inOut",
+        onComplete: () => {
+          overlayRef.current?.remove();
+          overlayRef.current = null;
+        }
+      });
+    }
+
+  }, [isZoomed, isRevealed, setZoomState]);
 
   const handleScreenTap = useCallback(() => {
     if (!isZoomed || !isRevealed) return;

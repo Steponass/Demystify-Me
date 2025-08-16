@@ -8,12 +8,15 @@ import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import AudioLevelIndicator from './AudioLevelIndicator';
+import Layer3Text from './Layer3Text';
+import { 
+  ANIMATION_DURATION, 
+  TRANSITION_SETTLE_TIME, 
+  MICROPHONE_START_DELAY 
+} from './constants/cloudConstants';
+import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 gsap.registerPlugin(MorphSVGPlugin);
-
-const ANIMATION_DURATION = 0.6;
-const TRANSITION_SETTLE_TIME = 300;
-const MICROPHONE_START_DELAY = 100;
 
 const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
@@ -103,61 +106,39 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
 
     isTransitioning.current = true;
 
-    // Create a GSAP timeline for coordinated animations
-    const timeline = gsap.timeline({
-      onComplete: () => {
+    const timeline = createLayer3Timeline(
+      layer3TextRef.current,
+      () => {
         advanceCloudLayer(levelId, cloudId);
         onReveal?.(cloudId);
         setTimeout(() => {
           isTransitioning.current = false;
         }, TRANSITION_SETTLE_TIME);
       }
-    });
+    );
 
-    // First, make Layer 3 visible but initially transparent
-    if (layer3TextRef.current) {
-      gsap.set(layer3TextRef.current, { 
-        opacity: 0, 
-        display: 'block', 
-        visibility: 'visible',
-        zIndex: 10 // Above other elements
-      });
-      
-      // Fade in Layer 3 immediately
-      timeline.to(layer3TextRef.current, {
-        opacity: 1,
-        duration: 0.3,
-        ease: "sine.in"
-      }, 0); // Start at the beginning of the timeline
-    }
-
-    // Heavy cloud + SVG disappear together
     const elements = [heavyCloudRef, svgPathRef];
     elements.forEach(element => {
       if (element.current) {
+        gsap.killTweensOf(element.current);
         element.current.style.transition = 'none';
         timeline.to(element.current, {
           y: -300,
           opacity: 0,
           scale: 0.8,
           duration: ANIMATION_DURATION,
-          ease: "sine.out"
-        }, 0); // Start at the beginning of the timeline
+          ease: 'sine.out'
+        }, 0);
       }
     });
-
-    // No need for setTimeout as the timeline handles the callback
   }, [isZoomed, isZoomingOut, advanceCloudLayer, levelId, cloudId, onReveal]);
 
   const handleLayer2Feedback = useCallback(() => {
-    if (currentLayerRef.current !== 2 || isTransitioning.current || !heavyCloudRef.current) {
+    if (currentLayerRef.current !== 2 || isTransitioning.current) {
       return;
     }
 
-    gsap.timeline()
-      .to(heavyCloudRef.current, { x: -15, duration: 0.1, ease: "power2.out" })
-      .to(heavyCloudRef.current, { x: 15, duration: 0.1, ease: "power2.out" })
-      .to(heavyCloudRef.current, { x: 0, duration: 0.1, ease: "power2.out" });
+    createFeedbackWiggle(heavyCloudRef, 'light');
   }, []);
 
   const { startListening, stopListening } = useBlowDetection({
@@ -201,7 +182,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
 
     if (shouldListen) {
       const timeoutId = setTimeout(() => {
-        startListening();
+        startBlowDetectionWithErrorHandling(startListening);
       }, MICROPHONE_START_DELAY);
 
       return () => clearTimeout(timeoutId);
@@ -236,63 +217,48 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-<div 
-  ref={layer3TextRef} 
-  className={`${styles.textContent} ${isLayer3 ? styles.visible : ''}`}
-  style={{ 
-    opacity: isLayer3 ? 1 : 0,
-    visibility: isLayer3 ? 'visible' : 'hidden',
-    zIndex: isZoomed ? 10 : 3, // Higher z-index when zoomed, lower when in grid view
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '100%',
-    textAlign: 'center',
-    pointerEvents: isZoomed ? 'auto' : 'none' // Prevent interaction when in grid view
-  }}
->
-  <p className={styles.finalLayerText}>
-    {content.layer3}
-  </p>
-</div>
+        <Layer3Text
+          layer3TextRef={layer3TextRef}
+          content={content.layer3}
+          isLayer3={isLayer3}
+          isZoomed={isZoomed}
+        />
 
-        {/* Layer 2 Base: Heavy cloud + SVG (always present for Layers 1 & 2) */}
-        {(isLayer1 || isLayer2) && content.svgMorph && (
-          <>
-            {/* Heavy cloud base layer */}
-            <div className={styles.cloudImage}>
-              <img
-                ref={heavyCloudRef}
-                src={heavyCloudImage}
-                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
-                  ? (isReverseDirection ? styles.floatingReverse : styles.floating)
-                  : ''
-                  }`}
+        {/* Layer 2 Base: Heavy cloud (always present for Layers 1 & 2) */}
+        {(isLayer1 || isLayer2) && (
+          <div className={styles.cloudImage}>
+            <img
+              ref={heavyCloudRef}
+              src={heavyCloudImage}
+              className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
+                ? (isReverseDirection ? styles.floatingReverse : styles.floating)
+                : ''
+                }`}
+            />
+          </div>
+        )}
+
+        {/* SVG morphing text layer - only visible when zoomed */}
+        {(isLayer1 || isLayer2) && isZoomed && !isZoomingOut && content.svgMorph && (
+          <div className={styles.textContent}>
+            <svg
+              className={styles.morphingSVG}
+              viewBox={content.svgMorph.viewBox}
+              fill="currentColor"
+            >
+              <path
+                ref={svgPathRef}
+                d={content.svgMorph.sourcePath}
+                stroke="currentColor"
+                strokeWidth="0.2mm"
               />
-            </div>
+            </svg>
 
-            {/* SVG morphing text layer */}
-            <div className={styles.textContent}>
-              <svg
-                className={styles.morphingSVG}
-                viewBox={content.svgMorph.viewBox}
-                fill="currentColor"
-              >
-                <path
-                  ref={svgPathRef}
-                  d={content.svgMorph.sourcePath}
-                  stroke="currentColor"
-                  strokeWidth="0.2mm"
-                />
-              </svg>
-
-              <AudioLevelIndicator
-                audioLevel={audioLevel}
-                inactiveText={getAudioIndicatorText()}
-              />
-            </div>
-          </>
+            <AudioLevelIndicator
+              audioLevel={audioLevel}
+              inactiveText={getAudioIndicatorText()}
+            />
+          </div>
         )}
 
         {/* Layer 1 Overlay: Semi-transparent Light cloud */}

@@ -7,6 +7,9 @@ import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import AudioLevelIndicator from './AudioLevelIndicator';
+import Layer3Text from './Layer3Text';
+import { MICROPHONE_START_DELAY, FEEDBACK_TIMEOUT_DELAY } from './constants/cloudConstants';
+import { createLayer3Timeline, animateElementsOut, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
@@ -32,80 +35,25 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
   const lastBlowTimeRef = useRef(null);
   const feedbackTimeoutRef = useRef(null);
 
-  // Handle the correct blow pattern (for A2: double blow)
   const handleDoubleBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
       return;
     }
 
-    // Clear any pending incorrect feedback if user succeeded
     if (feedbackTimeoutRef.current) {
       clearTimeout(feedbackTimeoutRef.current);
       feedbackTimeoutRef.current = null;
     }
 
-    const regularCloudElement = regularCloudRef.current;
-    const lightCloudElement = lightCloudRef.current;
-    const textElement = textContentRef.current;
-    const layer3Element = layer3TextRef.current;
-
-    // Create a GSAP timeline for coordinated animations
-    const timeline = gsap.timeline({
-      onComplete: () => {
-        // Update state after animation completes
+    const timeline = createLayer3Timeline(
+      layer3TextRef.current,
+      () => {
         advanceCloudLayer(levelId, cloudId);
         onReveal?.(cloudId);
       }
-    });
+    );
 
-    // First, make Layer 3 visible but initially transparent
-    if (layer3Element) {
-      gsap.set(layer3Element, { 
-        opacity: 0, 
-        display: 'block', 
-        visibility: 'visible',
-        zIndex: 10 // Above other elements
-      });
-      
-      // Fade in Layer 3 immediately
-      timeline.to(layer3Element, {
-        opacity: 1,
-        duration: 0.3,
-        ease: "sine.in"
-      }, 0); // Start at the beginning of the timeline
-    }
-
-    gsap.killTweensOf([regularCloudElement, lightCloudElement, textElement].filter(Boolean));
-
-    // Generate random direction for variety
-    const randomDirection = Math.random() > 0.5 ? 1 : -1;
-    const horizontalDistance = 25 * randomDirection;
-
-    // Animate both cloud elements floating away together
-    const cloudElements = [regularCloudElement, lightCloudElement].filter(Boolean);
-
-    timeline.to(cloudElements, {
-      y: -300,
-      x: horizontalDistance,
-      opacity: 0,
-      scale: 0.8,
-      duration: 0.6,
-      ease: "sine.inOut"
-    }, 0); // Start at the beginning of the timeline
-
-    if (textElement) {
-      textElement.style.transition = 'none';
-      timeline.to(textElement, {
-        y: -300,
-        x: horizontalDistance,
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.6,
-        ease: "sine.inOut"
-      }, 0); // Start at the beginning of the timeline
-    }
-
-    // No need for setTimeout as the timeline handles the callback
+    animateElementsOut([regularCloudRef, lightCloudRef, textContentRef], timeline);
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
 
   // Smart blow tracking: waits to see if it's part of a pattern
@@ -120,10 +68,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
       clearTimeout(feedbackTimeoutRef.current);
     }
 
-    // Set a timeout to show incorrect feedback, but only if no correct pattern is detected
-    // This gives the user time to complete a double blow pattern
     feedbackTimeoutRef.current = setTimeout(() => {
-      // Only show incorrect feedback if we're still in the same state
       if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
         return;
       }
@@ -133,21 +78,20 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
 
       gsap.killTweensOf(lightCloudElement);
 
-      // Create a subtle wiggle animation to indicate wrong blow type
       gsap.timeline()
         .to(lightCloudElement, {
           y: -155,
           duration: 0.35,
-          ease: "sine.inOut"
+          ease: 'sine.inOut'
         })
         .to(lightCloudElement, {
           y: 0,
           duration: 0.25,
-          ease: "bounce.out"
+          ease: 'bounce.out'
         });
 
       feedbackTimeoutRef.current = null;
-    }, 1200); // Wait 1.2 secs - time window for user to complete double blow
+    }, FEEDBACK_TIMEOUT_DELAY);
 
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed]);
 
@@ -175,8 +119,8 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
 
       if (shouldListen) {
         const timeoutId = setTimeout(() => {
-          startListening();
-        }, 300);
+          startBlowDetectionWithErrorHandling(startListening);
+        }, MICROPHONE_START_DELAY);
 
         return () => {
           clearTimeout(timeoutId);
@@ -216,14 +160,12 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal }) => {
         onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
         data-flip-id={cloudId}
       >
-        {/* Layer 3 - Final revealed state */}
-        {isLayer3 && (isZoomed || cloudState?.isRevealed) && !isZoomingOut && (
-          <div className={styles.textContent}>
-            <p className={styles.finalLayerText}>
-              {content.layer3}
-            </p>
-          </div>
-        )}
+        <Layer3Text
+          layer3TextRef={layer3TextRef}
+          content={content.layer3}
+          isLayer3={isLayer3}
+          isZoomed={isZoomed}
+        />
 
         {/* Layer 1 - The "sandwich" structure with 3 elements */}
         {isLayer1 && (
