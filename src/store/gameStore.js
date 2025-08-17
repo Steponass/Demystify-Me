@@ -11,6 +11,7 @@ const initialState = {
   isLevelTransitioning: false,
   shouldShowSplash: false,
   isZoomed: false,
+  zoomedCloudId: null,
   audioLevel: 0,
 };
 
@@ -44,8 +45,17 @@ const useGameStore = create(
         return completedLevels.includes(levelId);
       },
 
-      setZoomState: (isZoomed) => {
-        set({ isZoomed });
+      setZoomState: (isZoomed, cloudId = null) => {
+        set({ 
+          isZoomed,
+          zoomedCloudId: isZoomed ? cloudId : null 
+        });
+      },
+
+      getZoomedCloudState: (levelId) => {
+        const { zoomedCloudId, cloudStates } = get();
+        if (!zoomedCloudId || !cloudStates[levelId]) return null;
+        return cloudStates[levelId][zoomedCloudId];
       },
 
       getZoomState: () => {

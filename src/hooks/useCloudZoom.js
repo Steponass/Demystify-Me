@@ -5,7 +5,7 @@ import useGameStore from '@store/gameStore';
 
 gsap.registerPlugin(Flip);
 
-const useCloudZoomFlip = (isRevealed = false) => {
+const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [isZoomingOut, setIsZoomingOut] = useState(false);
   const [canZoomOut, setCanZoomOut] = useState(true);
@@ -107,7 +107,7 @@ const useCloudZoomFlip = (isRevealed = false) => {
 
     cloudElement.classList.add('zoomed');
     setIsZoomed(true);
-    setZoomState(true);
+    setZoomState(true, cloudId);
 
     // Animate from original state to new state
     Flip.from(state, {
@@ -138,7 +138,7 @@ const useCloudZoomFlip = (isRevealed = false) => {
       ease: "sine.inOut" 
     });
 
-  }, [isZoomed, setZoomState]);
+  }, [isZoomed, setZoomState, cloudId]);
 
   const handleZoomOut = useCallback(() => {
     if (!isZoomed) return;

@@ -10,9 +10,11 @@ import NextLevelButton from '@components/ui/NextLevelButton/NextLevelButton';
 import { LEVEL_METADATA } from '@components/screens/MainMenu/levelMetadata';
 
 const GameGUI = ({ levelId }) => {
-  const { currentHint, isHintVisible, isLevelCompleted, isZoomed, audioLevel } = useGameStore();
+  const { currentHint, isHintVisible, isLevelCompleted, isZoomed, audioLevel, getZoomedCloudState } = useGameStore();
 
   const isCompleted = isLevelCompleted(levelId);
+  const zoomedCloudState = getZoomedCloudState(levelId);
+  const isLayer3 = zoomedCloudState?.currentLayer === 3;
 
   // Get level metadata
   const levelMetadata = LEVEL_METADATA.find(level => level.id === levelId);
@@ -41,7 +43,9 @@ const GameGUI = ({ levelId }) => {
 
       {isZoomed && (
         <div className={styles.blowIndicatorSection}>
-          <BlowIndicator audioLevel={audioLevel} />
+          <BlowIndicator 
+          audioLevel={audioLevel}
+          shouldFadeOut={isLayer3} />
         </div>
       )}
     </div>

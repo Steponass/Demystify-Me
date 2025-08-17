@@ -23,7 +23,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
-  const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed);
+  const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
 
   // Use the centralized hint display system
   useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);

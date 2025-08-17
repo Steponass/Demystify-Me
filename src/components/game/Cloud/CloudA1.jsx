@@ -21,7 +21,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } =
     useCloudZoom(cloudState?.isRevealed);
 
-  useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
+  useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed, cloudId);
 
   const animationRef = React.useRef(null);
   const textContentRef = React.useRef(null);
