@@ -51,4 +51,6 @@ const useLevelProgress = (levelId, cloudConfigs = []) => {
     getCloudState: (cloudId) => getCloudState(levelId, cloudId),
     advanceCloud: (cloudId) => advanceCloudLayer(levelId, cloudId),
   };
-}; export default useLevelProgress;
+};
+
+export default useLevelProgress;

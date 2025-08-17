@@ -102,3 +102,36 @@ export const startBlowDetectionWithErrorHandling = async (startListening) => {
     return false;
   }
 };
+
+export const createCloudEntranceAnimation = (cloudContainers) => {
+  if (!cloudContainers || cloudContainers.length === 0) return null;
+
+  // Filter out null/undefined refs and get valid elements
+  const validElements = cloudContainers
+    .filter(ref => ref && ref.current)
+    .map(ref => ref.current);
+
+  if (validElements.length === 0) return null;
+
+  // Set initial state for all clouds
+  gsap.set(validElements, {
+    opacity: 0,
+    y: 20,
+    scale: 0.9
+  });
+
+  // Create staggered entrance animation
+  const timeline = gsap.timeline();
+  
+  timeline.to(validElements, {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    duration: 0.5,
+    ease: 'back.out(1.7)',
+    stagger: 0.2,
+    clearProps: 'transform'
+  });
+
+  return timeline;
+};

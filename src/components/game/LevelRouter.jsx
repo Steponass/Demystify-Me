@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { getLevelComponent } from '@levels/levelRoutes';
 import useGameStore from '@store/gameStore';
 import GameGUI from '@components/ui/GameGUI/GameGUI';
+import { setLevelGradient } from '@utils/backgroundGradient';
 
 const LevelRouter = () => {
   const { levelId } = useParams();
@@ -29,6 +30,11 @@ const LevelRouter = () => {
   if (!LevelComponent) {
     return <Navigate to="/" replace />;
   }
+
+  // Set the gradient for the current level
+  useEffect(() => {
+    setLevelGradient(numericLevelId);
+  }, [numericLevelId]);
 
   return (
     <>

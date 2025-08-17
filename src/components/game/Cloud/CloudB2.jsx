@@ -18,13 +18,12 @@ import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithError
 
 gsap.registerPlugin(MorphSVGPlugin);
 
-const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
+const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [lightCloudImage] = useState(() => getRandomCloudImages(1, 'Light')[0]);
   const [heavyCloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
-  const [animationDelay] = useState(() => Math.random() * 10);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
@@ -205,10 +204,11 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
 
   return (
     <div
+      ref={containerRef}
       className={styles.cloudContainer}
       style={{
         left: position?.x,
-        top: position?.y
+        top: position?.y,
       }}
     >
       <div
@@ -268,7 +268,6 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal }) => {
               ref={lightCloudRef}
               src={lightCloudImage}
               style={{
-                '--floating-delay': `${animationDelay}s`,
                 '--floating-duration': `${animationDuration}s`
               }}
             />

@@ -11,7 +11,8 @@ const Cloud = ({
   cloudType,
   content,
   onReveal,
-  levelId 
+  levelId,
+  containerRef
 }) => {
   // Route to appropriate cloud component based on type
   const CloudComponent = {
@@ -34,6 +35,7 @@ const Cloud = ({
       content={content}
       onReveal={onReveal}
       levelId={levelId}
+      containerRef={containerRef}
     />
   );
 };

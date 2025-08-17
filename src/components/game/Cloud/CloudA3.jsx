@@ -10,13 +10,12 @@ import Layer3Text from './Layer3Text';
 import { MICROPHONE_START_DELAY } from './constants/cloudConstants';
 import { createLayer3Timeline, animateElementsOut, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
-const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
+const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
 
-  const [animationDelay] = useState(() => Math.random() * 10);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
@@ -97,10 +96,11 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
 
   return (
     <div
+      ref={containerRef}
       className={styles.cloudContainer}
       style={{
         left: position?.x,
-        top: position?.y
+        top: position?.y,
       }}
     >
       <div
@@ -142,7 +142,6 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal }) => {
                   : ''
                   }`}
                 style={{
-                  '--floating-delay': `${animationDelay}s`,
                   '--floating-duration': `${animationDuration}s`
                 }}
               />

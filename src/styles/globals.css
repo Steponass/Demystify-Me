@@ -1,5 +1,56 @@
-:root{
+html {
+  transition: background var(--transition-slow);
+}
+
+/* Default fallback background */
+html {
   background: var(--sunset-gradient-1);
+}
+
+/* Level-specific gradients */
+html[data-level="1"] {
+  background: var(--sunset-gradient-1);
+}
+
+html[data-level="2"] {
+  background: var(--sunset-gradient-2);
+}
+
+html[data-level="3"] {
+  background: var(--sunset-gradient-3);
+}
+
+html[data-level="4"] {
+  background: var(--sunset-gradient-4);
+}
+
+html[data-level="5"] {
+  background: var(--sunset-gradient-5);
+}
+
+html[data-level="6"] {
+  background: var(--sunset-gradient-6);
+}
+
+html[data-level="7"] {
+  background: var(--sunset-gradient-7);
+}
+
+html[data-level="8"] {
+  background: var(--sunset-gradient-8);
+}
+
+html[data-level="9"] {
+  background: var(--sunset-gradient-9);
+}
+
+html[data-level="10"] {
+  background: var(--sunset-gradient-10);
+}
+
+/* Main menu uses a neutral gradient */
+html[data-level="menu"] {
+  background: var(--sky-gradient-1);
 }
 
 body {

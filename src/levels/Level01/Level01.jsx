@@ -1,23 +1,35 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
 import useLevelProgress from '@hooks/useLevelProgress';
 import useCloudLayout from '@hooks/useCloudLayout';
 import levelData from '@data/levels/level-01.json';
-import styles from '@levels/Level.module.css'
+import styles from '@levels/Level.module.css';
+import { createCloudEntranceAnimation } from '@components/game/Cloud/utils/cloudAnimations';
 
 const Level01 = ({ levelId }) => {
   const containerRef = useRef(null);
 
-  const cloudConfigs = levelData.clouds.map(cloud => ({
-    cloudId: cloud.cloudId,
-    cloudType: cloud.cloudType
-  }));
+  const cloudConfigs = useMemo(() => 
+    levelData.clouds.map(cloud => ({
+      cloudId: cloud.cloudId,
+      cloudType: cloud.cloudType
+    })), []);
+
+  const cloudIds = useMemo(() => 
+    cloudConfigs.map(config => config.cloudId), [cloudConfigs]);
+
+  // Create refs for each cloud container
+  const cloudRefs = useMemo(() => {
+    const refs = {};
+    cloudConfigs.forEach(config => {
+      refs[config.cloudId] = React.createRef();
+    });
+    return refs;
+  }, [cloudConfigs]);
 
   useLevelProgress(levelId, cloudConfigs);
 
-  const { cloudPositions, updateContainerDimensions } = useCloudLayout(
-    cloudConfigs.map(config => config.cloudId)
-  );
+  const { cloudPositions, updateContainerDimensions } = useCloudLayout(cloudIds);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -32,9 +44,24 @@ const Level01 = ({ levelId }) => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, [updateContainerDimensions]);
 
-  const handleCloudReveal = (cloudId) => {
+  // Trigger entrance animation when clouds are positioned
+  useEffect(() => {
+    const allCloudsPositioned = cloudConfigs.every(config => cloudPositions[config.cloudId]);
+    
+    if (allCloudsPositioned && Object.keys(cloudPositions).length > 0) {
+      // Small delay to ensure DOM elements are rendered
+      const timer = setTimeout(() => {
+        const cloudContainerRefs = Object.values(cloudRefs);
+        createCloudEntranceAnimation(cloudContainerRefs);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [cloudPositions, cloudConfigs, cloudRefs]);
+
+  const handleCloudReveal = useCallback((cloudId) => {
     console.log(`Cloud ${cloudId} revealed!`);
-  };
+  }, []);
 
   return (
     <main>
@@ -56,6 +83,7 @@ const Level01 = ({ levelId }) => {
               content={cloudData.content}
               onReveal={handleCloudReveal}
               levelId={levelId}
+              containerRef={cloudRefs[cloudData.cloudId]}
             />
           );
         })}

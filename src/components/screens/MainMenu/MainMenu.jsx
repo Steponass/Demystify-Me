@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGameStore from '@store/gameStore';
 import FirstVisitMenu from './FirstVisitMenu';
@@ -6,6 +6,7 @@ import ReturnVisitMenu from './ReturnVisitMenu';
 import CompletedGameMenu from './CompletedGameMenu';
 import { TOTAL_GAME_LEVELS } from './levelMetadata';
 import styles from './MainMenu.module.css';
+import { setMenuGradient } from '@utils/backgroundGradient';
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ const MainMenu = () => {
     completedLevels,
     resetAllProgress
   } = useGameStore();
+
+  // Set menu gradient when MainMenu mounts
+  useEffect(() => {
+    setMenuGradient();
+  }, []);
 
   // Determine which menu state to show
   const hasStartedGame = completedLevels.length > 0 || currentLevel > 0;

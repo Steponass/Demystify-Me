@@ -23,12 +23,11 @@ useEffect(() => {
 
     const hideTimer = setTimeout(() => {
       hideHint();
-    }, 4000);
+    }, 5000);
 
     return () => clearTimeout(hideTimer);
   }, [isHintVisible, hideHint]);
 
-  // Clear hint text after fade-out animation
   useEffect(() => {
     if (isHintVisible) return;
 

@@ -15,13 +15,12 @@ import {
 } from './constants/cloudConstants';
 import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
-const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
+const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [regularCloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
   const [heavyCloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
-  const [animationDelay] = useState(() => Math.random() * 10);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
 
@@ -187,10 +186,11 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
 
   return (
     <div
+      ref={containerRef}
       className={styles.cloudContainer}
       style={{
         left: position?.x,
-        top: position?.y
+        top: position?.y,
       }}
     >
       <div
@@ -243,7 +243,6 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal }) => {
                   : ''
                   }`}
                 style={{
-                  '--floating-delay': `${animationDelay}s`,
                   '--floating-duration': `${animationDuration}s`
                 }}
               />
