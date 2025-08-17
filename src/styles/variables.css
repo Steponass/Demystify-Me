@@ -1,94 +1,47 @@
 :root {
+  /* COLORS AT BOTTOM DUE TO SHITLOADS OF GRADIENTS */
 
-/* COLORS */
---clr-bg:       oklch(0.4483 0.1098 245.05);
---clr-whiteish: oklch(0.9851 0      0     );
---clr-blackish: oklch(0.133  0.0021 196.91);
---clr-overlay-hint: oklch(0.3079 0.0661 242.03);
-  
---gradient-1: linear-gradient(
-    115deg,
-    hsl(203deg 91% 29%) 0%,
-    hsl(204deg 91% 29%) 26%,
-    hsl(205deg 91% 29%) 43%,
-    hsl(206deg 91% 29%) 58%,
-    hsl(207deg 91% 29%) 74%,
-    hsl(208deg 91% 29%) 100%);
+  /* SPACING */
+  --space-4px: 4px;
+  --space-8px: 8px;
+  --space-12px: 12px;
+  --space-16px: 16px;
+  --space-24px: 24px;
+  --space-32px: 32px;
+  --space-48px: 48px;
+  --space-64px: 64px;
+  --space-96px: 96px;
 
---gradient-2: linear-gradient(
-    115deg,
-    hsl(203deg 91% 29%) 0%,
-    hsl(203deg 88% 28%) 26%,
-    hsl(203deg 86% 27%) 43%,
-    hsl(203deg 82% 27%) 58%,
-    hsl(203deg 80% 26%) 74%,
-    hsl(203deg 78% 25%) 100%);
-  
---gradient-3: linear-gradient(
-    115deg,
-    hsl(203deg 91% 29%) 0%,
-    hsl(204deg 89% 29%) 26%,
-    hsl(205deg 86% 29%) 43%,
-    hsl(206deg 85% 29%) 58%,
-    hsl(207deg 82% 29%) 74%,
-    hsl(208deg 81% 29%) 100%);
+  /* Fluid Spacing: https://utopia.fyi/space/calculator?c=360,16,1.25,1280,16,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+  --space-4-8px: clamp(4px, 2.4348px + 0.4348vw, 8px);
+  --space-8-12px: clamp(8px, 6.4348px + 0.4348vw, 12px);
+  --space-12-16px: clamp(12px, 10.4348px + 0.4348vw, 16px);
+  --space-16-24px: clamp(16px, 12.8696px + 0.8696vw, 24px);
+  --space-24-32px: clamp(24px, 20.8696px + 0.8696vw, 32px);
+  --space-32-48px: clamp(32px, 25.7391px + 1.7391vw, 48px);
+  --space-48-64px: clamp(48px, 41.7391px + 1.7391vw, 64px);
+  --space-64-96px: clamp(64px, 51.4783px + 3.4783vw, 96px);
 
---gradient-4: linear-gradient(
-    115deg,
-    hsl(203deg 91% 29%) 0%,
-    hsl(205deg 89% 28%) 26%,
-    hsl(206deg 87% 27%) 43%,
-    hsl(207deg 85% 26%) 58%,
-    hsl(209deg 83% 26%) 74%,
-    hsl(210deg 81% 25%) 100%);
+  /* BORDER RADIUS */
+  --radius-2px: 2px;
+  --radius-4px: 4px;
+  --radius-8px: 8px;
+  --radius-16px: 16px;
+  --radius-50px: 50px;
 
---gradient-5: linear-gradient(
-    115deg,
-    hsl(203deg 91% 29%) 0%,
-    hsl(207deg 80% 29%) 26%,
-    hsl(211deg 71% 29%) 43%,
-    hsl(214deg 60% 30%) 58%,
-    hsl(218deg 50% 30%) 74%,
-    hsl(221deg 40% 30%) 100%);    
+  /* TRANSITIONS */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 600ms ease;
 
-/* SPACING */
---space-4px:   4px;
---space-8px:   8px;
---space-12px: 12px;
---space-16px: 16px;
---space-24px: 24px;
---space-32px: 32px;
---space-48px: 48px;
---space-64px: 64px;
---space-96px: 96px;
-
-/* Fluid Spacing: https://utopia.fyi/space/calculator?c=360,16,1.25,1280,16,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
---space-4-8px:   clamp(4px,  2.4348px +  0.4348vw,  8px);
---space-8-12px:  clamp(8px,  6.4348px +  0.4348vw, 12px);
---space-12-16px: clamp(12px, 10.4348px + 0.4348vw, 16px);
---space-16-24px: clamp(16px, 12.8696px + 0.8696vw, 24px);
---space-24-32px: clamp(24px, 20.8696px + 0.8696vw, 32px);
---space-32-48px: clamp(32px, 25.7391px + 1.7391vw, 48px);
---space-48-64px: clamp(48px, 41.7391px + 1.7391vw, 64px);
---space-64-96px: clamp(64px, 51.4783px + 3.4783vw, 96px);
-
-/* BORDER RADIUS */
---radius-2px:   2px;
---radius-4px:   4px;
---radius-8px:   8px;
---radius-16px: 16px;
---radius-50px: 50px;
-
-/* TRANSITIONS */
---transition-fast: 150ms ease;
---transition-normal: 300ms ease;
---transition-slow: 600ms ease;
-
-/* CLOUD SIZES */
---cloud-size-mobile: 150px;
---cloud-size-desktop: 300px;
---cloud-size: clamp(var(--cloud-size-mobile), 15vw, var(--cloud-size-desktop));
-
+  /* CLOUD SIZES */
+  --cloud-size-mobile: 150px;
+  --cloud-size-desktop: 300px;
+  --cloud-size: clamp(
+    var(--cloud-size-mobile),
+    15vw,
+    var(--cloud-size-desktop)
+  );
 
   /* Z-index scale */
   --z-cloud-under: 1;
@@ -96,13 +49,134 @@
   --z-cloud-translucent: 3;
   --z-cloud-top: 4;
   --z-cloud-overlay: 5;
-  
+
   --z-gui: 100;
   --z-next-button: 150;
-  
+
   --z-zoom-overlay: 200;
   --z-zoom-content: 201;
-  
+
   --z-splash: 300;
 
+  /* COLORS */
+  --clr-bg: oklch(0.4483 0.1098 245.05);
+  --clr-whiteish: oklch(0.9851 0 0);
+  --clr-blackish: oklch(0.133 0.0021 196.91);
+  --clr-overlay-hint: oklch(0.3079 0.0661 242.03);
+
+  /* Gradients */
+
+  --sunset-gradient-1: linear-gradient(
+    360deg in oklch,
+    oklch(0.6825 0.1699 37.3) 0%,
+    oklch(0.5533 0.1835 356.47) 33%,
+    oklch(0.3901 0.0968 303.27) 66%,
+    oklch(0.273 0.0796 277.77) 100%
+  );
+  --sunset-gradient-2: linear-gradient(
+    360deg in oklch,
+    oklch(0.739 0.0855 38.39) 0%, 10%,
+    oklch(0.6266 0.1141 359.38) 20% 20%, 40%,
+    oklch(0.4597 0.1058 325.13) 62% 62%, 78%,
+    oklch(0.3452 0.0729 297.83) 100%
+  );
+  --sunset-gradient-3: linear-gradient(
+    360deg in oklch,
+    oklch(0.8354 0.1263 68.25) 0%, 5%,
+    oklch(0.7455 0.1594 9.17) 15% 15%, 32%,
+    oklch(0.5793 0.1833 321.95) 50% 50%, 75%,
+    oklch(0.3677 0.1215 288.33) 100%
+  );
+  --sunset-gradient-4: linear-gradient(
+    360deg in oklch,
+    oklch(0.7919 0.1316 52.7) 0%, 7%,
+    oklch(0.6943 0.099 18.3) 14% 14%, 26%,
+    oklch(0.5224 0.059 317.86) 42% 42%, 70%,
+    oklch(0.3488 0.0957 258.24) 100%
+  );
+  --sunset-gradient-5: linear-gradient(
+    360deg in oklch,
+    oklch(0.602 0.1297 7.94) 0%, 10%,
+    oklch(0.4808 0.1209 317.35) 29% 29%,
+    oklch(0.417 0.1173 289.11) 75% 75%, 95%,
+    oklch(0.364 0.1173 289.11) 100%
+  );
+  --sunset-gradient-6: linear-gradient(
+    360deg in oklch,
+    oklch(0.739 0.0855 38.39) 0%, 6%,
+    oklch(0.6266 0.1141 359.38) 15% 15%, 32%,
+    oklch(0.4597 0.1058 325.13) 54% 54%, 75%,
+    oklch(0.3452 0.0729 297.83) 100%
+  );
+  --sunset-gradient-7: linear-gradient(
+    360deg in oklch,
+    oklch(82% 0.1 39) 0%, 5%,
+    oklch(0.7314 0.1107 10.11) 10% 10%, 27%,
+    oklch(50% 0.11 309) 50% 50%, 75%,
+    oklch(30% 0.1 267) 100%
+  );
+  --sunset-gradient-8: linear-gradient(
+    360deg in oklch,
+    oklch(70% 0.14 10) 0%, 10%,
+    oklch(0.5153 0.1148 333.59) 24% 24%, 39%,
+    oklch(0.3885 0.083 304.94) 60% 60%, 80%,
+    oklch(0.3229 0.0411 298.03) 100%
+  );
+  --sunset-gradient-9: linear-gradient(
+    360deg in oklch,
+    oklch(0.5598 0.1449 8.62) 0%, 12%,
+    oklch(0.3729 0.0796 302.79) 28% 28%, 40%,
+    oklch(0.3027 0.0902 292.6) 60% 60%, 80%,
+    oklch(0.2316 0.0617 289.02) 100%
+  );
+  --sunset-gradient-10: linear-gradient(
+    360deg in oklch,
+    oklch(0.6971 0.1524 21.3) 0%, 8%,
+    oklch(0.625 0.14 7.63) 20% 20%, 34%,
+    oklch(0.5344 0.1026 355.93) 50% 50%, 75%,
+    oklch(0.3968 0.0421 326.33) 100%
+  );
+
+  --sky-gradient-1: linear-gradient(
+    360deg in oklch,
+    oklch(0.5423 0.0555 250.66) 0%, 12%,
+    oklch(0.422 0.071 250.48) 25% 25%, 37%,
+    oklch(0.363 0.0595 249.77) 54% 54%, 78%,
+    oklch(0.3021 0.0469 249.62) 100%
+  );
+  --sky-gradient-2: linear-gradient(
+    360deg in oklch,
+    oklch(0.5646 0.0725 254.41) 0%, 12%,
+    oklch(0.4785 0.0939 250.4) 25% 25%, 37%,
+    oklch(0.426 0.1091 252.08) 54% 54%, 78%,
+    oklch(0.3458 0.1085 255.96) 100%
+  );
+  --sky-gradient-3: linear-gradient(
+    360deg in oklch,
+    oklch(0.4785 0.0939 250.4) 0%, 10%,
+    oklch(0.426 0.1091 252.08) 20% 20%, 35%,
+    oklch(0.3458 0.1085 255.96) 50% 50%, 75%,
+    oklch(0.2009 0.0947 262.24) 100%
+  );
+  --sky-gradient-4: linear-gradient(
+    360deg in oklch,
+    oklch(0.4855 0.1007 264.38) 0%, 10%,
+    oklch(0.4434 0.1104 269.96) 20% 20%, 40%,
+    oklch(0.352 0.0981 257.35) 60% 60%, 80%,
+    oklch(0.2718 0.0834 263.2) 100%
+  );
+  --sky-gradient-5: linear-gradient(
+    360deg in oklch,
+    oklch(0.4679 0.0998 309.57) 0%, 8%,
+    oklch(0.3816 0.1074 295.01) 19% 19%, 38%,
+    oklch(0.3474 0.121 275.71) 60% 60%, 82%,
+    oklch(0.2499 0.1039 273.1) 100%
+  );
+  --sky-gradient-6: linear-gradient(
+    360deg in oklch,
+    oklch(0.3816 0.1074 295.01) 0%, 15%,
+    oklch(0.3474 0.121 275.71) 30% 30%, 46%,
+    oklch(0.2499 0.1039 273.1) 60% 60%, 80%,
+    oklch(0.1809 0.0795 271.05) 100%
+  );
 }
