@@ -6,7 +6,7 @@ const LevelTitle = ({ levelId, levelTitle }) => {
   const [currentDisplayLevel, setCurrentDisplayLevel] = useState(null);
 
   useEffect(() => {
-    if (levelId && levelId !== currentDisplayLevel) {
+    if (levelId) {
       setCurrentDisplayLevel(levelId);
       setShowDisplay(true);
       
@@ -17,7 +17,7 @@ const LevelTitle = ({ levelId, levelTitle }) => {
 
       return () => clearTimeout(timer);
     }
-  }, [levelId, currentDisplayLevel]);
+  }, [levelId]);
 
   if (!showDisplay) {
     return null;

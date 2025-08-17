@@ -26,7 +26,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
 
   const animationRef = React.useRef(null);
   const textContentRef = React.useRef(null);
-  const layer3TextRef = React.useRef(null); // Add ref for layer 3 content
+  const layer3TextRef = React.useRef(null);
 
   const handleAnyBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
@@ -145,7 +145,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
               ref={animationRef}
               src={cloudImage}
               className={`${styles.floatingCloud} ${
-                !cloudState?.isRevealed && !isZoomed
+                !cloudState?.isRevealed
                   ? isReverseDirection
                     ? styles.floatingReverse
                     : styles.floating

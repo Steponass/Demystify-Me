@@ -79,6 +79,8 @@
   pointer-events: none;
   cursor: none;
   width: 32ch;
+  /* maintain the same transform origin */
+  transform: translate(-50%, -50%) !important;
 }
 
 /* Show Layer 3 content for revealed clouds */
@@ -88,7 +90,6 @@
   cursor: none;
   overflow: hidden;
   width: 30ch;
-  animation: revealedTextAppear 0.3s ease-out;
 }
 
   /* Improve mobile performance during zoom */
@@ -134,6 +135,7 @@
 .finalLayerText {
   color: var(--clr-whiteish);
   text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+  transition: none;
 }
 
 /* Floating animation for non-revealed, non-zoomed clouds */
@@ -154,10 +156,10 @@
     transform: translate(0px, 0px) rotate(0deg);
   }
   33% {
-    transform: translate(15px, -15px) rotate(1deg);
+    transform: translate(10px, -10px) rotate(1deg);
   }
   66% {
-    transform: translate(-10px, 10px) rotate(-1deg);
+    transform: translate(-5px, 5px) rotate(-1deg);
   }
   100% {
     transform: translate(0px, 0px) rotate(0deg);
@@ -169,10 +171,10 @@
     transform: translate(0px, 0px) rotate(0deg);
   }
   33% {
-    transform: translate(-15px, 15px) rotate(-1deg);
+    transform: translate(-10px, 10px) rotate(-1deg);
   }
   66% {
-    transform: translate(10px, -10px) rotate(1deg);
+    transform: translate(5px, -5px) rotate(1deg);
   }
   100% {
     transform: translate(0px, 0px) rotate(0deg);

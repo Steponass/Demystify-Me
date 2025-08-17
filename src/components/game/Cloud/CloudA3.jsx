@@ -14,7 +14,7 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const { getCloudState, advanceCloudLayer } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
-  const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
+  const [cloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
 
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);

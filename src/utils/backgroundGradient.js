@@ -23,3 +23,14 @@ export const clearLevelGradient = () => {
 export const getCurrentLevelGradient = () => {
   return document.documentElement.getAttribute('data-level');
 };
+
+export const getCurrentLevelBackgroundStyle = () => {
+  const currentLevel = getCurrentLevelGradient();
+  if (!currentLevel) return 'var(--sunset-gradient-1)'; // Default fallback
+  
+  if (currentLevel === 'menu') {
+    return 'var(--sky-gradient-1)';
+  }
+  
+  return `var(--sunset-gradient-${currentLevel})`;
+};

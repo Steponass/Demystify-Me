@@ -13,12 +13,19 @@ const LevelRouter = () => {
   // Convert to number (params are strings)
   const numericLevelId = parseInt(levelId, 10);
 
+  // Set the gradient for the current level
+  useEffect(() => {
+    if (!isNaN(numericLevelId)) {
+      setLevelGradient(numericLevelId);
+    }
+  }, [numericLevelId]);
+
   // Check if level is valid and unlocked
-  const isValid = !isNaN(numericLevelId) && numericLevelId > 0; // Never allow level 0 (tutorial)
+  const isValid = !isNaN(numericLevelId);
   const isUnlocked = isValid && isLevelUnlocked(numericLevelId);
 
   if (!isValid || !isUnlocked) {
-    // Invalid or locked level - redirect to current level (never tutorial)
+    // Invalid or locked level - redirect to current level
     const safeLevel = currentLevel > 0 ? currentLevel : 1;
     return <Navigate to={`/level/${safeLevel}`} replace />;
   }
@@ -30,11 +37,6 @@ const LevelRouter = () => {
   if (!LevelComponent) {
     return <Navigate to="/" replace />;
   }
-
-  // Set the gradient for the current level
-  useEffect(() => {
-    setLevelGradient(numericLevelId);
-  }, [numericLevelId]);
 
   return (
     <>

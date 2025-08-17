@@ -62,7 +62,7 @@ const useGameStore = create(
       isLevelUnlocked: (levelId) => {
         const { completedLevels } = get();
 
-        // Only Level 1 is always unlocked, tutorial (level 0) is never allowed
+        // Only Level 1 is always unlocked
         if (levelId === 1) {
 
           return true;

@@ -5,15 +5,25 @@ import useGameStore from '@store/gameStore';
 
 gsap.registerPlugin(Flip);
 
-const useCloudZoom = (isRevealed = false) => {
+const useCloudZoomFlip = (isRevealed = false) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [isZoomingOut, setIsZoomingOut] = useState(false);
   const [canZoomOut, setCanZoomOut] = useState(true);
   const cloudRef = useRef(null);
   const overlayRef = useRef(null);
   const zoomOutDelayRef = useRef(null);
+  const originalStylesRef = useRef(null);
 
   const { setZoomState } = useGameStore();
+
+  // Helper function to get current level background
+  const getCurrentLevelBackgroundStyle = () => {
+    const levelAttr = document.documentElement.getAttribute('data-level');
+    if (levelAttr === 'menu') {
+      return 'var(--menu-gradient)';
+    }
+    return `var(--sunset-gradient-${levelAttr || '1'})`;
+  };
 
   const handleZoomIn = useCallback(() => {
     if (isZoomed) return;
@@ -21,6 +31,18 @@ const useCloudZoom = (isRevealed = false) => {
     const cloudElement = cloudRef.current;
     if (!cloudElement) return;
 
+    // Store original styles for restoration
+    originalStylesRef.current = {
+      position: cloudElement.style.position || '',
+      top: cloudElement.style.top || '',
+      left: cloudElement.style.left || '',
+      width: cloudElement.style.width || '',
+      height: cloudElement.style.height || '',
+      transform: cloudElement.style.transform || '',
+      zIndex: cloudElement.style.zIndex || ''
+    };
+
+    // Create overlay
     const overlay = document.createElement('div');
     overlayRef.current = overlay;
     document.body.appendChild(overlay);
@@ -30,28 +52,56 @@ const useCloudZoom = (isRevealed = false) => {
       left: 0,
       width: '100%',
       height: '100%',
-      backgroundColor: 'hsla(203, 91%, 29%, 0.98)',
-      zIndex: 100,
+      background: getCurrentLevelBackgroundStyle(),
+      zIndex: 2000,
       opacity: 0
     });
 
-    // Record the current state
+    // Record current state for Flip
     const state = Flip.getState(cloudElement);
 
-    // Set final zoomed state
+    // Calculate safe dimensions based on viewport
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const isMobile = viewportWidth < 768;
+
+    // Calculate maximum safe dimensions maintaining aspect ratio
+    let targetWidth, targetHeight;
+    
+    if (isMobile) {
+      // Mobile: More conservative sizing
+      targetWidth = Math.min(
+        viewportWidth * 0.85,  // 85% of viewport width
+        400                     // Max 400px wide
+      );
+    } else {
+      // Desktop: Larger but still constrained
+      targetWidth = Math.min(
+        viewportWidth * 0.6,   // 60% of viewport width
+        600                    // Max 600px wide
+      );
+    }
+    
+    // Calculate height maintaining 0.6 aspect ratio
+    targetHeight = targetWidth * 0.6;
+    
+    // Ensure it fits vertically too
+    const maxHeightAllowed = viewportHeight * 0.7;
+    if (targetHeight > maxHeightAllowed) {
+      targetHeight = maxHeightAllowed;
+      targetWidth = targetHeight / 0.6;
+    }
+
+    // Apply final state with constraints
     gsap.set(cloudElement, {
       position: 'fixed',
       top: '50%',
       left: '50%',
       xPercent: -50,
       yPercent: -50,
-      width: '100%',
-      maxWidth: '720px',
-      height: 'auto',
-      maxHeight: 'calc(720px * 9 / 16)',
-      aspectRatio: '16 / 9',
-      zIndex: 1001,
-      visibility: 'visible',
+      width: `${targetWidth}px`,
+      height: `${targetHeight}px`,
+      zIndex: 2001,
       overflow: 'visible'
     });
 
@@ -59,17 +109,34 @@ const useCloudZoom = (isRevealed = false) => {
     setIsZoomed(true);
     setZoomState(true);
 
-    // Animate from original state to zoomed state
+    // Animate from original state to new state
     Flip.from(state, {
       duration: 0.8,
       ease: "sine.inOut",
-      scale: true,
       absolute: true,
-      onComplete: () => gsap.set(cloudElement, { overflow: "visible" })
+      scale: true,
+      onUpdate: function() {
+        // Safety check: ensure element stays within viewport
+        const rect = cloudElement.getBoundingClientRect();
+        const margin = 20; // Safety margin from edges
+        
+        if (rect.left < margin || 
+            rect.right > viewportWidth - margin || 
+            rect.top < margin || 
+            rect.bottom > viewportHeight - margin) {
+          // Force completion if we're going out of bounds
+          this.progress(1);
+        }
+      }
     });
 
     // Fade in overlay
-    gsap.to(overlay, { opacity: 1, duration: 0.4, ease: "sine.inOut" });
+    gsap.to(overlay, { 
+      opacity: 0.98, 
+      delay: 0.8, 
+      duration: 0.3, 
+      ease: "sine.inOut" 
+    });
 
   }, [isZoomed, setZoomState]);
 
@@ -81,40 +148,41 @@ const useCloudZoom = (isRevealed = false) => {
 
     setIsZoomingOut(true);
 
-    gsap.killTweensOf(cloudElement);
+    // Record current zoomed state
+    const state = Flip.getState(cloudElement);
 
-    // Simple fade out and scale down in zoomed position
-    gsap.to(cloudElement, {
-      opacity: 0,
-      scale: 0,
+    // Restore original positioning
+    gsap.set(cloudElement, {
+      clearProps: 'all' // Clear all inline styles
+    });
+
+    // Restore any original inline styles that were important
+    if (originalStylesRef.current) {
+      Object.entries(originalStylesRef.current).forEach(([prop, value]) => {
+        if (value) {
+          cloudElement.style[prop] = value;
+        }
+      });
+    }
+
+    cloudElement.classList.remove('zoomed');
+    
+    // If revealed, add revealed class
+    if (isRevealed) {
+      cloudElement.classList.add('revealed');
+    }
+
+    // Animate back from zoomed state to original
+    Flip.from(state, {
       duration: 0.6,
       ease: "sine.inOut",
+      absolute: true,
+      scale: true,
       onComplete: () => {
-        // Reset to original position and styling
-        gsap.set(cloudElement, { clearProps: true });
-        cloudElement.classList.remove('zoomed');
-        
-        // If revealed, add the revealed class to show Layer 3
-        if (isRevealed) {
-          cloudElement.classList.add('revealed');
-        }
-
-        // Fade in and scale up in original grid position
-        gsap.fromTo(cloudElement, 
-          { opacity: 0, scale: 0.3 },
-          { 
-            opacity: 1, 
-            scale: 1,
-            delay: 0.2,
-            duration: 0.6,
-            ease: "sine.inOut",
-            onComplete: () => {
-              setIsZoomed(false);
-              setIsZoomingOut(false);
-              setZoomState(false);
-            }
-          }
-        );
+        setIsZoomed(false);
+        setIsZoomingOut(false);
+        setZoomState(false);
+        originalStylesRef.current = null;
       }
     });
 
@@ -145,24 +213,20 @@ const useCloudZoom = (isRevealed = false) => {
     }
   }, [isZoomed, isRevealed, handleScreenTap]);
 
-  // Add delay before allowing zoom out after cloud is revealed (after blow)
+  // Add delay before allowing zoom out after cloud is revealed
   useEffect(() => {
     if (isRevealed && isZoomed) {
-      // Disable zoom out immediately when revealed
       setCanZoomOut(false);
       
-      // Clear any existing timeout
       if (zoomOutDelayRef.current) {
         clearTimeout(zoomOutDelayRef.current);
       }
       
-      // Enable zoom out after 1.5 seconds to allow audio context to close
       zoomOutDelayRef.current = setTimeout(() => {
         setCanZoomOut(true);
         zoomOutDelayRef.current = null;
       }, 1500);
     } else {
-      // Reset canZoomOut when not in revealed+zoomed state
       setCanZoomOut(true);
       if (zoomOutDelayRef.current) {
         clearTimeout(zoomOutDelayRef.current);
@@ -178,26 +242,23 @@ const useCloudZoom = (isRevealed = false) => {
     };
   }, [isRevealed, isZoomed]);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      // Only cleanup if component unmounts while still zoomed
-      // This handles the case where user navigates away via menu button
       if (overlayRef.current) {
         gsap.killTweensOf(overlayRef.current);
         overlayRef.current.remove();
         overlayRef.current = null;
       }
-      // Clear zoom out delay timeout
       if (zoomOutDelayRef.current) {
         clearTimeout(zoomOutDelayRef.current);
         zoomOutDelayRef.current = null;
       }
-      // Reset zoom state in store if unmounting while zoomed
       if (isZoomed) {
         setZoomState(false);
       }
     };
-  }, []); // Empty dependency array - only runs on unmount
+  }, []);
 
   return {
     cloudRef,
@@ -208,4 +269,4 @@ const useCloudZoom = (isRevealed = false) => {
   };
 };
 
-export default useCloudZoom;
+export default useCloudZoomFlip;

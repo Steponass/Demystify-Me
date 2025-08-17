@@ -24,7 +24,6 @@ const Cloud = ({
   }[cloudType];
 
   if (!CloudComponent) {
-    console.error(`Unknown cloud type: ${cloudType}`);
     return null;
   }
 

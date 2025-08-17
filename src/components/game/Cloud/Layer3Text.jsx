@@ -20,7 +20,7 @@ const Layer3Text = ({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: isZoomed ? '100%' : 'clamp(80%, 90%, 95%)',
+        width: '100%',
         textAlign: 'center',
         pointerEvents: isZoomed ? 'auto' : 'none'
       }}

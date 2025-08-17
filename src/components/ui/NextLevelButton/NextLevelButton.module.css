@@ -6,35 +6,42 @@
 
   background-color: var(--clr-overlay-hint);
   color: var(--clr-whiteish);
-  font-size: var(--fs-h6);
+  font-size: var(--fs-h5);
 
   border: none;
   border-radius: var(--radius-8px);
-  padding: var(--space-8-12px) var(--space-16-24px);
+  padding: var(--space-16-24px) var(--space-24-32px);
   cursor: pointer;
   pointer-events: auto;
   opacity: 0;
-  transition: all 0.25s ease-in-out;
-  animation: delayedEntry 0.3s ease-out 2s forwards;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 1.7s ease-in-out;
+  animation: delayedEntry 0.5s ease-in-out 2s forwards;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   z-index: 1003;
+
+  --random-y: 0px;
+  --random-x: 0px;
+  --random-active-y: 0px;
+
+  @media (hover: hover) {
+    &:hover {
+      transform:
+      translateY(var(--random-y)) 
+      translateX(var(--random-x));
+      scale: 0.3;
+    }
+    &:active {
+      transform:
+      translateY(var(--random-active-y));
+    }
+  }
 }
 
 @keyframes delayedEntry {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.6);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
   }
-}
-
-.nextLevelButton:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.nextLevelButton:active {
-  transform: translate(-50%, -50%) scale(0.98);
 }
