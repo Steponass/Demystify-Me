@@ -5,13 +5,12 @@ import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
-import AudioLevelIndicator from './AudioLevelIndicator';
 import Layer3Text from './Layer3Text';
 import { MICROPHONE_START_DELAY } from './constants/cloudConstants';
 import { createLayer3Timeline, animateElementsOut, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
-  const { getCloudState, advanceCloudLayer } = useGameStore();
+  const { getCloudState, advanceCloudLayer, setAudioLevel } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [cloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
@@ -52,7 +51,6 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     createFeedbackWiggle(animationRef, 'heavy');
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed]);
 
-  const [audioLevel, setAudioLevel] = useState(0);
 
   const { startListening, stopListening } = useBlowDetection({
     onXLBlow: handleXLBlow,
@@ -136,10 +134,6 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
                 <p className={styles.regularLayerText}>
                   {content.layer1}
                 </p>
-                <AudioLevelIndicator
-                  audioLevel={audioLevel}
-                  inactiveText="XL blow to breakthrough"
-                />
               </div>
             )}
 

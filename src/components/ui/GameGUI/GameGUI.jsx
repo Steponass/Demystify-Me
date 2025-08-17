@@ -2,6 +2,7 @@ import React from 'react';
 import useGameStore from '@store/gameStore';
 import LevelTitle from '@components/ui/LevelTitle/LevelTitle';
 import HintDisplay from '@components/ui/HintDisplay/HintDisplay';
+import BlowIndicator from '@components/ui/BlowIndicator/BlowIndicator';
 import styles from './GameGUI.module.css';
 import MenuButton from '@components/ui/MenuButton/MenuButton';
 import RewindButton from '@components/ui/RewindButton/RewindButton';
@@ -9,7 +10,7 @@ import NextLevelButton from '@components/ui/NextLevelButton/NextLevelButton';
 import { LEVEL_METADATA } from '@components/screens/MainMenu/levelMetadata';
 
 const GameGUI = ({ levelId }) => {
-  const { currentHint, isHintVisible, isLevelCompleted, isZoomed } = useGameStore();
+  const { currentHint, isHintVisible, isLevelCompleted, isZoomed, audioLevel } = useGameStore();
 
   const isCompleted = isLevelCompleted(levelId);
 
@@ -36,6 +37,12 @@ const GameGUI = ({ levelId }) => {
 
       {isCompleted && !isZoomed && (
           <NextLevelButton levelId={levelId} />
+      )}
+
+      {isZoomed && (
+        <div className={styles.blowIndicatorSection}>
+          <BlowIndicator audioLevel={audioLevel} />
+        </div>
       )}
     </div>
   );

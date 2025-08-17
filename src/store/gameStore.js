@@ -11,6 +11,7 @@ const initialState = {
   isLevelTransitioning: false,
   shouldShowSplash: false,
   isZoomed: false,
+  audioLevel: 0,
 };
 
 const useGameStore = create(
@@ -49,6 +50,14 @@ const useGameStore = create(
 
       getZoomState: () => {
         return get().isZoomed;
+      },
+
+      setAudioLevel: (level) => {
+        set({ audioLevel: level });
+      },
+
+      getAudioLevel: () => {
+        return get().audioLevel;
       },
 
       setLevelTransitioning: (isTransitioning) => {

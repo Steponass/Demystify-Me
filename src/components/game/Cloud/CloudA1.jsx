@@ -5,13 +5,12 @@ import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
-import AudioLevelIndicator from './AudioLevelIndicator';
 import Layer3Text from './Layer3Text';
 import { MICROPHONE_START_DELAY } from './constants/cloudConstants';
 import { createLayer3Timeline, animateElementsOut, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
-  const { getCloudState, advanceCloudLayer } = useGameStore();
+  const { getCloudState, advanceCloudLayer, setAudioLevel } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
@@ -52,8 +51,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     onReveal,
   ]);
 
-  // Add audio level state to visualize microphone input
-  const [audioLevel, setAudioLevel] = useState(0);
 
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: handleAnyBlow,
@@ -162,7 +159,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
         {isZoomed && !isZoomingOut && isLayer1 && (
           <div ref={textContentRef} className={styles.textContent}>
             <p className={styles.regularLayerText}>{content.layer1}</p>
-            <AudioLevelIndicator audioLevel={audioLevel} />
           </div>
         )}
       </div>

@@ -6,7 +6,6 @@ import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
-import AudioLevelIndicator from './AudioLevelIndicator';
 import Layer3Text from './Layer3Text';
 import { 
   ANIMATION_DURATION, 
@@ -16,7 +15,7 @@ import {
 import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
-  const { getCloudState, advanceCloudLayer } = useGameStore();
+  const { getCloudState, advanceCloudLayer, setAudioLevel } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [regularCloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
@@ -36,7 +35,6 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const layer2TextRef = useRef(null);
   const layer3TextRef = useRef(null);
 
-  const [audioLevel, setAudioLevel] = useState(0);
   const isTransitioning = useRef(false);
   const currentLayerRef = useRef(cloudState?.currentLayer);
   const transitioningFromLayer = useRef(null);
@@ -192,11 +190,6 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const isLayer2 = cloudState.currentLayer === 2;
   const isLayer3 = cloudState.currentLayer === 3;
 
-  const getAudioIndicatorText = () => {
-    if (isLayer1) return "Blow to continue";
-    if (isLayer2) return "Long blow to reveal";
-    return "";
-  };
 
   return (
     <div
@@ -236,10 +229,6 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
                 <p className={styles.regularLayerText}>
                   {content.layer2}
                 </p>
-                <AudioLevelIndicator
-                  audioLevel={audioLevel}
-                  inactiveText={getAudioIndicatorText()}
-                />
               </div>
             )}
           </>
@@ -267,10 +256,6 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
                 <p className={styles.regularLayerText}>
                   {content.layer1}
                 </p>
-                <AudioLevelIndicator
-                  audioLevel={audioLevel}
-                  inactiveText={getAudioIndicatorText()}
-                />
               </div>
             )}
           </>
