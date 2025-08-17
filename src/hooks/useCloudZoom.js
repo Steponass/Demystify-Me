@@ -8,8 +8,10 @@ gsap.registerPlugin(Flip);
 const useCloudZoom = (isRevealed = false) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [isZoomingOut, setIsZoomingOut] = useState(false);
+  const [canZoomOut, setCanZoomOut] = useState(true);
   const cloudRef = useRef(null);
   const overlayRef = useRef(null);
+  const zoomOutDelayRef = useRef(null);
 
   const { setZoomState } = useGameStore();
 
@@ -132,9 +134,9 @@ const useCloudZoom = (isRevealed = false) => {
   }, [isZoomed, isRevealed, setZoomState]);
 
   const handleScreenTap = useCallback(() => {
-    if (!isZoomed || !isRevealed) return;
+    if (!isZoomed || !isRevealed || !canZoomOut) return;
     handleZoomOut();
-  }, [isZoomed, isRevealed, handleZoomOut]);
+  }, [isZoomed, isRevealed, canZoomOut, handleZoomOut]);
 
   useEffect(() => {
     if (isZoomed && isRevealed) {
@@ -142,6 +144,39 @@ const useCloudZoom = (isRevealed = false) => {
       return () => document.removeEventListener('click', handleScreenTap);
     }
   }, [isZoomed, isRevealed, handleScreenTap]);
+
+  // Add delay before allowing zoom out after cloud is revealed (after blow)
+  useEffect(() => {
+    if (isRevealed && isZoomed) {
+      // Disable zoom out immediately when revealed
+      setCanZoomOut(false);
+      
+      // Clear any existing timeout
+      if (zoomOutDelayRef.current) {
+        clearTimeout(zoomOutDelayRef.current);
+      }
+      
+      // Enable zoom out after 1.5 seconds to allow audio context to close
+      zoomOutDelayRef.current = setTimeout(() => {
+        setCanZoomOut(true);
+        zoomOutDelayRef.current = null;
+      }, 1500);
+    } else {
+      // Reset canZoomOut when not in revealed+zoomed state
+      setCanZoomOut(true);
+      if (zoomOutDelayRef.current) {
+        clearTimeout(zoomOutDelayRef.current);
+        zoomOutDelayRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (zoomOutDelayRef.current) {
+        clearTimeout(zoomOutDelayRef.current);
+        zoomOutDelayRef.current = null;
+      }
+    };
+  }, [isRevealed, isZoomed]);
 
   useEffect(() => {
     return () => {
@@ -151,6 +186,11 @@ const useCloudZoom = (isRevealed = false) => {
         gsap.killTweensOf(overlayRef.current);
         overlayRef.current.remove();
         overlayRef.current = null;
+      }
+      // Clear zoom out delay timeout
+      if (zoomOutDelayRef.current) {
+        clearTimeout(zoomOutDelayRef.current);
+        zoomOutDelayRef.current = null;
       }
       // Reset zoom state in store if unmounting while zoomed
       if (isZoomed) {

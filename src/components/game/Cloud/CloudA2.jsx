@@ -106,6 +106,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
 
   const prevZoomedRef = useRef(isZoomed);
   const prevRevealedRef = useRef(cloudState?.isRevealed);
+  const micTimeoutRef = useRef(null);
 
   useEffect(() => {
     const currentRevealed = cloudState?.isRevealed;
@@ -114,21 +115,30 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
       prevZoomedRef.current = isZoomed;
       prevRevealedRef.current = currentRevealed;
 
+      // Clear any pending timeout first
+      if (micTimeoutRef.current) {
+        clearTimeout(micTimeoutRef.current);
+        micTimeoutRef.current = null;
+      }
+
       const shouldListen = isZoomed && !currentRevealed;
 
       if (shouldListen) {
-        const timeoutId = setTimeout(() => {
+        micTimeoutRef.current = setTimeout(() => {
           startBlowDetectionWithErrorHandling(startListening);
+          micTimeoutRef.current = null;
         }, MICROPHONE_START_DELAY);
-
-        return () => {
-          clearTimeout(timeoutId);
-        };
       } else {
         stopListening();
-
       }
     }
+
+    return () => {
+      if (micTimeoutRef.current) {
+        clearTimeout(micTimeoutRef.current);
+        micTimeoutRef.current = null;
+      }
+    };
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
   // Cleanup timeouts on unmount

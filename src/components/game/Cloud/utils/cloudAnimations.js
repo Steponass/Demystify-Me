@@ -5,7 +5,7 @@ import {
   CLOUD_FLOAT_Y_DISTANCE, 
   HORIZONTAL_DISTANCE,
   CLOUD_SCALE_FACTOR 
-} from '../constants/cloudConstants';
+} from '@components/game/Cloud/constants/cloudConstants';
 
 export const createLayer3Timeline = (layer3Element, onComplete) => {
   const timeline = gsap.timeline({ onComplete });
@@ -116,7 +116,7 @@ export const createCloudEntranceAnimation = (cloudContainers) => {
   // Set initial state for all clouds
   gsap.set(validElements, {
     opacity: 0,
-    y: 20,
+    y: 10,
     scale: 0.9
   });
 
@@ -128,8 +128,8 @@ export const createCloudEntranceAnimation = (cloudContainers) => {
     y: 0,
     scale: 1,
     duration: 0.5,
-    ease: 'back.out(1.7)',
-    stagger: 0.2,
+    ease: 'sine.inOut',
+    stagger: 0.4,
     clearProps: 'transform'
   });
 

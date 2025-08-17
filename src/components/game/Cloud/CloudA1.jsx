@@ -63,6 +63,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   // Track zoom state changes
   const prevZoomedRef = React.useRef(isZoomed);
   const prevRevealedRef = React.useRef(cloudState?.isRevealed);
+  const micTimeoutRef = React.useRef(null);
 
   useEffect(() => {
     // Only run when zoom state or revealed state changes
@@ -75,21 +76,31 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       prevZoomedRef.current = isZoomed;
       prevRevealedRef.current = currentRevealed;
 
+      // Clear any pending timeout first
+      if (micTimeoutRef.current) {
+        clearTimeout(micTimeoutRef.current);
+        micTimeoutRef.current = null;
+      }
+
       // Microphone active only when zoomed AND not revealed
       const shouldListen = isZoomed && !currentRevealed;
 
       if (shouldListen) {
-        const timeoutId = setTimeout(() => {
+        micTimeoutRef.current = setTimeout(() => {
           startBlowDetectionWithErrorHandling(startListening);
+          micTimeoutRef.current = null;
         }, MICROPHONE_START_DELAY);
-
-        return () => {
-          clearTimeout(timeoutId);
-        };
       } else {
         stopListening();
       }
     }
+
+    return () => {
+      if (micTimeoutRef.current) {
+        clearTimeout(micTimeoutRef.current);
+        micTimeoutRef.current = null;
+      }
+    };
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
   if (!cloudState) return null;

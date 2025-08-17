@@ -1,45 +1,28 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
-import useLevelProgress from '@hooks/useLevelProgress';
-import useCloudLayout from '@hooks/useCloudLayout';
+import useLevel from '@hooks/useLevel';
 import levelData from '@data/levels/level-02.json';
-import styles from '@levels/Level.module.css'
+import styles from '@levels/Level.module.css';
 
 const Level02 = ({ levelId }) => {
-  const containerRef = useRef(null);
-
-  const cloudConfigs = levelData.clouds.map(cloud => ({
-    cloudId: cloud.cloudId,
-    cloudType: cloud.cloudType
-  }));
-
-  useLevelProgress(levelId, cloudConfigs);
-  const { cloudPositions, updateContainerDimensions } = useCloudLayout(
-    cloudConfigs.map(config => config.cloudId)
-  );
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        updateContainerDimensions(rect.width, rect.height);
-      }
-    };
-
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, [updateContainerDimensions]);
-
-  const handleCloudReveal = (cloudId) => {
+  // Custom reveal handler for Level 2
+  const customHandleReveal = (cloudId) => {
     console.log(`Cloud ${cloudId} revealed in Level 2!`);
   };
+
+  const {
+    containerRef,
+    cloudRefs,
+    cloudPositions,
+    handleCloudReveal,
+    levelData: level
+  } = useLevel(levelId, levelData, customHandleReveal);
 
   return (
     <main>
 
       <div className={styles.cloud_layout} ref={containerRef}>
-        {levelData.clouds.map((cloudData) => {
+        {level.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];
 
           // Don't render clouds until positioning is calculated
@@ -54,6 +37,7 @@ const Level02 = ({ levelId }) => {
               content={cloudData.content}
               onReveal={handleCloudReveal}
               levelId={levelId}
+              containerRef={cloudRefs[cloudData.cloudId]}
             />
           );
         })}

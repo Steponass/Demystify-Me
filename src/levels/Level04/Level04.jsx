@@ -1,50 +1,33 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
-import useLevelProgress from '@hooks/useLevelProgress';
-import useCloudLayout from '@hooks/useCloudLayout';
+import useLevel from '@hooks/useLevel';
 import levelData from '@data/levels/level-04.json';
-import styles from '@levels/Level.module.css'
+import styles from '@levels/Level.module.css';
 
 const Level04 = ({ levelId }) => {
-  const containerRef = useRef(null);
-
-  const cloudConfigs = levelData.clouds.map(cloud => ({
-    cloudId: cloud.cloudId,
-    cloudType: cloud.cloudType
-  }));
-
-  useLevelProgress(levelId, cloudConfigs);
-
-  const { cloudPositions, updateContainerDimensions } = useCloudLayout(
-    cloudConfigs.map(config => config.cloudId)
-  );
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        updateContainerDimensions(rect.width, rect.height);
-      }
-    };
-
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, [updateContainerDimensions]);
-
   // Enhanced reveal handler for B1 clouds - tracks sequential completion
-  const handleCloudReveal = useCallback((cloudId) => {
+  const customHandleReveal = (cloudId) => {
     // eslint-disable-next-line no-unused-vars
     const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
-  }, []);
+  };
 
+  const {
+    containerRef,
+    cloudRefs,
+    cloudPositions,
+    handleCloudReveal,
+    levelData: level
+  } = useLevel(levelId, levelData, customHandleReveal);
 
   return (
     <main>
-      <div className={styles.cloud_layout} ref={containerRef}>
-        {levelData.clouds.map((cloudData) => {
+      <div className={styles.cloud_layout}
+        ref={containerRef}
+      >
+        {level.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];
 
+          // Don't render until we have position data
           if (!position) return null;
 
           return (
@@ -56,6 +39,7 @@ const Level04 = ({ levelId }) => {
               content={cloudData.content}
               onReveal={handleCloudReveal}
               levelId={levelId}
+              containerRef={cloudRefs[cloudData.cloudId]}
             />
           );
         })}
