@@ -1,19 +1,14 @@
 .actionButton {
   padding: var(--space-12-16px) var(--space-24-32px);
   color: var(--clr-whiteish);
-  background-color: var(--clr-overlay-hint);
+  background-color: oklch(0.3021 0.0469 249.62);
   border: none;
   cursor: pointer;
   min-width: 128px;
   border-radius: var(--radius-50px);
-  font-weight: 400;
   transition: var(--transition-normal);
-}
-
-.primaryButton {
-  background-color: var(--clr-overlay-hint);
-  color: var(--clr-whiteish);
-  
+  font-size: var(--fs-h6);
+  box-shadow: var(--shadow-elevation-2);
 }
 
 .actionButton:hover:not(:disabled) {
@@ -22,22 +17,4 @@
 
 .actionButton:active:not(:disabled) {
   transform: translateY(1px);
-}
-
-.secondaryButton {
-  background-color: transparent;
-  color: var(--clr-whiteish);
-  border: 2px solid var(--clr-whiteish);
-  font-size: var(--fs-h6);
-}
-
-.secondaryButton:hover:not(:disabled) {
-  background-color: var(--clr-whiteish);
-  color: var(--clr-bg);
-}
-
-.levelButton {
-  padding: var(--space-8-12px) var(--space-12-16px);
-  font-size: var(--fs-h6);
-  max-width: 240px;
 }

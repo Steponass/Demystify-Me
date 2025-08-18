@@ -28,7 +28,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
 
-  // Use the centralized hint display system
+  // Use hint display system but exclude B2 from showing hints
   useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
 
   // Refs for managing visual elements
@@ -270,6 +270,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
             <img
               ref={lightCloudRef}
               src={lightCloudImage}
+              className={styles.floatingCloud}
               style={{
                 '--floating-duration': `${animationDuration}s`
               }}

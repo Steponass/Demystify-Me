@@ -2,7 +2,7 @@ import React from 'react';
 import ActionButton from '@components/ui/ActionButton/ActionButton';
 import styles from './MainMenu.module.css';
 
-const ReturnVisitMenu = ({ currentLevel, onResume, onStartOver }) => {
+const ReturnVisitMenu = ({ currentLevel, onResume }) => {
   const getLevelText = () => {
     return `Level ${currentLevel}`;
   };
@@ -22,13 +22,6 @@ const ReturnVisitMenu = ({ currentLevel, onResume, onStartOver }) => {
           onClick={onResume}
         >
           Resume
-        </ActionButton>
-        
-        <ActionButton 
-          variant="secondary"
-          onClick={onStartOver}
-        >
-          Start again
         </ActionButton>
       </div>
     </div>

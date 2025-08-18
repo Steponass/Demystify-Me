@@ -26,7 +26,6 @@
   pointer-events: none;
   z-index: 5;
   filter: blur(4px) drop-shadow(1px 4px 5px hsl(0, 4%, 16%));
-
 }
 
 /* For CloudB2 */
@@ -42,8 +41,7 @@
 .morphingSVG {
   width: 100%;
   height: 100%;
-  max-width: clamp(150px, 20vw, 400px);
-  max-height: clamp(90px, 12vw, 240px);
+  max-width: clamp(200px, 20vw, 400px);
 }
 
 /* Layer positioning classes */
@@ -58,7 +56,6 @@
 .floatingCloud {
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 .textContent {
@@ -90,14 +87,20 @@
   width: 30ch;
 }
 
-  /* Improve mobile performance during zoom */
+
+/* Improve mobile performance during zoom */
 .cloud.zoomed {
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  /* Ensure GSAP can control opacity */
+  /* Ensure zoom can control opacity */
   opacity: 1 !important;
+  /* Constrain width to max 600px while staying responsive */
+  width: min(100%, 600px);
+  height: min (300px, 500px);
+  /* Elevate above overlay */
+  z-index: var(--z-zoom-content);
 }
 
 /* Reduce motion for better mobile performance */

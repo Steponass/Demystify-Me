@@ -10,23 +10,16 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
   const [isZoomingOut, setIsZoomingOut] = useState(false);
   const [canZoomOut, setCanZoomOut] = useState(true);
   const cloudRef = useRef(null);
-  const overlayRef = useRef(null);
   const zoomOutDelayRef = useRef(null);
   const originalStylesRef = useRef(null);
 
   const { setZoomState } = useGameStore();
 
-  // Helper function to get current level background
-  const getCurrentLevelBackgroundStyle = () => {
-    const levelAttr = document.documentElement.getAttribute('data-level');
-    if (levelAttr === 'menu') {
-      return 'var(--menu-gradient)';
-    }
-    return `var(--sunset-gradient-${levelAttr || '1'})`;
-  };
 
   const handleZoomIn = useCallback(() => {
     if (isZoomed) return;
+
+    document.body.classList.add('cloud-zoomed');
 
     const cloudElement = cloudRef.current;
     if (!cloudElement) return;
@@ -42,20 +35,6 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
       zIndex: cloudElement.style.zIndex || ''
     };
 
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlayRef.current = overlay;
-    document.body.appendChild(overlay);
-    gsap.set(overlay, {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      background: getCurrentLevelBackgroundStyle(),
-      zIndex: 2000,
-      opacity: 0
-    });
 
     // Record current state for Flip
     const state = Flip.getState(cloudElement);
@@ -71,14 +50,14 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
     if (isMobile) {
       // Mobile: More conservative sizing
       targetWidth = Math.min(
-        viewportWidth * 0.85,  // 85% of viewport width
-        400                     // Max 400px wide
+        viewportWidth * 0.95,
+        400
       );
     } else {
       // Desktop: Larger but still constrained
       targetWidth = Math.min(
-        viewportWidth * 0.6,   // 60% of viewport width
-        600                    // Max 600px wide
+        viewportWidth * 0.6,
+        600
       );
     }
     
@@ -130,18 +109,13 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
       }
     });
 
-    // Fade in overlay
-    gsap.to(overlay, { 
-      opacity: 0.98, 
-      delay: 0.8, 
-      duration: 0.3, 
-      ease: "sine.inOut" 
-    });
 
   }, [isZoomed, setZoomState, cloudId]);
 
   const handleZoomOut = useCallback(() => {
     if (!isZoomed) return;
+
+    document.body.classList.remove('cloud-zoomed');
 
     const cloudElement = cloudRef.current;
     if (!cloudElement) return;
@@ -186,18 +160,6 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
       }
     });
 
-    // Remove overlay
-    if (overlayRef.current) {
-      gsap.to(overlayRef.current, {
-        opacity: 0,
-        duration: 0.4,
-        ease: "sine.inOut",
-        onComplete: () => {
-          overlayRef.current?.remove();
-          overlayRef.current = null;
-        }
-      });
-    }
 
   }, [isZoomed, isRevealed, setZoomState]);
 
@@ -245,11 +207,6 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (overlayRef.current) {
-        gsap.killTweensOf(overlayRef.current);
-        overlayRef.current.remove();
-        overlayRef.current = null;
-      }
       if (zoomOutDelayRef.current) {
         clearTimeout(zoomOutDelayRef.current);
         zoomOutDelayRef.current = null;

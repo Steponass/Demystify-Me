@@ -4,52 +4,44 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: oklch(0.133 0.0021 196.91 / 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: var(--z-splash);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(10px);
 }
 
 .dialog {
   background-color: var(--clr-overlay-hint);
   border-radius: var(--radius-16px);
-  border: 2px solid var(--clr-whiteish);
-  max-width: 400px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+  width: min(90%, 420px);
   animation: dialogAppear var(--transition-normal);
+  box-shadow: var(--shadow-elevation-3);
 }
 
 @keyframes dialogAppear {
   from {
     opacity: 0;
-    transform: scale(0.8) translateY(-20px);
+    transform: scale(0.7);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);
   }
 }
 
 .content {
   padding: var(--space-24-32px);
+  color: var(--clr-whiteish);
 }
 
 .title {
-  color: var(--clr-whiteish);
-  margin: 0 0 var(--space-16-24px) 0;
-  font-size: var(--fs-h4);
-  font-weight: 600;
+  margin-bottom: var(--space-16-24px);
   text-align: center;
 }
 
 .message {
-  color: var(--clr-whiteish);
-  margin: 0 0 var(--space-24-32px) 0;
-  line-height: 1.5;
+  margin-bottom: var(--space-32-48px);
   text-align: center;
 }
 

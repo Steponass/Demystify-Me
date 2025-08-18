@@ -2,55 +2,77 @@ html {
   transition: background var(--transition-slow);
 }
 
+/* Backdrop filter overlay when cloud is zoomed */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(50px) saturate(0.8) brightness(0.4);
+  z-index: var(--z-zoom-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+  pointer-events: none;
+}
+
+body.cloud-zoomed::before {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 /* Level-specific gradients */
 html[data-level="1"] {
-  background: var(--sunset-gradient-1);
+  background: var(--gradient-sunset-orange-to-purple);
 }
 
 html[data-level="2"] {
-  background: var(--sunset-gradient-2);
+  background: var(--gradient-sunset-colder);
 }
 
 html[data-level="3"] {
-  background: var(--sunset-gradient-3);
+  background: var(--gradient-sunset-less-vivid);
 }
 
 html[data-level="4"] {
-  background: var(--sunset-gradient-4);
+  background: var(--gradient-sunset-vivid);
 }
 
 html[data-level="5"] {
-  background: var(--sunset-gradient-5);
+  background: var(--gradient-sunset-less-vivid);
 }
 
 html[data-level="6"] {
-  background: var(--sunset-gradient-6);
+  background: var(--gradient-sunset-night);
 }
 
 html[data-level="7"] {
-  background: var(--sunset-gradient-7);
+  background: var(--gradient-sky-lightblu-to-midblu);
 }
 
 html[data-level="8"] {
-  background: var(--sunset-gradient-8);
+  background: var(--gradient-sky-midblu-to-darkblu);
 }
 
 html[data-level="9"] {
-  background: var(--sunset-gradient-9);
+  background: var(--gradient-sky-purple-to-darkblu);
 }
 
 html[data-level="10"] {
-  background: var(--sunset-gradient-10);
+  background: var(--gradient-sky-purple-to-midnight);
 }
 
-/* Main menu uses a neutral gradient */
+
 html[data-level="menu"] {
-  background: var(--sky-gradient-1);
+  background: var(--gradient-sky-classic);
 }
 
 body {
   overflow-y: hidden;
   padding-block: min(24px, 4px + 2vw);
-  width: min(98%, 1280px);
+  width: 100%;
   margin-inline: auto;
 }

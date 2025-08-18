@@ -90,6 +90,15 @@ const MainMenu = () => {
 
   return (
     <div className={styles.mainMenu}>
+
+      <div className={styles.menuFog}>
+        <img 
+          src="/images/clouds/Wide_Fog.webp" 
+          alt=""
+          className={styles.fogImage}
+        />
+      </div>
+
       <div className={styles.mainMenu_container}>
         {menuContent}
       </div>

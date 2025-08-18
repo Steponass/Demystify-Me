@@ -17,7 +17,7 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
             onClick={() => onLevelSelect(level.path)}
             variant="level"
           >
-            <p className={styles.levelTitle}>{level.title}</p>
+            <span className={styles.levelTitle}>{level.title}</span>
           </ActionButton>
         ))}
       </div>

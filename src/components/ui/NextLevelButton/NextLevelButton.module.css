@@ -16,7 +16,7 @@
   opacity: 0;
   transition: all 1.7s ease-in-out;
   animation: delayedEntry 0.5s ease-in-out 2s forwards;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-elevation-2);
   z-index: 1003;
 
   --random-y: 0px;

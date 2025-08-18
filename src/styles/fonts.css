@@ -49,9 +49,9 @@
 }
 
 :where(p, ul, ol, li, a, button, label, input, textarea) {
-  font-size: var(--fontsize-body);
+  font-size: var(--fs-p);
   font-family: 'Crimson Pro Variable', 'Adjusted Georgia Fallback', serif;
-  font-weight: 500;
+  font-weight: 450;
 }
 
 :where(h6, h5, h4, h3, h2, h1) {
