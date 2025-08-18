@@ -4,6 +4,7 @@ import useGameStore from '@store/gameStore';
 import FirstVisitMenu from './FirstVisitMenu';
 import ReturnVisitMenu from './ReturnVisitMenu';
 import CompletedGameMenu from './CompletedGameMenu';
+import EndingSequenceMenu from './EndingSequenceMenu';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog/ConfirmationDialog';
 import { TOTAL_GAME_LEVELS } from './levelMetadata';
 import styles from './MainMenu.module.css';
@@ -16,7 +17,8 @@ const MainMenu = () => {
   const {
     currentLevel,
     completedLevels,
-    resetAllProgress
+    resetAllProgress,
+    getEndingSequenceState
   } = useGameStore();
 
   // Set menu gradient when MainMenu mounts
@@ -62,10 +64,24 @@ const MainMenu = () => {
     setShowConfirmDialog(false);
   };
 
+  const handleEndingSequenceComplete = () => {
+    // Ending sequence is complete, the store state is already updated
+    // The component will re-render and show the normal CompletedGameMenu
+  };
+
   // Determine which menu component to render
   let menuContent;
-
-  if (hasCompletedGame) {
+  
+  // Check if we should show the ending sequence
+  const endingSequenceState = getEndingSequenceState();
+  
+  if (endingSequenceState === 'sequence_active') {
+    menuContent = (
+      <EndingSequenceMenu
+        onComplete={handleEndingSequenceComplete}
+      />
+    );
+  } else if (hasCompletedGame) {
     menuContent = (
       <CompletedGameMenu
         onLevelSelect={handleLevelSelect}
@@ -106,7 +122,7 @@ const MainMenu = () => {
       <ConfirmationDialog
         isOpen={showConfirmDialog}
         title="Reset Game Progress"
-        message="Are you sure you want to start fresh? This will reset all your progress and you'll lose all completed levels."
+        message="Sure you want to start again? This will reset all your progress."
         confirmText="Start Fresh"
         cancelText="Cancel"
         onConfirm={handleConfirmReset}

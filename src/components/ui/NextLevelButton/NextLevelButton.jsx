@@ -6,7 +6,7 @@ import styles from './NextLevelButton.module.css';
 const NextLevelButton = ({ levelId }) => {
   const navigate = useNavigate();
   const buttonRef = useRef(null);
-  const { isLevelUnlocked, isLevelCompleted, isGameComplete, checkGameComplete } = useGameStore();
+  const { isLevelUnlocked, isLevelCompleted, isGameComplete, checkGameComplete, getEndingSequenceState, setEndingSequenceState } = useGameStore();
 
   // Check if game should be complete on component mount
   useEffect(() => {
@@ -36,23 +36,46 @@ const NextLevelButton = ({ levelId }) => {
     }
   };
 
+  const handleBonusLevel = () => {
+    // Start the ending sequence and navigate to the special CompletedGameMenu
+    setEndingSequenceState('sequence_active');
+    navigate('/menu');
+  };
+
   const nextLevelId = levelId + 1;
   const isCurrentLevelCompleted = isLevelCompleted(levelId);
   const isNextLevelAvailable = nextLevelId <= 10 && isLevelUnlocked(nextLevelId);
+  
+  // Check if this is level 10 with bonus available
+  const endingSequenceState = getEndingSequenceState();
+  const isLevel10WithBonus = levelId === 10 && isCurrentLevelCompleted && endingSequenceState === 'bonus_available';
+  
+  // Determine button behavior
+  const buttonText = isLevel10WithBonus ? "Bonus Level!" : "Next Level";
+  const handleClick = isLevel10WithBonus ? handleBonusLevel : handleNextLevel;
 
-  // Don't render button if game is complete or current level isn't completed or there's no next level available
-  if (isGameComplete || !isCurrentLevelCompleted || !isNextLevelAvailable) {
+  // Don't render button if game is complete or current level isn't completed
+  // BUT do render for level 10 with bonus available
+  if (isGameComplete || !isCurrentLevelCompleted) {
     return null;
   }
+  
+  // Don't render if no next level available AND not the special level 10 bonus case
+  if (!isNextLevelAvailable && !isLevel10WithBonus) {
+    return null;
+  }
+
+  
+
 
   return (
     <button
       ref={buttonRef}
       className={styles.nextLevelButton}
-      onClick={handleNextLevel}
-      aria-label="Go to next level"
+      onClick={handleClick}
+      aria-label={isLevel10WithBonus ? "Go to bonus level" : "Go to next level"}
     >
-      Next Level
+      {buttonText}
     </button>
   );
 };

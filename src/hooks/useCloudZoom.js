@@ -50,14 +50,14 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
     if (isMobile) {
       // Mobile: More conservative sizing
       targetWidth = Math.min(
-        viewportWidth * 0.95,
-        400
+        viewportWidth * 0.85,  // 85% of viewport width
+        400                     // Max 400px wide
       );
     } else {
       // Desktop: Larger but still constrained
       targetWidth = Math.min(
-        viewportWidth * 0.6,
-        600
+        viewportWidth * 0.6,   // 60% of viewport width
+        600                    // Max 600px wide
       );
     }
     

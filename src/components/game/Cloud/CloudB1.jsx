@@ -225,10 +225,10 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
         />
 
         {/* Layer 2 - Intermediate state with Heavy cloud */}
-        {/* Show Layer 2 when zoomed and not yet blown away (currentLayer <= 2) */}
-        {isZoomed && !isZoomingOut && cloudState.currentLayer <= 2 && (
+        {/* Show Layer 2 only when we're actually on Layer 2 */}
+        {isZoomed && !isZoomingOut && isLayer2 && (
           <>
-            <div className={`${styles.cloudImage} ${isLayer1 ? styles.underLayer : ''}`}>
+            <div className={styles.cloudImage}>
               <img
                 ref={layer2CloudRef}
                 src={heavyCloudImage}

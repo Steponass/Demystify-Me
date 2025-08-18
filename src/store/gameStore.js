@@ -14,6 +14,7 @@ const initialState = {
   zoomedCloudId: null,
   audioLevel: 0,
   isGameComplete: false,
+  endingSequenceState: 'not_started',
 };
 
 const useGameStore = create(
@@ -39,10 +40,14 @@ const useGameStore = create(
             console.log('Game completed! All 10 levels finished.');
           }
 
+          // Special handling for level 10 first completion
+          const shouldTriggerEndingSequence = levelId === 10 && isFirstTimeCompletion;
+          
           set({
             completedLevels: newCompletedLevels,
             currentLevel: newCurrentLevel,
-            isGameComplete
+            isGameComplete,
+            endingSequenceState: shouldTriggerEndingSequence ? 'bonus_available' : get().endingSequenceState
             // isLevelTransitioning removed as requested
           });
         } else {
@@ -255,6 +260,19 @@ const useGameStore = create(
         });
       },
 
+      // Ending sequence management
+      setEndingSequenceState: (state) => {
+        set({ endingSequenceState: state });
+      },
+
+      getEndingSequenceState: () => {
+        return get().endingSequenceState;
+      },
+
+      completeEndingSequence: () => {
+        set({ endingSequenceState: 'completed' });
+      },
+
       resetAllProgress: () => set(initialState),
     }),
     {
@@ -266,6 +284,7 @@ const useGameStore = create(
         cloudStates: state.cloudStates,
         seenCloudTypes: state.seenCloudTypes,
         isGameComplete: state.isGameComplete,
+        endingSequenceState: state.endingSequenceState,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,
