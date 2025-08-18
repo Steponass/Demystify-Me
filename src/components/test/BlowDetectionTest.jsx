@@ -202,7 +202,7 @@ const BlowDetectionTest = () => {
               id="threshold-slider"
               type="range"
               min="0.05"
-              max="0.5"
+              max="0.8"
               step="0.01"
               value={customThreshold}
               onChange={(e) => setCustomThreshold(parseFloat(e.target.value))}

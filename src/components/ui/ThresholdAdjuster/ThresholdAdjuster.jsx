@@ -6,11 +6,11 @@ const ThresholdAdjuster = () => {
   const { blowThreshold, setBlowThreshold } = useGameStore();
 
   const thresholdOptions = [
-    { value: 0.1, label: 'Most Sensitive' },
-    { value: 0.2, label: 'More Sensitive' },
+    { value: 0.05, label: 'Most Sensitive' },
+    { value: 0.15, label: 'More Sensitive' },
     { value: 0.28, label: 'Default' },
-    { value: 0.4, label: 'Less Sensitive' },
-    { value: 0.5, label: 'Least Sensitive' }
+    { value: 0.6, label: 'Less Sensitive' },
+    { value: 0.8, label: 'Least Sensitive' }
   ];
 
   const currentIndex = thresholdOptions.findIndex(option => option.value === blowThreshold);
