@@ -1,5 +1,6 @@
 import React from 'react';
 import ActionButton from '@components/ui/ActionButton/ActionButton';
+import ThresholdAdjuster from '@components/ui/ThresholdAdjuster/ThresholdAdjuster';
 import styles from './MainMenu.module.css';
 
 const ReturnVisitMenu = ({ currentLevel, onResume }) => {
@@ -16,6 +17,8 @@ const ReturnVisitMenu = ({ currentLevel, onResume }) => {
         <p>Current progress: {getLevelText()}</p>
       </div>
       
+
+      
       <div className={styles.buttonContainer}>
         <ActionButton 
           variant="primary"
@@ -23,6 +26,7 @@ const ReturnVisitMenu = ({ currentLevel, onResume }) => {
         >
           Resume
         </ActionButton>
+        <ThresholdAdjuster />
       </div>
     </div>
   );

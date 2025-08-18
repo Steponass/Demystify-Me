@@ -18,7 +18,7 @@ import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithError
 gsap.registerPlugin(MorphSVGPlugin);
 
 const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
-  const { getCloudState, advanceCloudLayer, setAudioLevel } = useGameStore();
+  const { getCloudState, advanceCloudLayer, setAudioLevel, getBlowThreshold } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [lightCloudImage] = useState(() => getRandomCloudImages(1, 'Light')[0]);
@@ -155,7 +155,8 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     },
     onDoubleBlow: handleLayer2Feedback,
     onXLBlow: handleLayer2Feedback,
-    onLevelChange: setAudioLevel
+    onLevelChange: setAudioLevel,
+    blowThreshold: getBlowThreshold(),
   });
 
   // Initialize SVG and Layer 1 overlay

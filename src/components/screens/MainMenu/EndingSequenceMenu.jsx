@@ -9,7 +9,7 @@ import cloudStyles from '@components/game/Cloud/Cloud.module.css';
 import styles from './MainMenu.module.css';
 
 const EndingSequenceMenu = ({ onComplete }) => {
-  const { completeEndingSequence } = useGameStore();
+  const { completeEndingSequence, getBlowThreshold } = useGameStore();
   const [endingPhase, setEndingPhase] = useState('unlock_prompt'); // 'unlock_prompt' | 'joke_reveal'
   const [isComplete, setIsComplete] = useState(false);
   // Always zoomed for this sequence - no state needed
@@ -63,7 +63,8 @@ const EndingSequenceMenu = ({ onComplete }) => {
   // Blow detection setup
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: handleAnyBlow,
-    onLevelChange: () => {} // No-op for ending sequence
+    onLevelChange: () => {}, // No-op for ending sequence
+    blowThreshold: getBlowThreshold(),
   });
 
   // Microphone lifecycle

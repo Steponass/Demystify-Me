@@ -15,6 +15,7 @@ const initialState = {
   audioLevel: 0,
   isGameComplete: false,
   endingSequenceState: 'not_started',
+  blowThreshold: 0.28,
 };
 
 const useGameStore = create(
@@ -273,6 +274,14 @@ const useGameStore = create(
         set({ endingSequenceState: 'completed' });
       },
 
+      setBlowThreshold: (threshold) => {
+        set({ blowThreshold: threshold });
+      },
+
+      getBlowThreshold: () => {
+        return get().blowThreshold;
+      },
+
       resetAllProgress: () => set(initialState),
     }),
     {
@@ -285,6 +294,7 @@ const useGameStore = create(
         seenCloudTypes: state.seenCloudTypes,
         isGameComplete: state.isGameComplete,
         endingSequenceState: state.endingSequenceState,
+        blowThreshold: state.blowThreshold,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,

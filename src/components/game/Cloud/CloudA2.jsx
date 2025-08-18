@@ -11,7 +11,7 @@ import { MICROPHONE_START_DELAY, FEEDBACK_TIMEOUT_DELAY } from './constants/clou
 import { createLayer3Timeline, animateElementsOut, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay = 0, containerRef }) => {
-  const { getCloudState, advanceCloudLayer, setAudioLevel } = useGameStore();
+  const { getCloudState, advanceCloudLayer, setAudioLevel, getBlowThreshold } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [regularCloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
@@ -106,6 +106,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
     onLongBlow: () => { },
     onXLBlow: () => { },
     onLevelChange: setAudioLevel,
+    blowThreshold: getBlowThreshold(),
   });
 
   const prevZoomedRef = useRef(isZoomed);
