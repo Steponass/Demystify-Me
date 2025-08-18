@@ -245,7 +245,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
           </div>
         )}
 
-        {/* SVG morphing text layer - only visible when zoomed */}
+        {/* SVG morphing text layer */}
         {(isLayer1 || isLayer2) && isZoomed && !isZoomingOut && content.svgMorph && (
           <div className={styles.textContent}>
             <svg

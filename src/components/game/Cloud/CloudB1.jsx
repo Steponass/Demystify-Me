@@ -92,11 +92,16 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     isTransitioning.current = true;
     transitioningFromLayer.current = 1; // Remember we're transitioning from Layer 1
     
+    // Hide text immediately when blow is detected
+    if (layer1TextRef.current) {
+      layer1TextRef.current.style.display = 'none';
+    }
+    
     // Advance layer immediately to show Layer 2 behind Layer 1
     advanceCloudLayer(levelId, cloudId);
     
     animateElementsOut(
-      [layer1CloudRef, layer1TextRef],
+      [layer1CloudRef],
       () => {
         // Animation complete, cleanup
         setTimeout(() => {
@@ -114,8 +119,14 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     }
 
     isTransitioning.current = true;
+    
+    // Hide text immediately when blow is detected
+    if (layer2TextRef.current) {
+      layer2TextRef.current.style.display = 'none';
+    }
+    
     animateElementsOut(
-      [layer2CloudRef, layer2TextRef],
+      [layer2CloudRef],
       () => {
         advanceCloudLayer(levelId, cloudId);
         onReveal?.(cloudId);

@@ -2,11 +2,6 @@ html {
   transition: background var(--transition-slow);
 }
 
-/* Default fallback background */
-html {
-  background: var(--sunset-gradient-1);
-}
-
 /* Level-specific gradients */
 html[data-level="1"] {
   background: var(--sunset-gradient-1);
@@ -59,4 +54,3 @@ body {
   width: min(98%, 1280px);
   margin-inline: auto;
 }
-

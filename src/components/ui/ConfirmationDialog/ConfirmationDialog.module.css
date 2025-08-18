@@ -1,0 +1,61 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: oklch(0.133 0.0021 196.91 / 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-splash);
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  background-color: var(--clr-overlay-hint);
+  border-radius: var(--radius-16px);
+  border: 2px solid var(--clr-whiteish);
+  max-width: 400px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: dialogAppear var(--transition-normal);
+}
+
+@keyframes dialogAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.content {
+  padding: var(--space-24-32px);
+}
+
+.title {
+  color: var(--clr-whiteish);
+  margin: 0 0 var(--space-16-24px) 0;
+  font-size: var(--fs-h4);
+  font-weight: 600;
+  text-align: center;
+}
+
+.message {
+  color: var(--clr-whiteish);
+  margin: 0 0 var(--space-24-32px) 0;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-12-16px);
+  justify-content: center;
+  flex-wrap: wrap;
+}

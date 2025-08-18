@@ -6,7 +6,12 @@ import styles from './NextLevelButton.module.css';
 const NextLevelButton = ({ levelId }) => {
   const navigate = useNavigate();
   const buttonRef = useRef(null);
-  const { isLevelUnlocked } = useGameStore();
+  const { isLevelUnlocked, isLevelCompleted, isGameComplete, checkGameComplete } = useGameStore();
+
+  // Check if game should be complete on component mount
+  useEffect(() => {
+    checkGameComplete();
+  }, [checkGameComplete]);
 
   useEffect(() => {
     const button = buttonRef.current;
@@ -32,10 +37,11 @@ const NextLevelButton = ({ levelId }) => {
   };
 
   const nextLevelId = levelId + 1;
+  const isCurrentLevelCompleted = isLevelCompleted(levelId);
   const isNextLevelAvailable = nextLevelId <= 10 && isLevelUnlocked(nextLevelId);
 
-  // Don't render button if there's no next level available
-  if (!isNextLevelAvailable) {
+  // Don't render button if game is complete or current level isn't completed or there's no next level available
+  if (isGameComplete || !isCurrentLevelCompleted || !isNextLevelAvailable) {
     return null;
   }
 

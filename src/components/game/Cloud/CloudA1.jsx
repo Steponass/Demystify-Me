@@ -32,6 +32,11 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
+    // Hide text immediately when blow is detected
+    if (textContentRef.current) {
+      textContentRef.current.style.display = 'none';
+    }
+
     const timeline = createLayer3Timeline(
       layer3TextRef.current,
       () => {
@@ -40,7 +45,8 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       }
     );
 
-    animateElementsOut([animationRef, textContentRef], timeline);
+    // Only animate the cloud image out, not the text
+    animateElementsOut([animationRef], timeline);
   }, [
     isZoomed,
     isZoomingOut,
@@ -142,7 +148,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
               ref={animationRef}
               src={cloudImage}
               className={`${styles.floatingCloud} ${
-                !cloudState?.isRevealed
+                !cloudState?.isRevealed && !isZoomed
                   ? isReverseDirection
                     ? styles.floatingReverse
                     : styles.floating

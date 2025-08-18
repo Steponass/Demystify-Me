@@ -13,6 +13,7 @@ const initialState = {
   isZoomed: false,
   zoomedCloudId: null,
   audioLevel: 0,
+  isGameComplete: false,
 };
 
 const useGameStore = create(
@@ -30,11 +31,18 @@ const useGameStore = create(
 
         if (isFirstTimeCompletion) {
           const newCurrentLevel = Math.max(currentLevel, levelId + 1);
+          const newCompletedLevels = [...completedLevels, levelId];
+          const isGameComplete = newCompletedLevels.length === 10; // All 10 levels completed
+          
           console.log(`Completing level ${levelId}. Current level will be: ${newCurrentLevel}`);
+          if (isGameComplete) {
+            console.log('Game completed! All 10 levels finished.');
+          }
 
           set({
-            completedLevels: [...completedLevels, levelId],
-            currentLevel: newCurrentLevel
+            completedLevels: newCompletedLevels,
+            currentLevel: newCurrentLevel,
+            isGameComplete
             // isLevelTransitioning removed as requested
           });
         } else {
@@ -43,6 +51,17 @@ const useGameStore = create(
       }, isLevelCompletedBefore: (levelId) => {
         const { completedLevels } = get();
         return completedLevels.includes(levelId);
+      },
+
+      // Check and update isGameComplete based on current completedLevels
+      checkGameComplete: () => {
+        const { completedLevels, isGameComplete } = get();
+        const shouldBeComplete = completedLevels.length === 10;
+        
+        if (shouldBeComplete && !isGameComplete) {
+          console.log('Game completed! All 10 levels finished.');
+          set({ isGameComplete: true });
+        }
       },
 
       setZoomState: (isZoomed, cloudId = null) => {
@@ -246,6 +265,7 @@ const useGameStore = create(
         completedLevels: state.completedLevels,
         cloudStates: state.cloudStates,
         seenCloudTypes: state.seenCloudTypes,
+        isGameComplete: state.isGameComplete,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,

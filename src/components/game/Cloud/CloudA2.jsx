@@ -43,6 +43,11 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
       feedbackTimeoutRef.current = null;
     }
 
+    // Hide text immediately when blow is detected
+    if (textContentRef.current) {
+      textContentRef.current.style.display = 'none';
+    }
+
     const timeline = createLayer3Timeline(
       layer3TextRef.current,
       () => {
@@ -51,7 +56,8 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
       }
     );
 
-    animateElementsOut([regularCloudRef, lightCloudRef, textContentRef], timeline);
+    // Only animate the cloud images out, not the text
+    animateElementsOut([regularCloudRef, lightCloudRef], timeline);
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
 
   // Smart blow tracking: waits to see if it's part of a pattern

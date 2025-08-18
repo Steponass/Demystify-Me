@@ -9,7 +9,12 @@ export const setLevelGradient = (levelId) => {
 
   // Convert to string and set the data attribute
   const levelString = String(levelId);
-  htmlElement.setAttribute('data-level', levelString);
+  
+  // Only update if different to prevent unnecessary transitions
+  const currentLevel = htmlElement.getAttribute('data-level');
+  if (currentLevel !== levelString) {
+    htmlElement.setAttribute('data-level', levelString);
+  }
 };
 
 export const setMenuGradient = () => {

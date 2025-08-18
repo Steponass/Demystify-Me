@@ -15,6 +15,22 @@ const useBlowDetection = ({
 
   const [isListening, setIsListening] = useState(false);
 
+  // Use refs to store callbacks to prevent dependency cascade
+  const onLevelChangeRef = useRef(onLevelChange);
+  const onAnyBlowRef = useRef(onAnyBlow);
+  const onDoubleBlowRef = useRef(onDoubleBlow);
+  const onLongBlowRef = useRef(onLongBlow);
+  const onXLBlowRef = useRef(onXLBlow);
+
+  // Update refs when callbacks change
+  useEffect(() => {
+    onLevelChangeRef.current = onLevelChange;
+    onAnyBlowRef.current = onAnyBlow;
+    onDoubleBlowRef.current = onDoubleBlow;
+    onLongBlowRef.current = onLongBlow;
+    onXLBlowRef.current = onXLBlow;
+  });
+
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const microphoneStreamRef = useRef(null);
@@ -51,8 +67,8 @@ const useBlowDetection = ({
     lastBlowEndTimeRef.current = null;
 
     setIsListening(false);
-    onLevelChange(0);
-  }, [onLevelChange]);
+    onLevelChangeRef.current(0);
+  }, []);
 
   const requestMicrophoneAccess = useCallback(async () => {
     try {
@@ -155,7 +171,7 @@ const useBlowDetection = ({
             dataArrayRef.current.length / 255; // Normalize to 0-1 range
 
           // Report current audio level for UI feedback
-          onLevelChange(averageAmplitude);
+          onLevelChangeRef.current(averageAmplitude);
 
 
           const currentTime = Date.now();
@@ -178,21 +194,21 @@ const useBlowDetection = ({
                 const actualGapBetweenBlows = blowStartTimeRef.current - lastBlowEndTimeRef.current;
                 
                 if (actualGapBetweenBlows <= doubleBlowMaxGap) {
-                  onDoubleBlow();
+                  onDoubleBlowRef.current();
                 }
               }
 
               // Update the timestamp for when this blow ended (for next gap calculation)
               lastBlowEndTimeRef.current = currentTime;
 
-              onAnyBlow();
+              onAnyBlowRef.current();
 
               if (blowDuration >= longBlowThreshold) {
-                onLongBlow();
+                onLongBlowRef.current();
               }
 
               if (blowDuration >= xlBlowThreshold) {
-                onXLBlow();
+                onXLBlowRef.current();
               }
             }
 
@@ -227,11 +243,6 @@ const useBlowDetection = ({
     longBlowThreshold,
     xlBlowThreshold,
     doubleBlowMaxGap,
-    onAnyBlow,
-    onDoubleBlow,
-    onLongBlow,
-    onXLBlow,
-    onLevelChange,
     cleanupAudioResources
   ]);
 

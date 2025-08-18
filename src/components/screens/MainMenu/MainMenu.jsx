@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGameStore from '@store/gameStore';
 import FirstVisitMenu from './FirstVisitMenu';
 import ReturnVisitMenu from './ReturnVisitMenu';
 import CompletedGameMenu from './CompletedGameMenu';
+import ConfirmationDialog from '@components/ui/ConfirmationDialog/ConfirmationDialog';
 import { TOTAL_GAME_LEVELS } from './levelMetadata';
 import styles from './MainMenu.module.css';
 import { setMenuGradient } from '@utils/backgroundGradient';
 
 const MainMenu = () => {
   const navigate = useNavigate();
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const {
     currentLevel,
@@ -47,8 +49,17 @@ const MainMenu = () => {
   };
 
   const handleStartFresh = () => {
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmReset = () => {
     resetAllProgress();
+    setShowConfirmDialog(false);
     // Stay on the menu after resetting so user can see the change
+  };
+
+  const handleCancelReset = () => {
+    setShowConfirmDialog(false);
   };
 
   // Determine which menu component to render
@@ -82,6 +93,16 @@ const MainMenu = () => {
       <div className={styles.mainMenu_container}>
         {menuContent}
       </div>
+      
+      <ConfirmationDialog
+        isOpen={showConfirmDialog}
+        title="Reset Game Progress"
+        message="Are you sure you want to start fresh? This will reset all your progress and you'll lose all completed levels."
+        confirmText="Start Fresh"
+        cancelText="Cancel"
+        onConfirm={handleConfirmReset}
+        onCancel={handleCancelReset}
+      />
     </div>
   );
 };
