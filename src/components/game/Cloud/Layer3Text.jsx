@@ -15,7 +15,6 @@ const Layer3Text = ({
       style={{ 
         opacity: isLayer3 ? 1 : 0,
         visibility: isLayer3 ? 'visible' : 'hidden',
-        // zIndex: isZoomed ? 10 : 3,
         position: 'absolute',
         top: '50%',
         left: '50%',

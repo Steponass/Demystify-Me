@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { 
-  ANIMATION_DURATION, 
+  CLOUD_ANIMATION_DURATION, 
   LAYER3_FADE_DURATION, 
   CLOUD_FLOAT_Y_DISTANCE, 
   HORIZONTAL_DISTANCE,
@@ -53,7 +53,7 @@ export const animateElementsOut = (elements, timeline = null) => {
           x: horizontalDistance,
           opacity: 0,
           scale: CLOUD_SCALE_FACTOR,
-          duration: ANIMATION_DURATION,
+          duration: CLOUD_ANIMATION_DURATION,
           ease: 'sine.inOut',
         },
         0
@@ -71,8 +71,8 @@ export const createFeedbackWiggle = (element, intensity = 'medium') => {
 
   const wiggleParams = {
     light: { x: [-15, 15, 0], rotation: [0, 0, 0], duration: [0.1, 0.1, 0.1] },
-    medium: { x: [-30, 30, 0], rotation: [-2, 2, 0], duration: [0.2, 0.2, 0.2] },
-    heavy: { x: [-40, 40, -20, 0], rotation: [-5, 5, -2, 0], duration: [0.2, 0.25, 0.2, 0.25] }
+    medium: { x: [-30, 30, -30, 0], rotation: [-1, 1, 0, 0], duration: [0.1, 0.1, 0.1, 0.1] },
+    heavy: { x: [-50, 50, -50, 0], rotation: [-2, 2, -1, 0], duration: [0.12, 0.12, 0.12, 0.12] }
   };
 
   const params = wiggleParams[intensity] || wiggleParams.medium;

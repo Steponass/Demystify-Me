@@ -27,7 +27,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
   const regularCloudRef = useRef(null);
   const lightCloudRef = useRef(null);
   const textContentRef = useRef(null);
-  const layer3TextRef = useRef(null); // Add ref for layer 3 content
+  const layer3TextRef = useRef(null);
 
   // Track blow attempts to differentiate anyblow from double blow
   const lastBlowTimeRef = useRef(null);
@@ -85,7 +85,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
       gsap.timeline()
         .to(lightCloudElement, {
           y: -155,
-          duration: 0.35,
+          duration: 0.15,
           ease: 'sine.inOut'
         })
         .to(lightCloudElement, {

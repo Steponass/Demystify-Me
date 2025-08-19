@@ -18,7 +18,8 @@ const MainMenu = () => {
     currentLevel,
     completedLevels,
     resetAllProgress,
-    getEndingSequenceState
+    getEndingSequenceState,
+    setEndingSequenceState
   } = useGameStore();
 
   // Set menu gradient when MainMenu mounts
@@ -69,6 +70,11 @@ const MainMenu = () => {
     // The component will re-render and show the normal CompletedGameMenu
   };
 
+  // Debug function to access EndingSequenceMenu
+  const handleDebugEndingSequence = () => {
+    setEndingSequenceState('sequence_active');
+  };
+
   // Determine which menu component to render
   let menuContent;
   
@@ -117,6 +123,26 @@ const MainMenu = () => {
 
       <div className={styles.mainMenu_container}>
         {menuContent}
+        
+        {/* DEBUG: Temporary button to access EndingSequenceMenu */}
+        <button 
+          onClick={handleDebugEndingSequence}
+          style={{
+            position: 'fixed',
+            top: '10px',
+            right: '10px',
+            padding: '8px 12px',
+            backgroundColor: '#ff6b6b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '12px',
+            cursor: 'pointer',
+            zIndex: 9999
+          }}
+        >
+          DEBUG: Ending Sequence
+        </button>
       </div>
       
       <ConfirmationDialog

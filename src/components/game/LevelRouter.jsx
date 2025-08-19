@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { getLevelComponent } from '@levels/levelRoutes';
 import useGameStore from '@store/gameStore';
@@ -7,18 +7,26 @@ import { setLevelGradient } from '@utils/backgroundGradient';
 
 const LevelRouter = () => {
   const { levelId } = useParams();
-  const { isLevelUnlocked, currentLevel } = useGameStore();
+  const isLevelUnlocked = useGameStore(state => state.isLevelUnlocked);
+  const currentLevel = useGameStore(state => state.currentLevel);
+  const setZoomState = useGameStore(state => state.setZoomState);
   const [showHint, setShowHint] = React.useState(null);
 
   // Convert to number (params are strings)
   const numericLevelId = parseInt(levelId, 10);
 
-  // Set the gradient for the current level
+  // Set the gradient for the current level and cleanup zoom state
   useEffect(() => {
     if (!isNaN(numericLevelId)) {
       setLevelGradient(numericLevelId);
     }
-  }, [numericLevelId]);
+    
+    // Cleanup zoom state and DOM when level changes
+    return () => {
+      document.body.classList.remove('cloud-zoomed');
+      setZoomState(false);
+    };
+  }, [numericLevelId, setZoomState]);
 
   // Check if level is valid and unlocked
   const isValid = !isNaN(numericLevelId);
@@ -46,4 +54,4 @@ const LevelRouter = () => {
   );
 };
 
-export default LevelRouter;
+export default memo(LevelRouter);

@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path';
+import { serviceWorkerPlugin } from './vite-plugins/service-worker-plugin';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    serviceWorkerPlugin()],
     resolve: {
     alias: {
       '@': path.resolve('./src'),
@@ -16,5 +19,15 @@ export default defineConfig({
       '@data': path.resolve('./src/data'),
       '@levels': path.resolve('./src/levels')
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        // Ensure Service Worker gets copied to the build output
+        main: path.resolve('index.html')
+      }
+    }
+  },
+  // Copy the Service Worker to the build output
+  publicDir: 'public'
 })

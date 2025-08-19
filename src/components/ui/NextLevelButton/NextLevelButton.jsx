@@ -6,7 +6,16 @@ import styles from './NextLevelButton.module.css';
 const NextLevelButton = ({ levelId }) => {
   const navigate = useNavigate();
   const buttonRef = useRef(null);
-  const { isLevelUnlocked, isLevelCompleted, isGameComplete, checkGameComplete, getEndingSequenceState, setEndingSequenceState } = useGameStore();
+  const isLevelUnlocked = useGameStore(state => state.isLevelUnlocked);
+  const isCurrentLevelCompleted = useGameStore(state => {
+    const levelClouds = state.cloudStates[levelId] || {};
+    const cloudArray = Object.values(levelClouds);
+    return cloudArray.length > 0 && cloudArray.every(cloud => cloud.isRevealed);
+  });
+  const isGameComplete = useGameStore(state => state.isGameComplete);
+  const checkGameComplete = useGameStore(state => state.checkGameComplete);
+  const getEndingSequenceState = useGameStore(state => state.getEndingSequenceState);
+  const setEndingSequenceState = useGameStore(state => state.setEndingSequenceState);
 
   // Check if game should be complete on component mount
   useEffect(() => {
@@ -43,7 +52,6 @@ const NextLevelButton = ({ levelId }) => {
   };
 
   const nextLevelId = levelId + 1;
-  const isCurrentLevelCompleted = isLevelCompleted(levelId);
   const isNextLevelAvailable = nextLevelId <= 10 && isLevelUnlocked(nextLevelId);
   
   // Check if this is level 10 with bonus available
@@ -56,7 +64,12 @@ const NextLevelButton = ({ levelId }) => {
 
   // Don't render button if game is complete or current level isn't completed
   // BUT do render for level 10 with bonus available
-  if (isGameComplete || !isCurrentLevelCompleted) {
+  if (!isCurrentLevelCompleted) {
+    return null;
+  }
+  
+  // Don't render if game is complete UNLESS this is the special level 10 bonus case
+  if (isGameComplete && !isLevel10WithBonus) {
     return null;
   }
   

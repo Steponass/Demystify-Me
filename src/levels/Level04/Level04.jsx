@@ -5,11 +5,6 @@ import levelData from '@data/levels/level-04.json';
 import styles from '@levels/Level.module.css';
 
 const Level04 = ({ levelId }) => {
-  // Enhanced reveal handler for B1 clouds - tracks sequential completion
-  const customHandleReveal = (cloudId) => {
-    // eslint-disable-next-line no-unused-vars
-    const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
-  };
 
   const {
     containerRef,
@@ -17,7 +12,7 @@ const Level04 = ({ levelId }) => {
     cloudPositions,
     handleCloudReveal,
     levelData: level
-  } = useLevel(levelId, levelData, customHandleReveal);
+  } = useLevel(levelId, levelData);
 
   return (
     <main>

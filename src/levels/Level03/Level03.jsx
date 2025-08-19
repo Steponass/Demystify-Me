@@ -5,19 +5,13 @@ import levelData from '@data/levels/level-03.json';
 import styles from '@levels/Level.module.css';
 
 const Level03 = ({ levelId }) => {
-  // Enhanced cloud reveal handler for mixed-type levels
-  const customHandleReveal = (cloudId) => {
-    const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
-    console.log(`Level 3: ${revealedCloud?.cloudType} cloud "${cloudId}" revealed!`);
-  };
-
   const {
     containerRef,
     cloudRefs,
     cloudPositions,
     handleCloudReveal,
     levelData: level
-  } = useLevel(levelId, levelData, customHandleReveal);
+  } = useLevel(levelId, levelData);
 
   return (
     <main>

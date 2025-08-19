@@ -3,10 +3,10 @@ import useGameStore from '@store/gameStore';
 import styles from './BlowIndicator.module.css';
 
 const BlowIndicator = ({ 
-  audioLevel, 
   shouldFadeOut = false
 }) => {
   const { getBlowThreshold } = useGameStore();
+  const audioLevel = useGameStore(state => state.audioLevel);
   const threshold = getBlowThreshold();
 
 

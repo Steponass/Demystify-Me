@@ -65,7 +65,6 @@ const useGameStore = create(
         const shouldBeComplete = completedLevels.length === 10;
         
         if (shouldBeComplete && !isGameComplete) {
-          console.log('Game completed! All 10 levels finished.');
           set({ isGameComplete: true });
         }
       },

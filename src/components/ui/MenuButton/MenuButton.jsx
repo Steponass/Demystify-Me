@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './MenuButton.module.css';
 import MenuIcon from '@/assets/images/ui/MenuIcon';
@@ -21,4 +21,4 @@ const MenuButton = () => {
   );
 };
 
-export default MenuButton;
+export default memo(MenuButton);

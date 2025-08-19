@@ -13,7 +13,8 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
   const zoomOutDelayRef = useRef(null);
   const originalStylesRef = useRef(null);
 
-  const { setZoomState } = useGameStore();
+  const setZoomState = useGameStore(state => state.setZoomState);
+  const globalIsZoomed = useGameStore(state => state.isZoomed);
 
 
   const handleZoomIn = useCallback(() => {
@@ -151,7 +152,7 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
       duration: 0.6,
       ease: "sine.inOut",
       absolute: true,
-      scale: true,
+      scale: false,
       onComplete: () => {
         setIsZoomed(false);
         setIsZoomingOut(false);
@@ -204,18 +205,30 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
     };
   }, [isRevealed, isZoomed]);
 
-  // Cleanup on unmount
+  // Sync with global zoom state changes (e.g., when reset externally)
+  useEffect(() => {
+    if (!globalIsZoomed && isZoomed) {
+      // Global state was reset, clean up local state and DOM
+      document.body.classList.remove('cloud-zoomed');
+      setIsZoomed(false);
+      setIsZoomingOut(false);
+    }
+  }, [globalIsZoomed, isZoomed]);
+
+  // Cleanup on unmount - only cleanup if this component was responsible for the zoom state
   useEffect(() => {
     return () => {
       if (zoomOutDelayRef.current) {
         clearTimeout(zoomOutDelayRef.current);
         zoomOutDelayRef.current = null;
       }
-      if (isZoomed) {
+      // Only cleanup if this component's zoom state matches global state
+      if (isZoomed && globalIsZoomed) {
+        document.body.classList.remove('cloud-zoomed');
         setZoomState(false);
       }
     };
-  }, []);
+  }, [isZoomed, globalIsZoomed, setZoomState]);
 
   return {
     cloudRef,

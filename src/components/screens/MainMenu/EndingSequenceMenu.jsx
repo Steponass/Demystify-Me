@@ -23,7 +23,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
   // Content for the ending cloud based on phase
   const getCurrentText = () => {
     if (endingPhase === 'unlock_prompt') {
-      return "Unlock bonus level";
+      return "Ready for the biggest challenge?";
     } else {
       return "Just kidding, you've completed the game";
     }
@@ -148,7 +148,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
             }}
           >
             <p className={cloudStyles.finalLayerText}>
-              🎉 Congratulations! 🎉
+              Just kidding, this is the end.
             </p>
           </div>
 
@@ -174,14 +174,14 @@ const EndingSequenceMenu = ({ onComplete }) => {
       {endingPhase === 'joke_reveal' && !isComplete && (
         <div style={{
           position: 'absolute',
-          bottom: '50px',
+          top: '50px',
           left: '50%',
           transform: 'translateX(-50%)',
           color: 'rgba(255, 255, 255, 0.7)',
           fontSize: '14px',
           textAlign: 'center'
         }}>
-          Click anywhere to continue
+          <p>Click anywhere to continue</p>
         </div>
       )}
     </div>

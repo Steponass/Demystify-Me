@@ -8,7 +8,7 @@ import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import Layer3Text from './Layer3Text';
 import { 
-  ANIMATION_DURATION, 
+  CLOUD_ANIMATION_DURATION, 
   TRANSITION_SETTLE_TIME, 
   MICROPHONE_START_DELAY 
 } from './constants/cloudConstants';
@@ -78,7 +78,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
           y: -300,
           opacity: 0,
           scale: 0.8,
-          duration: ANIMATION_DURATION,
+          duration: CLOUD_ANIMATION_DURATION,
           ease: 'sine.out'
         }, 0);
       }

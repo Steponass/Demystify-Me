@@ -11,9 +11,9 @@ const FirstVisitMenu = ({ onStart }) => {
       
       > Mystify Me</h1>
 
-      <h5 className={styles.triggerWarning}>Trigger warning: some of the content may upset you, particularly if you like living in denial </h5>
+      <h5 className={styles.triggerWarning}>Trigger warning: some of the content may upset you, particularly if you like living in denial</h5>
       
-      <div className={styles.buttonContainer}>
+      <div className={styles.buttonContainerFirstVisit}>
         <ActionButton 
           variant="primary"
           onClick={onStart}

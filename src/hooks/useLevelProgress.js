@@ -5,19 +5,20 @@ import useGameStore from '@store/gameStore';
 const useLevelProgress = (levelId, cloudConfigs = []) => {
   const navigate = useNavigate();
 
-  const {
-    currentLevel,
-    isLevelUnlocked,
-    initializeClouds,
-    advanceCloudLayer,
-    getCloudState,
-    isLevelCompleted,
-    isLevelCompletedBefore,
-    completeLevel
-  } = useGameStore();
+  const currentLevel = useGameStore(state => state.currentLevel);
+  const isLevelUnlocked = useGameStore(state => state.isLevelUnlocked);
+  const initializeClouds = useGameStore(state => state.initializeClouds);
+  const advanceCloudLayer = useGameStore(state => state.advanceCloudLayer);
+  const getCloudState = useGameStore(state => state.getCloudState);
+  const isLevelCompletedBefore = useGameStore(state => state.isLevelCompletedBefore);
+  const completeLevel = useGameStore(state => state.completeLevel);
+  const isCompleted = useGameStore(state => {
+    const levelClouds = state.cloudStates[levelId] || {};
+    const cloudArray = Object.values(levelClouds);
+    return cloudArray.length > 0 && cloudArray.every(cloud => cloud.isRevealed);
+  });
 
   const isUnlocked = isLevelUnlocked(levelId);
-  const isCompleted = isLevelCompleted(levelId);
   const wasCompletedBefore = isLevelCompletedBefore(levelId);
 
   useEffect(() => {
@@ -36,7 +37,6 @@ const useLevelProgress = (levelId, cloudConfigs = []) => {
   // Call completeLevel when the level is completed for the first time
   useEffect(() => {
     if (isCompleted && !wasCompletedBefore) {
-      console.log(`Level ${levelId} completed!`);
       completeLevel(levelId);
     }
   }, [isCompleted, wasCompletedBefore, levelId, completeLevel]);

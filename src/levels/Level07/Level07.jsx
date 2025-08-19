@@ -5,10 +5,6 @@ import levelData from '@data/levels/level-07.json';
 import styles from '@levels/Level.module.css';
 
 const Level07 = ({ levelId }) => {
-  const customHandleReveal = (cloudId) => {
-    const revealedCloud = levelData.clouds.find(cloud => cloud.cloudId === cloudId);
-    console.log(`Level 7: ${revealedCloud?.cloudType} cloud "${cloudId}" revealed!`);
-  };
 
   const {
     containerRef,
@@ -16,7 +12,7 @@ const Level07 = ({ levelId }) => {
     cloudPositions,
     handleCloudReveal,
     levelData: level
-  } = useLevel(levelId, levelData, customHandleReveal);
+  } = useLevel(levelId, levelData);
 
   return (
     <main>
