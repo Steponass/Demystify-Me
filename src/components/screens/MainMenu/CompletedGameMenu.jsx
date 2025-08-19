@@ -8,7 +8,8 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
   return (
     <div className={styles.menuContent}>
       <h1 className={styles.title}>Mystify Me</h1>
-      <h6 className={styles.subtitle}>You've completed all the levels!</h6>
+      
+      <ThresholdAdjuster />
       
       <div className={styles.levelSelection}>
         {LEVEL_METADATA.map((level) => (
@@ -31,7 +32,7 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
           Start Fresh
         </ActionButton>
 
-        <ThresholdAdjuster />
+
 
       </div>
     </div>

@@ -6,11 +6,11 @@ const ThresholdAdjuster = () => {
   const { blowThreshold, setBlowThreshold } = useGameStore();
 
   const thresholdOptions = [
-    { value: 0.05, label: 'Most Sensitive' },
-    { value: 0.15, label: 'More Sensitive' },
+    { value: 0.11, label: 'Most Sensitive' },
+    { value: 0.2, label: 'More Sensitive' },
     { value: 0.28, label: 'Default' },
-    { value: 0.6, label: 'Less Sensitive' },
-    { value: 0.8, label: 'Least Sensitive' }
+    { value: 0.5, label: 'Less Sensitive' },
+    { value: 0.7, label: 'Least Sensitive' }
   ];
 
   const currentIndex = thresholdOptions.findIndex(option => option.value === blowThreshold);
@@ -32,7 +32,7 @@ const ThresholdAdjuster = () => {
   return (
     <div className={styles.thresholdAdjuster}>
       <div className={styles.label}>
-        Sensitivity
+        Microphone Sensitivity
       </div>
       
       <div className={styles.controls}>
@@ -42,11 +42,12 @@ const ThresholdAdjuster = () => {
           disabled={!canDecrease}
           aria-label="Decrease sensitivity"
         >
-          ←
+          {/* https://iconsvg.xyz/ */}
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         
         <div className={styles.currentValue}>
-          {currentOption.label}
+          <span>{currentOption.label}</span>
         </div>
         
         <button 
@@ -55,7 +56,7 @@ const ThresholdAdjuster = () => {
           disabled={!canIncrease}
           aria-label="Increase sensitivity"
         >
-          →
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
     </div>

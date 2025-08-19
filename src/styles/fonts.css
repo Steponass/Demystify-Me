@@ -46,12 +46,15 @@
 :where(h6, h5, h4, h3, h2, h1) {
   font-family: 'Crimson Pro Variable', 'Adjusted Georgia Fallback', serif;
   font-weight: 400;
+  font-feature-settings: "dlig" 1;
+  letter-spacing: 1px;
 }
 
 :where(p, ul, ol, li, a, button, label, input, textarea) {
   font-size: var(--fs-p);
   font-family: 'Crimson Pro Variable', 'Adjusted Georgia Fallback', serif;
   font-weight: 450;
+  font-feature-settings: "dlig" 1;
 }
 
 :where(h6, h5, h4, h3, h2, h1) {

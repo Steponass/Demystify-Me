@@ -49,10 +49,11 @@
   --z-cloud-translucent: 3;
   --z-cloud-top: 4;
   --z-cloud-overlay: 5;
-  --z-gui: 100;
-  --z-next-button: 150;
+  --z-gui: 1521;
+  --z-next-button: 50;
   --z-zoom-overlay: 200;
   --z-zoom-content: 201;
+  --z-zoom-ui: 250;
   --z-splash: 300;
 
   /* SHADOWS */

@@ -1,13 +1,15 @@
-// BlowIndicator.jsx with moving average smoothing
 import React, { useState, useEffect, useRef } from 'react';
+import useGameStore from '@store/gameStore';
 import styles from './BlowIndicator.module.css';
 
 const BlowIndicator = ({ 
   audioLevel, 
-  threshold = 0.28,
   shouldFadeOut = false
 }) => {
-  
+  const { getBlowThreshold } = useGameStore();
+  const threshold = getBlowThreshold();
+
+
   // State to track smoothed audio level
   const [smoothedLevel, setSmoothedLevel] = useState(0);
   

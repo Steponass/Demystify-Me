@@ -10,7 +10,7 @@
   pointer-events: none;
   color: var(--clr-whiteish);
   text-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5);
-  z-index: 1200;
+  z-index: var(--z-zoom-ui);
   animation: fadeInOut 4s ease-in-out forwards;
   background-color: var(--clr-overlay-hint);
   padding: var(--space-16-24px);
