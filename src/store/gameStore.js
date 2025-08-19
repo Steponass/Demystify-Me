@@ -36,7 +36,7 @@ const useGameStore = create(
           const newCompletedLevels = [...completedLevels, levelId];
           const isGameComplete = newCompletedLevels.length === 10; // All 10 levels completed
           
-          console.log(`Completing level ${levelId}. Current level will be: ${newCurrentLevel}`);
+
           if (isGameComplete) {
             console.log('Game completed! All 10 levels finished.');
           }
@@ -177,8 +177,6 @@ const useGameStore = create(
         const { cloudStates } = get();
         const levelClouds = cloudStates[levelId] || {};
         const cloudState = levelClouds[cloudId];
-
-        console.log('Current cloud state:', { levelId, cloudId, cloudState });
 
         if (!cloudState) {
           console.warn('Cloud state not found:', { levelId, cloudId });

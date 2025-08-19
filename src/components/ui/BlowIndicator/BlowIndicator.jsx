@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import useGameStore from '@store/gameStore';
 import styles from './BlowIndicator.module.css';
 
-const BlowIndicator = ({ 
-  shouldFadeOut = false
-}) => {
+const BlowIndicator = () => {
   const { getBlowThreshold } = useGameStore();
   const audioLevel = useGameStore(state => state.audioLevel);
   const threshold = getBlowThreshold();
@@ -50,8 +48,8 @@ const BlowIndicator = ({
   const clipPathId = "levelClip";
   
   return (
-    <div className={styles.blowIndicatorContainer}
-    style={{ opacity: shouldFadeOut ? 0 : 1 }}>
+    <div 
+    className={styles.blowIndicatorContainer}>
         <svg 
           viewBox="0 0 56 56" 
           xmlns="http://www.w3.org/2000/svg" 

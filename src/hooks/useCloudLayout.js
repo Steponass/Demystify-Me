@@ -9,40 +9,56 @@ const useCloudLayout = (cloudIds = []) => {
     return containerDimensions.width > 200 && containerDimensions.height > 300;
   }, [containerDimensions.width, containerDimensions.height]);
 
-  // Simplified cloud dimensions - only 480px breakpoint
+  // Better responsive cloud sizing with intermediate breakpoint
   const cloudDimensions = useMemo(() => {
-    const isMobile = containerDimensions.width < 480;
+    const width = containerDimensions.width;
     
-    const width = isMobile ? 120 : 250;
-    const height = width * 0.6; // Maintain aspect ratio
-    const margin = isMobile ? 20 : 30;
+    // Add intermediate sizing for problematic width range
+    let cloudWidth;
+    if (width < 480) {
+      cloudWidth = 120; // Mobile
+    } else if (width < 700) {
+      // Scale proportionally in the problematic range
+      cloudWidth = 120 + ((width - 480) / (700 - 480)) * (200 - 120);
+    } else {
+      cloudWidth = 250; // Desktop
+    }
+    
+    const cloudHeight = cloudWidth * 0.6;
+    const margin = width < 480 ? 20 : 30;
 
     return {
-      width: Math.floor(width),
-      height: Math.floor(height),
+      width: Math.floor(cloudWidth),
+      height: Math.floor(cloudHeight),
       margin: Math.floor(margin)
     };
   }, [containerDimensions.width]);
 
-  // Proper bounding box collision detection
-  const checkCollision = (rect1, rect2) => {
+  // Memoize collision detection to fix linter errors
+  const checkCollision = useCallback((rect1, rect2) => {
     return (
       rect1.x < rect2.x + rect2.width &&
       rect1.x + rect1.width > rect2.x &&
       rect1.y < rect2.y + rect2.height &&
       rect1.y + rect1.height > rect2.y
     );
-  };
+  }, []);
 
-  // Systematic fallback positioning when random placement fails
-  const findFallbackPosition = useCallback((placedRects, cloudWidth, cloudHeight, buffer, safeZone) => {
-    const stepSize = cloudWidth / 4; // Try positions in quarter-width steps
-    const maxX = containerDimensions.width - cloudWidth - safeZone;
-    const maxY = containerDimensions.height - cloudHeight - safeZone;
+  // Improved fallback with better spacing
+  const findFallbackPosition = useCallback((placedRects, cloudWidth, cloudHeight, buffer, safeZone, cloudIndex) => {
+    const containerWidth = containerDimensions.width;
+    const containerHeight = containerDimensions.height;
+    
+    // Larger step size for better coverage
+    const stepSizeX = Math.max(cloudWidth * 0.75, 100);
+    const stepSizeY = Math.max(cloudHeight * 0.75, 80);
+    
+    const maxX = containerWidth - cloudWidth - safeZone - buffer;
+    const maxY = containerHeight - cloudHeight - safeZone - buffer;
 
-    // Try positions in a grid pattern
-    for (let y = safeZone; y <= maxY; y += stepSize) {
-      for (let x = safeZone; x <= maxX; x += stepSize) {
+    // Try grid positions with better spacing
+    for (let y = safeZone; y <= maxY; y += stepSizeY) {
+      for (let x = safeZone; x <= maxX; x += stepSizeX) {
         const candidateRect = {
           x: x - buffer,
           y: y - buffer,
@@ -60,13 +76,18 @@ const useCloudLayout = (cloudIds = []) => {
       }
     }
 
-    // Last resort: place at a corner with minimal overlap risk
+    // Better last resort: distribute clouds more evenly
+    const columnsCount = Math.max(2, Math.floor(containerWidth / (cloudWidth + buffer)));
+    const rowsCount = Math.max(2, Math.floor(containerHeight / (cloudHeight + buffer)));
+    
+    const column = cloudIndex % columnsCount;
+    const row = Math.floor(cloudIndex / columnsCount) % rowsCount;
+    
     return {
-      x: safeZone + Math.random() * 50,
-      y: safeZone + Math.random() * 50
+      x: safeZone + (column * (containerWidth - cloudWidth - safeZone * 2) / Math.max(1, columnsCount - 1)),
+      y: safeZone + (row * (containerHeight - cloudHeight - safeZone * 2) / Math.max(1, rowsCount - 1))
     };
   }, [containerDimensions, checkCollision]);
-
 
   const calculatePositions = useCallback(() => {
     if (!hasValidDimensions || cloudIds.length === 0) return;
@@ -78,25 +99,22 @@ const useCloudLayout = (cloudIds = []) => {
     const newPositions = {};
     const placedRects = [];
     
-    // Safe zone to avoid edges
     const safeZone = 20;
-    const maxX = containerDimensions.width - cloudWidth - safeZone;
-    const maxY = containerDimensions.height - cloudHeight - safeZone;
-    
-    // Buffer space between clouds to ensure visual separation
     const buffer = isMobile ? 15 : 25;
+    
+    const maxX = containerDimensions.width - cloudWidth - safeZone - buffer;
+    const maxY = containerDimensions.height - cloudHeight - safeZone - buffer;
     const maxAttempts = 100;
 
-    for (const cloudId of cloudIds) {
+    cloudIds.forEach((cloudId, index) => {
       let positionFound = false;
 
       for (let attempt = 0; attempt < maxAttempts; attempt++) {
         const candidatePos = {
-          x: safeZone + Math.random() * (maxX - safeZone),
-          y: safeZone + Math.random() * (maxY - safeZone),
+          x: safeZone + Math.random() * Math.max(0, maxX - safeZone),
+          y: safeZone + Math.random() * Math.max(0, maxY - safeZone),
         };
 
-        // Create bounding rectangle with buffer
         const candidateRect = {
           x: candidatePos.x - buffer,
           y: candidatePos.y - buffer,
@@ -104,7 +122,6 @@ const useCloudLayout = (cloudIds = []) => {
           height: cloudHeight + (buffer * 2),
         };
 
-        // Check for collisions with all placed clouds
         const hasCollision = placedRects.some(placedRect => 
           checkCollision(candidateRect, placedRect)
         );
@@ -117,12 +134,17 @@ const useCloudLayout = (cloudIds = []) => {
         }
       }
 
-      // Fallback: try systematic placement if random fails
       if (!positionFound) {
-        const fallbackPos = findFallbackPosition(placedRects, cloudWidth, cloudHeight, buffer, safeZone);
+        const fallbackPos = findFallbackPosition(
+          placedRects, 
+          cloudWidth, 
+          cloudHeight, 
+          buffer, 
+          safeZone, 
+          index // Pass index for better distribution
+        );
         newPositions[cloudId] = fallbackPos;
         
-        // Add to placed rects
         const fallbackRect = {
           x: fallbackPos.x - buffer,
           y: fallbackPos.y - buffer,
@@ -131,7 +153,7 @@ const useCloudLayout = (cloudIds = []) => {
         };
         placedRects.push(fallbackRect);
       }
-    }
+    });
 
     setCloudPositions(newPositions);
     hasCalculated.current = true;
@@ -142,7 +164,7 @@ const useCloudLayout = (cloudIds = []) => {
       const widthDiff = Math.abs(previousDimensions.width - width);
       const heightDiff = Math.abs(previousDimensions.height - height);
 
-      const threshold = width < 480 ? 5 : 15; // More sensitive on mobile
+      const threshold = width < 480 ? 5 : 15;
 
       if (widthDiff > threshold || heightDiff > threshold) {
         hasCalculated.current = false;

@@ -73,9 +73,7 @@ const useLevel = (levelId, levelData, customHandleReveal = null) => {
   const handleCloudReveal = useCallback((cloudId) => {
     if (customHandleReveal) {
       customHandleReveal(cloudId);
-    } else {
-      console.log(`Cloud ${cloudId} revealed!`);
-    }
+    };
   }, [customHandleReveal]);
 
   return {
