@@ -32,7 +32,7 @@ const ThresholdAdjuster = () => {
   return (
     <div className={styles.thresholdAdjuster}>
       <div className={styles.label}>
-        Microphone Sensitivity
+        <p>Microphone Sensitivity</p>
       </div>
       
       <div className={styles.controls}>
@@ -47,7 +47,7 @@ const ThresholdAdjuster = () => {
         </button>
         
         <div className={styles.currentValue}>
-          <span>{currentOption.label}</span>
+          <p>{currentOption.label}</p>
         </div>
         
         <button 

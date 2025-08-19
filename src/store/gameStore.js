@@ -147,7 +147,8 @@ const useGameStore = create(
         // Ensure seenCloudTypes is always an array
         const seenCloudTypes = Array.isArray(state.seenCloudTypes) ? state.seenCloudTypes : [];
 
-        if (!seenCloudTypes.includes(cloudType)) {
+        // TODO(human): Modify this condition to always show A1 hints for visual editing
+        if (cloudType === 'A1' || !seenCloudTypes.includes(cloudType)) {
           const hints = {
             'A1': 'Blow into the microphone',
             'A2': 'Blow twice',

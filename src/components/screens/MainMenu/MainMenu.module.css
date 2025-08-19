@@ -7,6 +7,22 @@
   overflow: hidden;
 }
 
+.titleFirstVisit {
+  filter: blur(0px);
+  transition: filter 2s ease;
+  @starting-style {
+    filter: blur(50px);
+  }
+}
+
+.triggerWarning {
+  filter: blur(0px);
+  transition: filter 2s ease 1.7s;
+  @starting-style {
+    filter: blur(50px);
+  }
+}
+
 .mainMenu_container {
   width: min(95%, 1280px);
   position: relative;
@@ -37,7 +53,13 @@
   /* flex-direction: column; */
   gap: var(--space-8-12px);
   align-items: center;
-  margin-top: var(--space-24-32px)
+  margin-top: var(--space-24-32px);
+  filter: blur(0px);
+  transition: filter 1s ease 6.5s;
+  @starting-style {
+    filter: blur(50px);
+  }
+  
 }
 
 .buttonContainer button {

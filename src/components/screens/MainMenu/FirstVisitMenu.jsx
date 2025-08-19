@@ -6,9 +6,12 @@ import styles from './MainMenu.module.css';
 const FirstVisitMenu = ({ onStart }) => {
   return (
     <div className={styles.menuContent}>
-      <h1 className={styles.title}>Mystify Me</h1>
+      <h1 className=
+      {`${styles.titleFirstVisit} ${styles.title}`}
       
-      <ThresholdAdjuster />
+      > Mystify Me</h1>
+
+      <h5 className={styles.triggerWarning}>Trigger warning: some of the content may upset you, particularly if you like living in denial </h5>
       
       <div className={styles.buttonContainer}>
         <ActionButton 
@@ -18,6 +21,7 @@ const FirstVisitMenu = ({ onStart }) => {
           Start
         </ActionButton>
       </div>
+      <ThresholdAdjuster />
     </div>
   );
 };

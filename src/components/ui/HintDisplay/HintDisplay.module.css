@@ -1,21 +1,35 @@
 .hintContainer {
   background: var(--clr-overlay-hint);
   color: var(--clr-whiteish);
-  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+  padding: var(--space-16px) var(--space-24px);
   border-radius: var(--radius-4px);
   text-align: center;
-  max-width: min(400px, 90vw);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  width: min(400px, 90vw);
+  transition: opacity 1s ease, filter 1s ease, transform 0.3s ease;
   backdrop-filter: blur(4px);
   box-shadow: var(--shadow-elevation-3);
+  z-index: var(--z-zoom-ui);
+  opacity: 0;
+  filter: blur(0px);
+  transform: translateY(10px);
+}
+
+.hintContainer p {
+  font-size: var(--fs-h5);
 }
 
 .visible {
   opacity: 1;
+  filter: blur(0px);
   transform: translateY(0);
+  transition: opacity 1s ease, filter 1s ease, transform 0.3s ease;
+  
+  @starting-style {
+    filter: blur(50px);
+  }
 }
 
 .hidden {
   opacity: 0;
-  transform: translateY(10px);
+  filter: blur(50px);
 }

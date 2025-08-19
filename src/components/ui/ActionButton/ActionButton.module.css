@@ -1,5 +1,5 @@
 .actionButton {
-  padding: var(--space-12-16px) var(--space-24-32px);
+  padding: var(--space-12px) var(--space-24-32px);
   color: var(--clr-whiteish);
   background-color: oklch(0.3021 0.0469 249.62);
   border: none;

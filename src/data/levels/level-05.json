@@ -48,10 +48,19 @@
       "cloudId": "cloud6",
       "cloudType": "B1",
       "content": {
-        "layer1": "Failure is feedback",
-        "layer2": "Learn from mistakes",
-        "layer3": "Then package it as a motivational anecdote"
+        "layer1": "Failure is just feedback",
+        "layer2": "Learn from your mistakes",
+        "layer3": "Then package them as motivational anecdotes"
+      }
+    },
+    {
+      "cloudId": "cloud7",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "We're leveraging synergies",
+        "layer3": "We're doing the same thing twice"
       }
     }
+    
   ]
 }

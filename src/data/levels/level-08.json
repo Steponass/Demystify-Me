@@ -57,6 +57,14 @@
         },
         "layer3": "I’m scared I’d be nothing without a job"
       }
+    },
+    {
+      "cloudId": "cloud7",
+      "cloudType": "A2",
+      "content": {
+        "layer1": "Change starts with individuals",
+        "layer3": "It’s easier to preach self-change than face structures"
+      }
     }
   ]
 }

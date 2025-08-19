@@ -7,7 +7,7 @@
       "cloudType": "A1",
       "content": {
         "layer1": "What doesn't kill you makes you stronger",
-        "layer3": "Survival masquerading as empowerment"
+        "layer3": "So we call scars “character development”?"
       }
     },
     {
@@ -15,7 +15,7 @@
       "cloudType": "A1",
       "content": {
         "layer1": "We only use 10% of our brains",
-        "layer3": "Repeating a catchy myth"
+        "layer3": "Someone's repeating a catchy myth"
       }
     },
     {
@@ -40,6 +40,14 @@
       "content": {
         "layer1": "History repeats itself",
         "layer3": "I skipped nuance and went straight to cliché"
+      }
+    },
+    {
+      "cloudId": "cloud6",
+      "cloudType": "A1",
+      "content": {
+        "layer1": "That's just human nature",
+        "layer3": "Let's excuse bad behavior with pseudoscience"
       }
     }
   ]
