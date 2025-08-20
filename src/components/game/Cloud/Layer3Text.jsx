@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styles from './Cloud.module.css';
 
 const Layer3Text = ({ 
@@ -32,4 +32,4 @@ const Layer3Text = ({
   );
 };
 
-export default Layer3Text;
+export default memo(Layer3Text);

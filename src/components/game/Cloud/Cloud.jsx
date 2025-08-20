@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import CloudA1 from './CloudA1';
 import CloudA2 from './CloudA2';
 import CloudA3 from './CloudA3';
@@ -39,4 +39,4 @@ const Cloud = ({
   );
 };
 
-export default Cloud;
+export default memo(Cloud);

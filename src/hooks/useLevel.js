@@ -16,11 +16,11 @@ const useLevel = (levelId, levelData, customHandleReveal = null) => {
   const cloudIds = useMemo(() => 
     cloudConfigs.map(config => config.cloudId), [cloudConfigs]);
 
-  // Create refs for each cloud container
+  // Create refs for each cloud container (stable references)
   const cloudRefs = useMemo(() => {
     const refs = {};
     cloudConfigs.forEach(config => {
-      refs[config.cloudId] = React.createRef();
+      refs[config.cloudId] = { current: null };
     });
     return refs;
   }, [cloudConfigs]);

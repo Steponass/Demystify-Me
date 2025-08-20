@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import useGameStore from '@store/gameStore';
 
@@ -9,7 +9,8 @@ import useGameStore from '@store/gameStore';
 
 const ProtectedLevelRoute = () => {
   const { levelId } = useParams();
-  const { isLevelUnlocked, currentLevel } = useGameStore();
+  const isLevelUnlocked = useGameStore(state => state.isLevelUnlocked);
+  const currentLevel = useGameStore(state => state.currentLevel);
 
   // Convert to number (params are strings)
   const numericLevelId = parseInt(levelId, 10);
@@ -34,4 +35,4 @@ const ProtectedLevelRoute = () => {
   return <Outlet />;
 };
 
-export default ProtectedLevelRoute;
+export default memo(ProtectedLevelRoute);

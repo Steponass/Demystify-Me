@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import useGameStore from '@store/gameStore';
 import LevelTitle from '@components/ui/LevelTitle/LevelTitle';
 import HintDisplay from '@components/ui/HintDisplay/HintDisplay';
@@ -52,4 +52,4 @@ const GameGUI = ({ levelId }) => {
   );
 };
 
-export default GameGUI;
+export default memo(GameGUI);

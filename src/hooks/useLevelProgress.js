@@ -12,11 +12,8 @@ const useLevelProgress = (levelId, cloudConfigs = []) => {
   const getCloudState = useGameStore(state => state.getCloudState);
   const isLevelCompletedBefore = useGameStore(state => state.isLevelCompletedBefore);
   const completeLevel = useGameStore(state => state.completeLevel);
-  const isCompleted = useGameStore(state => {
-    const levelClouds = state.cloudStates[levelId] || {};
-    const cloudArray = Object.values(levelClouds);
-    return cloudArray.length > 0 && cloudArray.every(cloud => cloud.isRevealed);
-  });
+  const isLevelCompleted = useGameStore(state => state.isLevelCompleted);
+  const isCompleted = isLevelCompleted(levelId);
 
   const isUnlocked = isLevelUnlocked(levelId);
   const wasCompletedBefore = isLevelCompletedBefore(levelId);

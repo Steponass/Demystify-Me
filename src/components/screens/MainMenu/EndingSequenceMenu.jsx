@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
 import useGameStore from '@store/gameStore';
 import useBlowDetection from '@hooks/useBlowDetection';
-import { getRandomCloudImages } from '@data/cloudDefinitions';
 import { MICROPHONE_START_DELAY } from '@components/game/Cloud/constants/cloudConstants';
 import { startBlowDetectionWithErrorHandling } from '@components/game/Cloud/utils/cloudAnimations';
 import cloudStyles from '@components/game/Cloud/Cloud.module.css';
@@ -10,17 +9,15 @@ import styles from './MainMenu.module.css';
 
 const EndingSequenceMenu = ({ onComplete }) => {
   const { completeEndingSequence, getBlowThreshold } = useGameStore();
-  const [endingPhase, setEndingPhase] = useState('unlock_prompt'); // 'unlock_prompt' | 'joke_reveal'
+  const [endingPhase, setEndingPhase] = useState('unlock_prompt');
   const [isComplete, setIsComplete] = useState(false);
-  // Always zoomed for this sequence - no state needed
-  const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
+  const cloudImage = '/images/clouds/Regular/Cloud_Reg_3.webp';
 
   const cloudRef = useRef(null);
   const textContentRef = useRef(null);
   const layer3TextRef = useRef(null);
   const micTimeoutRef = useRef(null);
 
-  // Content for the ending cloud based on phase
   const getCurrentText = () => {
     if (endingPhase === 'unlock_prompt') {
       return "Ready for the biggest challenge?";
@@ -29,41 +26,34 @@ const EndingSequenceMenu = ({ onComplete }) => {
     }
   };
 
-  // Handle the cloud reveal (first blow)
   const handleAnyBlow = useCallback(() => {
     if (endingPhase === 'unlock_prompt' && !isComplete) {
-      // Hide text immediately when blow is detected
       if (textContentRef.current) {
         textContentRef.current.style.display = 'none';
       }
 
-      // Show layer 3 text with congratulations
       if (layer3TextRef.current) {
         layer3TextRef.current.style.opacity = '1';
         layer3TextRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
       }
 
-      // Animate cloud image out
       const cloudImage = cloudRef.current?.querySelector('img');
       if (cloudImage) {
         gsap.to(cloudImage, {
-          y: -300,
           opacity: 0,
-          scale: 0.8,
-          duration: 1.2,
+          scale: 6,
+          duration: 0.8,
           ease: 'sine.out'
         });
       }
 
-      // Move to joke reveal phase
       setEndingPhase('joke_reveal');
     }
   }, [endingPhase, isComplete]);
 
-  // Blow detection setup
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: handleAnyBlow,
-    onLevelChange: () => {}, // No-op for ending sequence
+    onLevelChange: () => {},
     blowThreshold: getBlowThreshold(),
   });
 
@@ -95,24 +85,8 @@ const EndingSequenceMenu = ({ onComplete }) => {
   const handleCompleteSequence = () => {
     if (endingPhase === 'joke_reveal' && !isComplete) {
       setIsComplete(true);
-      
-      // Fade out the entire cloud
-      if (cloudRef.current) {
-        gsap.to(cloudRef.current, {
-          opacity: 0,
-          scale: 0.8,
-          duration: 1,
-          ease: 'power2.out',
-          onComplete: () => {
-            completeEndingSequence();
-            onComplete();
-          }
-        });
-      } else {
-        // Fallback if animation fails
-        completeEndingSequence();
-        onComplete();
-      }
+      completeEndingSequence();
+      onComplete();
     }
   };
 
@@ -122,7 +96,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
       onClick={handleCompleteSequence}
       style={{ cursor: endingPhase === 'joke_reveal' ? 'pointer' : 'default' }}
     >
-      {/* Center the cloud in the screen */}
+
       <div style={{
         position: 'absolute',
         top: '50%',
@@ -137,7 +111,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
           className={`${cloudStyles.cloud} ${cloudStyles.zoomed}`}
           data-flip-id="ending-cloud"
         >
-          {/* Layer 3 Text (congratulations) */}
+
           <div 
             ref={layer3TextRef}
             className={cloudStyles.textContent}
@@ -177,11 +151,10 @@ const EndingSequenceMenu = ({ onComplete }) => {
           top: '50px',
           left: '50%',
           transform: 'translateX(-50%)',
-          color: 'rgba(255, 255, 255, 0.7)',
-          fontSize: '14px',
+          color: 'rgba(255, 255, 255, 0.8)',
           textAlign: 'center'
         }}>
-          <p>Click anywhere to continue</p>
+          <p>You can replay any level now</p>
         </div>
       )}
     </div>

@@ -10,7 +10,7 @@ import { MICROPHONE_START_DELAY } from './constants/cloudConstants';
 import { createLayer3Timeline, animateElementsOut, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
-  const { getCloudState, advanceCloudLayer, setAudioLevel, getBlowThreshold } = useGameStore();
+  const { getCloudState, advanceCloudLayer, getBlowThreshold } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
@@ -60,7 +60,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
 
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: handleAnyBlow,
-    onLevelChange: setAudioLevel,
     blowThreshold: getBlowThreshold(),
   });
 

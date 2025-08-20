@@ -34,7 +34,7 @@
   top: 0;
   left: 0;
   z-index: 10;
-  opacity: 0.6;
+  opacity: 0.4;
   overflow: visible;
 }
 
@@ -101,6 +101,11 @@
   height: min (300px, 500px);
   /* Elevate above overlay */
   z-index: var(--z-zoom-content);
+}
+
+.cloud.zoomed .floatingCloud {
+  transform: scale(1.3);
+  transform-origin: center;
 }
 
 /* Reduce motion for better mobile performance */

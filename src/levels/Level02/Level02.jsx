@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
 import useLevel from '@hooks/useLevel';
 import levelData from '@data/levels/level-02.json';
@@ -46,4 +46,4 @@ const Level02 = ({ levelId }) => {
   );
 };
 
-export default Level02;
+export default memo(Level02);

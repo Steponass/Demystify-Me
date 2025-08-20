@@ -15,7 +15,7 @@ import {
 import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
-  const { getCloudState, advanceCloudLayer, setAudioLevel, getBlowThreshold } = useGameStore();
+  const { getCloudState, advanceCloudLayer, getBlowThreshold } = useGameStore();
   const cloudState = getCloudState(levelId, cloudId);
 
   const [regularCloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
@@ -160,7 +160,6 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       }
     },
     onDoubleBlow: handleLayer2Feedback,
-    onLevelChange: setAudioLevel,
     blowThreshold: getBlowThreshold(),
   });
 
