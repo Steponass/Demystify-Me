@@ -236,7 +236,13 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
               <img
                 ref={layer2CloudRef}
                 src={heavyCloudImage}
-                className={styles.floatingCloud}
+                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
+                  ? (isReverseDirection ? styles.floatingReverse : styles.floating)
+                  : ''
+                  }`}
+                style={{
+                  '--floating-duration': `${animationDuration}s`
+                }}
               />
             </div>
             {isLayer2 && (

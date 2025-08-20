@@ -86,7 +86,15 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
 
       gsap.killTweensOf(lightCloudElement);
 
-      gsap.timeline()
+      // Temporarily disable CSS animation
+      lightCloudElement.style.animation = 'none';
+
+      gsap.timeline({
+        onComplete: () => {
+          // Re-enable CSS animation after bounce
+          lightCloudElement.style.animation = '';
+        }
+      })
         .to(lightCloudElement, {
           y: -155,
           duration: 0.15,
@@ -196,7 +204,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
                 ref={lightCloudRef}
                 src={lightCloudImage}
                 className={`${styles.floatingCloud} 
-                ${!cloudState?.isRevealed && !isZoomed
+                ${!cloudState?.isRevealed && !isExitAnimating
                   ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                   : ''
                   }`}
@@ -220,7 +228,8 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
               <img
                 ref={regularCloudRef}
                 src={regularCloudImage}
-                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
+                className={`${styles.floatingCloud} 
+                ${!cloudState?.isRevealed && !isExitAnimating
                   ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                   : ''
                   }`}

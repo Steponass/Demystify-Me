@@ -246,6 +246,9 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
                 ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                 : ''
                 }`}
+              style={{
+                '--floating-duration': `${animationDuration}s`
+              }}
             />
           </div>
         )}
@@ -275,7 +278,11 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
             <img
               ref={lightCloudRef}
               src={lightCloudImage}
-              className={styles.floatingCloud}
+              className={`${styles.floatingCloud} 
+              ${!cloudState?.isRevealed && !isExitAnimating
+                ? (isReverseDirection ? styles.floatingReverse : styles.floating)
+                : ''
+                }`}
               style={{
                 '--floating-duration': `${animationDuration}s`
               }}
