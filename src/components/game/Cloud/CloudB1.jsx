@@ -223,6 +223,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
           content={content.layer3}
           isLayer3={isLayer3}
           isZoomed={isZoomed}
+          isZoomingOut={isZoomingOut}
         />
 
         {/* Layer 2 - Intermediate state with Heavy cloud */}

@@ -6,8 +6,24 @@
 }
 
 .label {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-8px);
+  align-items: center;
+  justify-content: center;
   font-size: var(--fs-p);
   margin-bottom: var(--space-4px);
+}
+
+.label p {
+  padding-bottom: 2px;
+}
+
+.thresholdAdjusterInfoBtn {
+  background-color: transparent;
+  border: none;
+  color: var(--clr-whiteish);
+  cursor: pointer;
 }
 
 .controls {

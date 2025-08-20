@@ -230,6 +230,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
           content={content.layer3}
           isLayer3={isLayer3}
           isZoomed={isZoomed}
+          isZoomingOut={isZoomingOut}
         />
 
         {/* Layer 2 Base: Heavy cloud (always present for Layers 1 & 2) */}

@@ -6,6 +6,7 @@ const Layer3Text = ({
   content, 
   isLayer3, 
   isZoomed,
+  isZoomingOut,
   className = styles.textContent 
 }) => {
   return (
@@ -24,7 +25,7 @@ const Layer3Text = ({
         pointerEvents: isZoomed ? 'auto' : 'none'
       }}
     >
-      <p className={styles.finalLayerText}>
+      <p className={`${styles.finalLayerText} ${(isZoomed && !isZoomingOut) ? styles.zoomedText : styles.unzoomedText}`}>
         {content}
       </p>
     </div>

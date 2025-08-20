@@ -181,6 +181,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
           content={content.layer3}
           isLayer3={isLayer3}
           isZoomed={isZoomed}
+          isZoomingOut={isZoomingOut}
         />
 
         {/* Layer 1 - The "sandwich" structure with 3 elements */}
