@@ -5,14 +5,22 @@
   cursor: pointer;
   padding: var(--space-8px);
   width: var(--space-48-64px);
+  @media (hover: hover) {
+    &:hover {
+      filter: drop-shadow(0.5px 0.5px 1.5px var(--clr-whiteish));
+      transform: translateY(-1px);
+    }
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+  &:focus-visible {
+    outline: solid 3px var(--clr-whiteish);
+    border-radius: 50px;
+  }
 }
 
 .menuButton svg {
   width: 100%;
   height: 100%;
-}
-
-.menuButton:hover {
-  filter: drop-shadow(0.5px 0.5px 1.5px var(--clr-whiteish));
-  transform: translateY(-0.5px);
 }

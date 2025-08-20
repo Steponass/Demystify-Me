@@ -31,7 +31,11 @@ body.cloud-zoomed::before {
   pointer-events: auto;
 }
 
-/* Level-specific gradients */
+html[data-level="menu"] {
+  background: var(--gradient-sky-classic);
+}
+
+/* Level gradients */
 html[data-level="1"] {
   background: var(--gradient-sunset-orange-to-purple);
 }
@@ -72,8 +76,4 @@ html[data-level="10"] {
   background: var(--gradient-sky-purple-to-midnight);
 }
 
-
-html[data-level="menu"] {
-  background: var(--gradient-sky-classic);
-}
 

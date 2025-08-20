@@ -1,5 +1,5 @@
 :root {
-  /* COLORS AT BOTTOM DUE TO SHITLOADS OF GRADIENTS */
+  /* COLORS AT BOTTOM DUE TO LOADS OF GRADIENTS */
 
   /* SPACING */
   --space-4px: 4px;
@@ -43,7 +43,7 @@
     var(--cloud-size-desktop)
   );
 
-  /* Z-index scale (not used yet) */
+  /* Z-INDEX */
   --z-cloud-under: 1;
   --z-cloud-base: 2;
   --z-cloud-translucent: 3;
@@ -59,19 +59,21 @@
   /* SHADOWS */
   /* 1st - "direct"
      2nd - "ambient" */
-  --shadow-elevation-1: 
-    0    2px 3px -1px hsla(0, 0%, 26%, 0.3),
-    0 -0.5px 1px      hsla(0, 0%, 10%, 0.2);
 
-    /* buttons */
+    /* Action Button */
+  --shadow-elevation-1: 
+    0    2px 3px -1px hsla(0, 0%, 16%, 0.9),
+    0    0px 1px      hsla(0, 0%, 18%, 0.9);
+
+    /* Action Button:hover */
   --shadow-elevation-2: 
-    0 3px 6px hsla(0, 0%, 16%),
-    0 2px 4px hsla(0, 0%, 18%);
+    0   2.5px 4px hsla(0, 0%, 16%),
+    0     0.5px 2px hsla(0, 0%, 18%);
 
     /* Overlays / Conf. dialog  */
   --shadow-elevation-3: 
-    0 8px 16px hsla(0, 0%, 16%),
-    0 3px  6px hsla(0, 0%, 12%);
+    0 6px 8px hsla(0, 0%, 16%),
+    0 2px  3px hsla(0, 0%, 14%);
 
   --shadow-elevation-4: 
     0 8px 12px -1px hsla(0, 0%, 30%, 0.4),
@@ -81,12 +83,14 @@
     0 10px 16px -3px hsla(0, 0%, 30%, 0.4);
 
   /* COLORS */
-  --clr-bg: oklch(0.4483 0.1098 245.05);
   --clr-whiteish: oklch(0.9851 0 0);
   --clr-blackish: oklch(0.133 0.0021 196.91);
   --clr-overlay-hint: oklch(0.3079 0.0661 242.03 / 0.95);
+  --clr-btn-primary: oklch(0.242 0.0339 238.08);
+  --clr-btn-secondary: oklch(0.2745 0.0334 237.45);
+  --clr-greyish: oklch(0.6751 0.0191 234.65);
 
-  /* Level gradients, in level order */
+  /* GRADIENTS, in level order */
   --gradient-sunset-orange-to-purple: linear-gradient(
     360deg in oklch,
     oklch(0.739 0.0855 38.39) 0%, 6%,
@@ -151,7 +155,6 @@
     oklch(0.2499 0.1039 273.1) 60% 60%, 80%,
     oklch(0.1809 0.0795 271.05) 100%
   );
-
   /* Current Menu */
   --gradient-sky-classic: linear-gradient(
     360deg in oklch,

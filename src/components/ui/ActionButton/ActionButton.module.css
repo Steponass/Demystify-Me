@@ -1,25 +1,31 @@
 .actionButton {
   padding: var(--space-12px) var(--space-24-32px);
   color: var(--clr-whiteish);
-  background-color: oklch(0.3079 0.0661 242.03 / 0.55);
+  background-color: var(--clr-btn-primary);
   border: none;
   cursor: pointer;
   min-width: 128px;
   border-radius: var(--radius-50px);
   transition: var(--transition-normal);
   font-size: var(--fs-h6);
-  box-shadow: var(--shadow-elevation-2);
-}
-
-.actionButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-}
-
-.actionButton:active:not(:disabled) {
-  transform: translateY(1px);
+  box-shadow: var(--shadow-elevation-1);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-elevation-2);
+    }
+  }
+  &:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-elevation-1);
+  }
+  &:focus-visible {
+    outline: solid 3px var(--clr-whiteish);
+  }
 }
 
 .levelButton {
-  /* background-color: red; */
+  background-color: var(--clr-btn-secondary);
   padding: var(--space-8px) var(--space-16px);
+
 }

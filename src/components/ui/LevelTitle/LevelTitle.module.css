@@ -11,10 +11,12 @@
   color: var(--clr-whiteish);
   text-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5);
   z-index: var(--z-zoom-ui);
-  animation: fadeInOut 4s ease-in-out forwards;
+  animation: fadeInOut 5s ease-in-out forwards;
   background-color: var(--clr-overlay-hint);
   padding: var(--space-16-24px);
   border-radius: var(--radius-16px);
+  will-change: opacity, transform, filter;
+  box-shadow: var(--shadow-elevation-3);
 }
 
 .levelNumber {
@@ -30,18 +32,25 @@
 @keyframes fadeInOut {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) translateY(30px);
+    filter: blur(50px);
+    transform: translate(-50%, -50%) translateY(20px);
   }
+
   15% {
     opacity: 1;
+    filter: blur(0px);
     transform: translate(-50%, -50%) translateY(0);
   }
+
   85% {
     opacity: 1;
+    filter: blur(0px);
     transform: translate(-50%, -50%) translateY(0);
   }
+
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) translateY(-30px);
+    filter: blur(50px);
+    transform: translate(-50%, -50%) translateY(-20px);
   }
 }
