@@ -19,14 +19,14 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
             onClick={() => onLevelSelect(level.path)}
             variant="level"
           >
-            <span className={styles.levelTitle}>{level.title}</span>
+            <p>{level.title}</p>
           </ActionButton>
         ))}
       </div>
       
       <div className={styles.freshStartContainer}>
         <ActionButton 
-          variant="secondary"
+          variant="primary"
           onClick={onStartFresh}
         >
           Start Fresh

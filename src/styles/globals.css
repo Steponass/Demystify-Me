@@ -2,6 +2,13 @@ html {
   transition: background var(--transition-slow);
 }
 
+body {
+  overflow: hidden;
+  padding-block: min(24px, 4px + 2vw);
+  width: 100%;
+  margin-inline: auto;
+}
+
 /* Backdrop filter overlay when cloud is zoomed */
 body::before {
   content: '';
@@ -70,9 +77,3 @@ html[data-level="menu"] {
   background: var(--gradient-sky-classic);
 }
 
-body {
-  overflow-y: hidden;
-  padding-block: min(24px, 4px + 2vw);
-  width: 100%;
-  margin-inline: auto;
-}

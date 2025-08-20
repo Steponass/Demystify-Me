@@ -25,6 +25,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const [heavyCloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
+  const [isExitAnimating, setIsExitAnimating] = useState(false);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
 
@@ -101,6 +102,9 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
+    // Disable CSS floating animation before GSAP takes over
+    setIsExitAnimating(true);
+    
     isTransitioning.current = true;
 
     const timeline = createLayer3Timeline(
@@ -238,7 +242,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
             <img
               ref={heavyCloudRef}
               src={heavyCloudImage}
-              className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
+              className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
                 ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                 : ''
                 }`}

@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import { gsap } from 'gsap';
 import useLevelProgress from '@hooks/useLevelProgress';
 import useCloudLayout from '@hooks/useCloudLayout';
+import useGameStore from '@store/gameStore';
 import { createCloudEntranceAnimation } from '@components/game/Cloud/utils/cloudAnimations';
 
 const useLevel = (levelId, levelData, customHandleReveal = null) => {
@@ -73,8 +74,22 @@ const useLevel = (levelId, levelData, customHandleReveal = null) => {
   const handleCloudReveal = useCallback((cloudId) => {
     if (customHandleReveal) {
       customHandleReveal(cloudId);
-    };
-  }, [customHandleReveal]);
+    }
+    
+    // Immediately check for level completion when a cloud is revealed
+    // Use setTimeout to allow the cloud state to update before checking completion
+    setTimeout(() => {
+      const gameState = useGameStore.getState();
+      const { isLevelCompleted, completeLevel, isLevelCompletedBefore } = gameState;
+      
+      const isCompleted = isLevelCompleted(levelId);
+      const wasCompletedBefore = isLevelCompletedBefore(levelId);
+      
+      if (isCompleted && !wasCompletedBefore) {
+        completeLevel(levelId);
+      }
+    }, 0);
+  }, [customHandleReveal, levelId]);
 
   return {
     containerRef,

@@ -7,11 +7,8 @@ const NextLevelButton = ({ levelId }) => {
   const navigate = useNavigate();
   const buttonRef = useRef(null);
   const isLevelUnlocked = useGameStore(state => state.isLevelUnlocked);
-  const isCurrentLevelCompleted = useGameStore(state => {
-    const levelClouds = state.cloudStates[levelId] || {};
-    const cloudArray = Object.values(levelClouds);
-    return cloudArray.length > 0 && cloudArray.every(cloud => cloud.isRevealed);
-  });
+  const isLevelCompleted = useGameStore(state => state.isLevelCompleted);
+  const isCurrentLevelCompleted = isLevelCompleted(levelId);
   const isGameComplete = useGameStore(state => state.isGameComplete);
   const checkGameComplete = useGameStore(state => state.checkGameComplete);
   const getEndingSequenceState = useGameStore(state => state.getEndingSequenceState);

@@ -10,6 +10,7 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
+  user-select: none;
 }
 
 .cloud.revealed {
@@ -25,7 +26,7 @@
   height: 100%;
   pointer-events: none;
   z-index: 5;
-  filter: blur(4px) drop-shadow(1px 2px 5px hsl(0, 0%, 12%));
+  filter: blur(4px) drop-shadow(1px 2px 5px hsl(0, 0%, 15%));
 }
 
 /* For CloudB2 */
@@ -34,14 +35,14 @@
   top: 0;
   left: 0;
   z-index: 10;
-  opacity: 0.4;
+  opacity: 0.45;
   overflow: visible;
 }
 
 .morphingSVG {
   width: 100%;
   height: 100%;
-  max-width: clamp(200px, 20vw, 400px);
+  width: clamp(220px, 240px, 300px);
 }
 
 /* Layer positioning classes */

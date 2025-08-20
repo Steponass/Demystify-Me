@@ -22,6 +22,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const [heavyCloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
+  const [isExitAnimating, setIsExitAnimating] = useState(false);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
 
@@ -89,6 +90,9 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
+    // Disable CSS floating animation before GSAP takes over
+    setIsExitAnimating(true);
+    
     isTransitioning.current = true;
     transitioningFromLayer.current = 1; // Remember we're transitioning from Layer 1
     
@@ -226,8 +230,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
         />
 
         {/* Layer 2 - Intermediate state with Heavy cloud */}
-        {/* Show Layer 2 only when we're actually on Layer 2 */}
-        {isZoomed && !isZoomingOut && isLayer2 && (
+        {isZoomed && !isZoomingOut && (
           <>
             <div className={styles.cloudImage}>
               <img
@@ -253,7 +256,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
               <img
                 ref={layer1CloudRef}
                 src={regularCloudImage}
-                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
+                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
                   ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                   : ''
                   }`}

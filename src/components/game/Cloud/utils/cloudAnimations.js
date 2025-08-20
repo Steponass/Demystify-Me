@@ -43,16 +43,45 @@ export const animateElementsOut = (elements, timeline = null) => {
 
   elements.forEach(element => {
     if (element?.current) {
+      // Kill any existing GSAP tweens but preserve CSS animations momentarily
       gsap.killTweensOf(element.current);
+      
+      // Get current computed transform to maintain smooth transition
+      const computedStyle = getComputedStyle(element.current);
+      const currentTransform = computedStyle.transform;
+      
+      // Parse current transform values to start GSAP from current position
+      let currentX = 0, currentY = 0, currentScale = 1;
+      if (currentTransform && currentTransform !== 'none') {
+        const matrix = currentTransform.match(/matrix.*\((.+)\)/);
+        if (matrix) {
+          const values = matrix[1].split(', ');
+          if (values.length >= 6) {
+            currentX = parseFloat(values[4]) || 0;
+            currentY = parseFloat(values[5]) || 0;
+            currentScale = parseFloat(values[0]) || 1;
+          }
+        }
+      }
+      
+      // Set initial GSAP values to current computed state
+      gsap.set(element.current, {
+        x: currentX,
+        y: currentY,
+        scale: currentScale
+      });
+      
+      // Disable CSS animations now that GSAP has taken over
       element.current.style.transition = 'none';
+      element.current.style.animation = 'none';
 
       tl.to(
         element.current,
         {
-          y: CLOUD_FLOAT_Y_DISTANCE,
-          x: horizontalDistance,
+          y: currentY + CLOUD_FLOAT_Y_DISTANCE,
+          x: currentX + horizontalDistance,
           opacity: 0,
-          scale: CLOUD_SCALE_FACTOR,
+          scale: currentScale * CLOUD_SCALE_FACTOR,
           duration: CLOUD_ANIMATION_DURATION,
           ease: 'sine.inOut',
         },

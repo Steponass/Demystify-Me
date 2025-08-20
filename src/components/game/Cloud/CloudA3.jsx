@@ -17,6 +17,7 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
 
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
+  const [isExitAnimating, setIsExitAnimating] = useState(false);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
 
@@ -45,6 +46,9 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       }
     );
 
+    // Disable CSS floating animation just before GSAP takes over
+    setIsExitAnimating(true);
+
     // Only animate the cloud image out, not the text
     animateElementsOut([animationRef], timeline);
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
@@ -54,6 +58,9 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
+    // Disable CSS floating after first incorrect blow to avoid CSS-GSAP conflicts
+    setIsExitAnimating(true);
+    
     createFeedbackWiggle(animationRef, 'heavy');
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed]);
 
@@ -149,7 +156,7 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
               <img
                 ref={animationRef}
                 src={cloudImage}
-                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isZoomed
+                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
                   ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                   : ''
                   }`}
