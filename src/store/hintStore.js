@@ -1,20 +1,15 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-const CLOUD_HINTS = {
-  'A1': 'Blow into the microphone',
-  'A2': 'Blow twice',
-  'A3': 'A stubborn one! Try a longer blow',
-  'B1': 'This one has 2 layers',
-};
 
 const initialHintState = {
-  // Current active hint
-  currentHint: null,
+  // Current active hint data (cloudType + variant)
+  currentHintData: null,
   isHintVisible: false,
   
   // Tracking
-  seenCloudTypes: [],
+  zoomCounts: {}, // Tracks how many times each cloud type has been zoomed (A1: 2, A2: 1, etc.)
+  incorrectBlowCounts: {}, // Tracks incorrect blows per cloud instance (levelId-cloudId: count)
   
   // Configuration
   hintsEnabled: true,
@@ -25,13 +20,13 @@ const useHintStore = create(
     (set, get) => ({
       ...initialHintState,
 
-      showHint: (hintText) => {
+      showHint: (cloudType, variant) => {
         const { hintsEnabled } = get();
         
         if (!hintsEnabled) return;
 
         set({
-          currentHint: hintText,
+          currentHintData: { cloudType, variant },
           isHintVisible: true,
         });
       },
@@ -39,45 +34,115 @@ const useHintStore = create(
       hideHint: () => {
         set({ 
           isHintVisible: false,
-          currentHint: null,
+          currentHintData: null,
         });
       },
 
-      showCloudHint: (cloudType) => {
-        const { seenCloudTypes, hintsEnabled } = get();
+      showCloudHint: (cloudType, levelId, cloudId) => {
+        const { hintsEnabled, zoomCounts, incorrectBlowCounts } = get();
         
         if (!hintsEnabled) return;
         
-        const hintText = CLOUD_HINTS[cloudType];
-        if (!hintText) return;
+        // Check if this cloud type exists in our hint variants
+        if (!cloudType) return;
 
-        // Enabled for debugging, use commented after finished
-        const shouldShow = true;
-        // const shouldShow = !seenCloudTypes.includes(cloudType);
-
-        if (shouldShow) {
-          get().showHint(hintText);
-
-          // Mark as seen
-          // Disabled for debugging, enable after finished
-          // set({
-          //   seenCloudTypes: [...seenCloudTypes, cloudType],
-          // });
+        // Get current zoom count for this cloud type across the entire game
+        const currentZoomCount = zoomCounts[cloudType] || 0;
+        const newZoomCount = currentZoomCount + 1;
+        
+        // Reset incorrect blow count for this specific cloud instance when zooming in
+        const cloudInstanceId = `${levelId}-${cloudId}`;
+        
+        // Determine if we should show a hint and which variant
+        let shouldShowHint = false;
+        let variant;
+        
+        if (newZoomCount === 1) {
+          // First time seeing this cloud type in the entire game
+          variant = 'first';
+          shouldShowHint = true;
+        } else if (newZoomCount === 2) {
+          // Second time seeing this cloud type in the entire game
+          variant = 'second';
+          shouldShowHint = true;
         }
+        // For 3+ encounters, don't show first/second hints anymore
+        
+        // Update zoom count and reset incorrect blow count for this cloud instance
+        set({
+          zoomCounts: {
+            ...zoomCounts,
+            [cloudType]: newZoomCount
+          },
+          incorrectBlowCounts: {
+            ...incorrectBlowCounts,
+            [cloudInstanceId]: 0 // Reset to 0 when zooming in
+          }
+        });
+
+        // Only show hint if it's first or second encounter
+        if (shouldShowHint) {
+          get().showHint(cloudType, variant);
+        }
+      },
+
+      incrementIncorrectBlow: (levelId, cloudId, cloudType) => {
+        const { incorrectBlowCounts, hintsEnabled } = get();
+        
+        if (!hintsEnabled) return;
+        
+        const cloudInstanceId = `${levelId}-${cloudId}`;
+        const currentCount = incorrectBlowCounts[cloudInstanceId] || 0;
+        const newCount = currentCount + 1;
+        
+        // Update the count
+        set({
+          incorrectBlowCounts: {
+            ...incorrectBlowCounts,
+            [cloudInstanceId]: newCount
+          }
+        });
+        
+        // Show repeated hint if user has made 2+ incorrect attempts
+        if (newCount >= 2) {
+          get().showHint(cloudType, 'repeated');
+          
+          // Reset the count after showing repeated hint to give user a fresh start
+          set({
+            incorrectBlowCounts: {
+              ...get().incorrectBlowCounts,
+              [cloudInstanceId]: 0
+            }
+          });
+        }
+      },
+
+      resetIncorrectBlowsForCloud: (levelId, cloudId) => {
+        const { incorrectBlowCounts } = get();
+        const cloudInstanceId = `${levelId}-${cloudId}`;
+        
+        // Remove the count for this specific cloud instance when zooming out
+        const newIncorrectBlowCounts = { ...incorrectBlowCounts };
+        delete newIncorrectBlowCounts[cloudInstanceId];
+        
+        set({
+          incorrectBlowCounts: newIncorrectBlowCounts
+        });
       },
 
       setHintsEnabled: (enabled) => {
         set({ hintsEnabled: enabled });
         
         if (!enabled) {
-          set({ currentHint: null, isHintVisible: false });
+          set({ currentHintData: null, isHintVisible: false });
         }
       },
 
       resetHintProgress: () => {
         set({
-          seenCloudTypes: [],
-          currentHint: null,
+          zoomCounts: {},
+          incorrectBlowCounts: {},
+          currentHintData: null,
           isHintVisible: false,
         });
       },
@@ -86,7 +151,8 @@ const useHintStore = create(
       name: 'hint-system-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        seenCloudTypes: state.seenCloudTypes,
+        zoomCounts: state.zoomCounts,
+        incorrectBlowCounts: state.incorrectBlowCounts,
         hintsEnabled: state.hintsEnabled,
       }),
     }

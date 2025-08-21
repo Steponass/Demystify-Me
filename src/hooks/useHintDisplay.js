@@ -12,7 +12,7 @@ const useHintDisplay = (levelId, cloudId, isZoomed, isRevealed) => {
       
       if (cloudState?.cloudType && cloudState.cloudType !== 'B2') {
         const hintTimer = setTimeout(() => {
-          showCloudHint(cloudState.cloudType);
+          showCloudHint(cloudState.cloudType, levelId, cloudId);
         }, 800); // MUST BE longer than longest mic init delay (300ms)
         
         return () => clearTimeout(hintTimer);

@@ -5,6 +5,7 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
+  user-select: none;
 }
 
 .titleFirstVisit {
@@ -13,6 +14,10 @@
   @starting-style {
     filter: blur(50px);
   }
+}
+
+.levelTitle {
+  color: var(--clr-greyish);
 }
 
 .triggerWarning {

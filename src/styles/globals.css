@@ -7,6 +7,7 @@ body {
   padding-block: min(24px, 4px + 2vw);
   width: 100%;
   margin-inline: auto;
+  transition: background var(--transition-normal) ease-in-out;
 }
 
 /* Backdrop filter overlay when cloud is zoomed */

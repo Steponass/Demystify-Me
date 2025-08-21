@@ -4,6 +4,7 @@ import useCloudZoom from '@hooks/useCloudZoom';
 import useBlowDetection from '@hooks/useBlowDetection';
 import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
+import useHintStore from '@store/hintStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import Layer3Text from './Layer3Text';
@@ -16,6 +17,8 @@ import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithError
 
 const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
   const { getCloudState, advanceCloudLayer, getBlowThreshold } = useGameStore();
+  const incrementIncorrectBlow = useHintStore(state => state.incrementIncorrectBlow);
+  const resetIncorrectBlowsForCloud = useHintStore(state => state.resetIncorrectBlowsForCloud);
   const cloudState = getCloudState(levelId, cloudId);
 
   const [regularCloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
@@ -25,6 +28,17 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const [isExitAnimating, setIsExitAnimating] = useState(false);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
+
+  // Track zoom state to reset incorrect blows when zooming out
+  const prevZoomedStateRef = useRef(isZoomed);
+  
+  useEffect(() => {
+    // Reset incorrect blows when transitioning from zoomed to not zoomed
+    if (prevZoomedStateRef.current && !isZoomed) {
+      resetIncorrectBlowsForCloud(levelId, cloudId);
+    }
+    prevZoomedStateRef.current = isZoomed;
+  }, [isZoomed, resetIncorrectBlowsForCloud, levelId, cloudId]);
 
   // Use the centralized hint display system
   useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
@@ -144,8 +158,13 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
+    // Increment incorrect blow count for hint system
+    if (cloudState?.cloudType) {
+      incrementIncorrectBlow(levelId, cloudId, cloudState.cloudType);
+    }
+
     createFeedbackWiggle(layer2CloudRef, 'medium');
-  }, []);
+  }, [cloudState?.cloudType, incrementIncorrectBlow, levelId, cloudId]);
 
   // Simplified blow detection handlers
   const { startListening, stopListening } = useBlowDetection({

@@ -48,11 +48,9 @@
   /* Game Elements (1-99) */
   --z-cloud-base: 2;
   --z-cloud-translucent: 3;
-  --z-cloud-top: 5;
+  --z-cloud-top: 6;
   --z-cloud-overlay: 5;
-  --z-cloud-overlay-content: 6;
   --z-cloud-image: 5;
-  --z-cloud-text: var(--z-cloud-top);
   
   /* UI Elements (100-399) */
   --z-next-button: 50;
