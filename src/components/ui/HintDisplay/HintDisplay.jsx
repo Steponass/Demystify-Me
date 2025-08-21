@@ -5,24 +5,24 @@ import styles from './HintDisplay.module.css';
 
 const HINT_VARIANTS = {
   'A1': {
-    first: 'Blow into the microphone',
-    second: 'Try a gentle, steady breath into the microphone',
-    repeated: 'Still having trouble? Give it one more gentle blow - just breathe normally'
+    first: 'Blow into your microphone until the wind icon is full',
+    second: 'Simple clouds only need a shorter (~0.3s) blow',
+    repeated: 'Nothing? Go to Menu and increase microphone sensitivty'
   },
   'A2': {
-    first: 'Blow twice',
-    second: 'Try two separate, distinct breaths - pause between each blow',
-    repeated: 'Two quick puffs should do it! Blow-pause-blow'
+    first: 'Blow twice. Briefly pause between each blow',
+    second: 'Try two separate breaths. Pause between each blow',
+    repeated: 'Two quick or long puffs should do it. Blow-pause-blow'
   },
   'A3': {
     first: 'A stubborn one! Try a longer blow',
-    second: 'This cloud needs a sustained, longer breath - hold it for 2-3 seconds',
-    repeated: 'Keep that breath going! Try a really long, steady blow until it disappears'
+    second: 'You will have to blow for at least 1.2s',
+    repeated: 'Is it wiggling? Blow for longer. Denial is strong in this one.'
   },
   'B1': {
-    first: 'This one has 2 layers',
-    second: 'Blow once to reveal the first layer, then blow again for the second',
-    repeated: 'Two-stage cloud: blow to clear each layer one at a time'
+    first: 'This has 2 clouds: first one is simple; second one needs a longer blow',
+    second: 'First layer needs a quick puff; second: at least 0.8s long',
+    repeated: 'Is it wiggling? It means you need to blow for longer'
   },
 };
 
