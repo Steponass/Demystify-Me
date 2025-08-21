@@ -15,12 +15,12 @@
     filter: blur(50px);
   }
 }
-
 .levelTitle {
   color: var(--clr-greyish);
 }
 
-.triggerWarning {
+.introText {
+  max-width: 50ch;
   filter: blur(0px);
   transition: filter 2s ease 1.7s;
   @starting-style {
@@ -41,6 +41,17 @@
   flex-direction: column;
   align-items: center;
 }
+
+.menuContent > * + * {
+
+  margin-block-start: var(--space-16-24px);
+  
+  }
+  .menuContent > :nth-child(2) {
+  
+  margin-block-end: auto;
+  
+  }
 
 .buttonContainerFirstVisit {
   display: flex;
@@ -78,6 +89,14 @@
   grid-template-columns: auto auto;
   column-gap: var(--space-8-12px);
   row-gap: var(--space-12-16px)
+}
+
+.thresholdAdjusterFirstVisit {
+  filter: blur(0px);
+  transition: filter 0.8s ease 7.5s;
+  @starting-style {
+    filter: blur(50px);
+  }
 }
 
 /* Menu fog effect positioned at bottom */

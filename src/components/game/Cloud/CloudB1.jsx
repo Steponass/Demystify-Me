@@ -21,7 +21,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const resetIncorrectBlowsForCloud = useHintStore(state => state.resetIncorrectBlowsForCloud);
   const cloudState = getCloudState(levelId, cloudId);
 
-  const [regularCloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
+  const [lightCloudImage] = useState(() => getRandomCloudImages(1, 'Light')[0]);
   const [heavyCloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
@@ -249,7 +249,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
         />
 
         {/* Layer 2 - Intermediate state with Heavy cloud */}
-        {isZoomed && !isZoomingOut && (
+        {!isZoomingOut && !cloudState?.isRevealed && (
           <>
             <div className={styles.cloudImage}>
               <img
@@ -280,7 +280,7 @@ const CloudB1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
             <div className={`${styles.cloudImage} ${styles.topLayer}`}>
               <img
                 ref={layer1CloudRef}
-                src={regularCloudImage}
+                src={lightCloudImage}
                 className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
                   ? (isReverseDirection ? styles.floatingReverse : styles.floating)
                   : ''

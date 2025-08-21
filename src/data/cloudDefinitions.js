@@ -10,7 +10,6 @@ export const CLOUD_IMAGES = {
     '/images/clouds/Regular/Cloud_Reg_8.webp',
     '/images/clouds/Regular/Cloud_Reg_9.webp',
     '/images/clouds/Regular/Cloud_Reg_10.webp',
-    '/images/clouds/Regular/Cloud_Reg_11.webp',
   ],
   Heavy: [
     '/images/clouds/Heavy/Cloud_Heavy_1.webp',
@@ -20,7 +19,8 @@ export const CLOUD_IMAGES = {
     '/images/clouds/Heavy/Cloud_Heavy_3.webp',
     '/images/clouds/Heavy/Cloud_Heavy_3_flipped.webp',
     '/images/clouds/Heavy/Cloud_Heavy_4.webp',
-    '/images/clouds/Heavy/Cloud_Heavy_4_flipped.webp'
+    '/images/clouds/Heavy/Cloud_Heavy_4_flipped.webp',
+    '/images/clouds/Heavy/Cloud_Heavy_5.webp'
   ],
   Light: [
     '/images/clouds/Light/Cloud_Light_1.webp',

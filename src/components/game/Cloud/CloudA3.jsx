@@ -7,7 +7,7 @@ import useHintStore from '@store/hintStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import Layer3Text from './Layer3Text';
-import { MICROPHONE_START_DELAY } from './constants/cloudConstants';
+import { MICROPHONE_START_DELAY, FEEDBACK_TIMEOUT_DELAY } from './constants/cloudConstants';
 import { createLayer3Timeline, animateElementsOut, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
 
 const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
@@ -41,10 +41,17 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const animationRef = useRef(null);
   const textContentRef = useRef(null);
   const layer3TextRef = useRef(null); // Add ref for layer 3 content
+  const feedbackTimeoutRef = useRef(null); // Track pending incorrect blow feedback
 
   const handleXLBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
       return;
+    }
+
+    // Cancel any pending incorrect blow feedback since we got the correct blow
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+      feedbackTimeoutRef.current = null;
     }
 
     // Hide text immediately when blow is detected
@@ -72,15 +79,30 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
-    // Increment incorrect blow count for hint system
-    if (cloudState?.cloudType) {
-      incrementIncorrectBlow(levelId, cloudId, cloudState.cloudType);
+    // Cancel any existing timeout to avoid multiple pending feedbacks
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
     }
 
-    // Disable CSS floating after first incorrect blow to avoid CSS-GSAP conflicts
-    setIsExitAnimating(true);
-    
-    createFeedbackWiggle(animationRef, 'heavy');
+    // Delay feedback to allow XL blow detection to cancel it if needed
+    feedbackTimeoutRef.current = setTimeout(() => {
+      if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
+        return;
+      }
+
+      // Increment incorrect blow count for hint system
+      if (cloudState?.cloudType) {
+        incrementIncorrectBlow(levelId, cloudId, cloudState.cloudType);
+      }
+
+      // Disable CSS floating after first incorrect blow to avoid CSS-GSAP conflicts
+      setIsExitAnimating(true);
+      
+      createFeedbackWiggle(animationRef, 'heavy');
+
+      feedbackTimeoutRef.current = null;
+    }, FEEDBACK_TIMEOUT_DELAY);
+
   }, [isZoomed, isZoomingOut, cloudState?.isRevealed, cloudState?.cloudType, incrementIncorrectBlow, levelId, cloudId]);
 
 
@@ -129,6 +151,15 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       }
     };
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (feedbackTimeoutRef.current) {
+        clearTimeout(feedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!cloudState) return null;
 

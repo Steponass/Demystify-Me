@@ -11,7 +11,8 @@ const FirstVisitMenu = ({ onStart }) => {
       
       > Mystify Me</h1>
 
-      <h5 className={styles.triggerWarning}>Trigger warning: some of the content may upset you, particularly if you like living in denial</h5>
+      <h6 className={styles.introText}>This experience makes fun of buzzwords, comfort phrases, and other clichés.</h6>
+      <h6 className={styles.introText}>You will need to use your microphone. A lot. When prompted, allow access.</h6>
       
       <div className={styles.buttonContainerFirstVisit}>
         <ActionButton 
@@ -21,7 +22,9 @@ const FirstVisitMenu = ({ onStart }) => {
           Start
         </ActionButton>
       </div>
+      <div className={styles.thresholdAdjusterFirstVisit}>
       <ThresholdAdjuster />
+      </div>
     </div>
   );
 };

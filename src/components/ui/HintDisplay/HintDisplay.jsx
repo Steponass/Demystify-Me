@@ -17,7 +17,7 @@ const HINT_VARIANTS = {
   'A3': {
     first: 'A stubborn one! Try a longer blow',
     second: 'You will have to blow for at least 1.2s',
-    repeated: 'Is it wiggling? Blow for longer. Denial is strong in this one.'
+    repeated: 'Is it wiggling? Blow for longer. Denial is strong with this one.'
   },
   'B1': {
     first: 'This has 2 clouds: first one is simple; second one needs a longer blow',

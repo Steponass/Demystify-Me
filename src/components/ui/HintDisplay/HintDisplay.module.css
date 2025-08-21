@@ -17,7 +17,7 @@
 }
 
 .hintContainer p {
-  font-size: var(--fs-h5);
+  font-size: var(--fs-h6);
   margin-bottom: var(--space-8px);
 }
 

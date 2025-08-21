@@ -5,6 +5,7 @@ import useCloudZoom from '@hooks/useCloudZoom';
 import useBlowDetection from '@hooks/useBlowDetection';
 import useHintDisplay from '@hooks/useHintDisplay';
 import useGameStore from '@store/gameStore';
+import useHintStore from '@store/hintStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
 import styles from './Cloud.module.css';
 import Layer3Text from './Layer3Text';
@@ -19,6 +20,7 @@ gsap.registerPlugin(MorphSVGPlugin);
 
 const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
   const { getCloudState, advanceCloudLayer, getBlowThreshold } = useGameStore();
+  const incrementIncorrectBlow = useHintStore(state => state.incrementIncorrectBlow);
   const cloudState = getCloudState(levelId, cloudId);
 
   const [lightCloudImage] = useState(() => getRandomCloudImages(1, 'Light')[0]);
@@ -66,6 +68,9 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
+    // Disable CSS floating animation before GSAP takes over
+    setIsExitAnimating(true);
+    
     isTransitioning.current = true;
 
     // Coordinated animation: Light cloud disappears + SVG morphs
@@ -139,8 +144,13 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
-    createFeedbackWiggle(heavyCloudRef, 'light');
-  }, []);
+    // Increment incorrect blow count for hint system
+    if (cloudState?.cloudType) {
+      incrementIncorrectBlow(levelId, cloudId, cloudState.cloudType);
+    }
+
+    createFeedbackWiggle(heavyCloudRef, 'medium');
+  }, [cloudState?.cloudType, incrementIncorrectBlow, levelId, cloudId]);
 
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: () => {

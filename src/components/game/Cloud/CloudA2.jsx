@@ -33,6 +33,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
     // Reset incorrect blows when transitioning from zoomed to not zoomed
     if (prevZoomedStateRef.current && !isZoomed) {
       resetIncorrectBlowsForCloud(levelId, cloudId);
+      isSuccessfulBlowRef.current = false; // Reset successful blow flag for fresh attempts
     }
     prevZoomedStateRef.current = isZoomed;
   }, [isZoomed, resetIncorrectBlowsForCloud, levelId, cloudId]);
@@ -47,12 +48,17 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
   // Track blow attempts to differentiate anyblow from double blow
   const lastBlowTimeRef = useRef(null);
   const feedbackTimeoutRef = useRef(null);
+  const isSuccessfulBlowRef = useRef(false); // Track if correct blow was detected
 
   const handleDoubleBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
       return;
     }
 
+    // Mark that we got the correct blow to prevent subsequent incorrect feedback
+    isSuccessfulBlowRef.current = true;
+    
+    // Cancel any pending incorrect blow feedback since we got the correct blow
     if (feedbackTimeoutRef.current) {
       clearTimeout(feedbackTimeoutRef.current);
       feedbackTimeoutRef.current = null;
@@ -81,6 +87,11 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
   // Smart blow tracking: waits to see if it's part of a pattern
   const handleAnyBlowDetected = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
+      return;
+    }
+
+    // Don't provide incorrect feedback if correct blow was already detected
+    if (isSuccessfulBlowRef.current) {
       return;
     }
 
@@ -182,6 +193,7 @@ const CloudA2 = ({ levelId, cloudId, position, content, onReveal, animationDelay
       if (feedbackTimeoutRef.current) {
         clearTimeout(feedbackTimeoutRef.current);
       }
+      isSuccessfulBlowRef.current = false; // Reset flag on unmount
     };
   }, []);
 
