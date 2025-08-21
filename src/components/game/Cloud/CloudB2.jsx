@@ -88,7 +88,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       lightCloudRef.current.style.transition = 'none';
       timeline.to(lightCloudRef.current, {
         opacity: 0,
-        scale: 1.4,
+        scale: 4.5,
         duration: CLOUD_ANIMATION_DURATION,
         ease: "sine.out"
       }, 0);
@@ -149,7 +149,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       incrementIncorrectBlow(levelId, cloudId, cloudState.cloudType);
     }
 
-    createFeedbackWiggle(heavyCloudRef, 'medium');
+    createFeedbackWiggle(heavyCloudRef, 'heavy');
   }, [cloudState?.cloudType, incrementIncorrectBlow, levelId, cloudId]);
 
   const { startListening, stopListening } = useBlowDetection({

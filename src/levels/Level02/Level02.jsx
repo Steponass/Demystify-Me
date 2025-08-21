@@ -5,18 +5,13 @@ import levelData from '@data/levels/level-02.json';
 import styles from '@levels/Level.module.css';
 
 const Level02 = ({ levelId }) => {
-  // Custom reveal handler for Level 2
-  const customHandleReveal = (cloudId) => {
-    console.log(`Cloud ${cloudId} revealed in Level 2!`);
-  };
-
   const {
     containerRef,
     cloudRefs,
     cloudPositions,
     handleCloudReveal,
     levelData: level
-  } = useLevel(levelId, levelData, customHandleReveal);
+  } = useLevel(levelId, levelData);
 
   return (
     <main>
@@ -25,7 +20,6 @@ const Level02 = ({ levelId }) => {
         {level.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];
 
-          // Don't render clouds until positioning is calculated
           if (!position) return null;
 
           return (

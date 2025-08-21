@@ -12,15 +12,13 @@ const ProtectedLevelRoute = () => {
   const isLevelUnlocked = useGameStore(state => state.isLevelUnlocked);
   const currentLevel = useGameStore(state => state.currentLevel);
 
-  // Convert to number (params are strings)
+  // Convert to number (since the params are strings)
   const numericLevelId = parseInt(levelId, 10);
 
-  // Check if level is valid and unlocked
   const isValid = !isNaN(numericLevelId);
   const isUnlocked = isValid && isLevelUnlocked(numericLevelId);
 
   if (!isValid) {
-    // Invalid level ID - redirect to level 1 or current level
     const safeLevel = currentLevel > 0 ? currentLevel : 1;
     return <Navigate to={`/level/${safeLevel}`} replace />;
   }

@@ -21,15 +21,13 @@ const MainMenu = () => {
     getEndingSequenceState,
   } = useGameStore();
 
-  // Set menu gradient when MainMenu mounts
   useEffect(() => {
     setMenuGradient();
   }, []);
 
-  // Determine which menu state to show
+
   const hasStartedGame = completedLevels.length > 0 || currentLevel > 0;
 
-  // Check if all 10 game levels are completed
   const hasCompletedGame = completedLevels.length >= TOTAL_GAME_LEVELS;
 
   const handleStartNewGame = () => {

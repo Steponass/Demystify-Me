@@ -22,7 +22,6 @@ const Level08 = ({ levelId }) => {
         {level.clouds.map((cloudData) => {
           const position = cloudPositions[cloudData.cloudId];
 
-          // Don't render until we have position data
           if (!position) return null;
 
           return (

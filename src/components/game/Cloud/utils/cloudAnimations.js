@@ -71,7 +71,7 @@ export const animateElementsOut = (elements, timeline = null) => {
         scale: currentScale
       });
       
-      // Disable CSS animations now that GSAP has taken over
+      // Disable CSS animations
       element.current.style.transition = 'none';
       element.current.style.animation = 'none';
 

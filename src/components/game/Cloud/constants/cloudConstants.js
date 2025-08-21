@@ -1,8 +1,8 @@
 export const CLOUD_ANIMATION_DURATION = 0.4;
 export const TRANSITION_SETTLE_TIME = 300;
-export const MICROPHONE_START_DELAY = 1800;
-export const HORIZONTAL_DISTANCE = 35;
+export const MICROPHONE_START_DELAY = 1600;
+export const HORIZONTAL_DISTANCE = 42;
 export const FEEDBACK_TIMEOUT_DELAY = 700;
 export const LAYER3_FADE_DURATION = 0.3;
-export const CLOUD_FLOAT_Y_DISTANCE = -300;
-export const CLOUD_SCALE_FACTOR = 0.9;
+export const CLOUD_FLOAT_Y_DISTANCE = -700;
+export const CLOUD_SCALE_FACTOR = 3;

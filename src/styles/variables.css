@@ -76,13 +76,13 @@
 
     /* Action Button:hover */
   --shadow-elevation-2: 
-    0   2.5px 4px hsla(0, 0%, 16%),
-    0     0.5px 2px hsla(0, 0%, 18%);
+    0   2.5px 4px hsla(0, 0%, 16%, 0.8),
+    0     0.5px 2px hsla(0, 0%, 18%, 0.8);
 
     /* Overlays / Conf. dialog  */
   --shadow-elevation-3: 
-    0 6px 8px hsla(0, 0%, 16%),
-    0 2px  3px hsla(0, 0%, 14%);
+    0 6px 8px hsla(0, 0%, 16%, 0.5),
+    0 2px  3px hsla(0, 0%, 14%, 0.5);
 
   --shadow-elevation-4: 
     0 8px 12px -1px hsla(0, 0%, 30%, 0.4),

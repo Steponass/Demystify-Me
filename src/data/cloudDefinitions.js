@@ -32,12 +32,6 @@ export const CLOUD_IMAGES = {
   ]
 };
 
-/**
- * Get random cloud images for a level
- * @param {number} count - How many images needed
- * @param {string} category - 'Regular', 'Heavy', or 'Light'
- * @returns {string[]} - Array of image paths
- */
 export const getRandomCloudImages = (count, category = 'Regular') => {
   const availableImages = [...CLOUD_IMAGES[category]];
   const selectedImages = [];

@@ -4,8 +4,6 @@ import ProtectedLevelRoute from '@components/screens/ProtectedLevelRoute';
 import LevelRouter from '@components/game/LevelRouter';
 import MainMenu from '@components/screens/MainMenu/MainMenu';
 
-const BlowDetectionTest = React.lazy(() => import('./components/test/BlowDetectionTest'));
-
 function App() {
   return (
     <BrowserRouter>
@@ -15,7 +13,6 @@ function App() {
           <Route index element={<LevelRouter />} />
         </Route>
         
-        <Route path="/test-blow" element={<BlowDetectionTest />} />
         <Route path="*" element={<MainMenu />} />
       </Routes>
     </BrowserRouter>
