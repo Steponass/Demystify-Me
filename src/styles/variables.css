@@ -43,18 +43,29 @@
     var(--cloud-size-desktop)
   );
 
-  /* Z-INDEX */
-  --z-cloud-under: 1;
+  /* Z-INDEX - Logical Hierarchy */
+  
+  /* Game Elements (1-99) */
   --z-cloud-base: 2;
   --z-cloud-translucent: 3;
-  --z-cloud-top: 4;
+  --z-cloud-top: 5;
   --z-cloud-overlay: 5;
-  --z-gui: 1521;
+  --z-cloud-overlay-content: 6;
+  --z-cloud-image: 5;
+  --z-cloud-text: var(--z-cloud-top);
+  
+  /* UI Elements (100-399) */
   --z-next-button: 50;
   --z-zoom-overlay: 200;
   --z-zoom-content: 201;
   --z-zoom-ui: 250;
-  --z-splash: 300;
+  
+  /* Priority UI (400-899) */
+  --z-hint-display: 400;
+  
+  /* Modal/Dialog Layer (900+) */
+  --z-modal: 900;
+  --z-gui: 950;
 
   /* SHADOWS */
   /* 1st - "direct"

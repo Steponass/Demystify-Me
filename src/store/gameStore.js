@@ -5,11 +5,7 @@ const initialState = {
   currentLevel: 0,
   completedLevels: [],
   cloudStates: {},
-  seenCloudTypes: [],
-  currentHint: null,
-  isHintVisible: false,
   isLevelTransitioning: false,
-  shouldShowSplash: false,
   isZoomed: false,
   zoomedCloudId: null,
   audioLevel: 0,
@@ -98,10 +94,6 @@ const useGameStore = create(
         set({ isLevelTransitioning: isTransitioning });
       },
 
-      setShouldShowSplash: (shouldShow) => {
-        set({ shouldShowSplash: shouldShow });
-      },
-
       isLevelUnlocked: (levelId) => {
         const { completedLevels } = get();
 
@@ -138,39 +130,6 @@ const useGameStore = create(
             }
           });
         }
-      },
-
-      showHint: (cloudType) => {
-        const state = get();
-
-        // Ensure seenCloudTypes is always an array
-        const seenCloudTypes = Array.isArray(state.seenCloudTypes) ? state.seenCloudTypes : [];
-
-        // TODO(human): Modify this condition to always show A1 hints for visual editing
-        if (!seenCloudTypes.includes(cloudType)) {
-          const hints = {
-            'A1': 'Blow into the microphone',
-            'A2': 'Blow twice',
-            'A3': 'A stubborn one! Try a longer blow',
-            'B1': 'This one has 2 layers',
-          };
-
-          const hintText = hints[cloudType] || 'Blow into your microphone to interact';
-
-          set({
-            seenCloudTypes: [...seenCloudTypes, cloudType],
-            currentHint: hintText,
-            isHintVisible: true
-          });
-        }
-      },
-
-      hideHint: () => {
-        set({ isHintVisible: false });
-      },
-
-      clearHint: () => {
-        set({ currentHint: null });
       },
 
       advanceCloudLayer: (levelId, cloudId) => {
@@ -289,7 +248,6 @@ const useGameStore = create(
         currentLevel: state.currentLevel,
         completedLevels: state.completedLevels,
         cloudStates: state.cloudStates,
-        seenCloudTypes: state.seenCloudTypes,
         isGameComplete: state.isGameComplete,
         endingSequenceState: state.endingSequenceState,
         blowThreshold: state.blowThreshold,
@@ -297,7 +255,6 @@ const useGameStore = create(
       merge: (persistedState, currentState) => ({
         ...currentState,
         ...persistedState,
-        seenCloudTypes: Array.isArray(persistedState?.seenCloudTypes) ? persistedState.seenCloudTypes : [],
       }),
     }
   )

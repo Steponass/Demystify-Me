@@ -8,11 +8,11 @@ const ThresholdAdjuster = () => {
   const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
 
   const thresholdOptions = [
-    { value: 0.11, label: 'Most Sensitive' },
+    { value: 0.13, label: 'Most Sensitive' },
     { value: 0.2, label: 'More Sensitive' },
     { value: 0.28, label: 'Default' },
-    { value: 0.5, label: 'Less Sensitive' },
-    { value: 0.7, label: 'Least Sensitive' }
+    { value: 0.45, label: 'Less Sensitive' },
+    { value: 0.67, label: 'Least Sensitive' }
   ];
 
   const currentIndex = thresholdOptions.findIndex(option => option.value === blowThreshold);

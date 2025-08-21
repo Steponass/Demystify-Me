@@ -71,7 +71,8 @@
   padding-block: var(--space-32px);
   display: grid;
   grid-template-columns: auto auto;
-  gap: var(--space-8-12px);
+  column-gap: var(--space-8-12px);
+  row-gap: var(--space-12-16px)
 }
 
 /* Menu fog effect positioned at bottom */

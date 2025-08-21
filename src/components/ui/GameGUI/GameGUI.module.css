@@ -45,5 +45,5 @@
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
-  z-index: var(--z-zoom-ui);
+  z-index: var(--z-zoom-content);
 }

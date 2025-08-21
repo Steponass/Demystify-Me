@@ -11,8 +11,6 @@ import { LEVEL_METADATA } from '@components/screens/MainMenu/levelMetadata';
 
 const GameGUI = ({ levelId }) => {
 
-  const currentHint = useGameStore(state => state.currentHint);
-  const isHintVisible = useGameStore(state => state.isHintVisible);
   const isLevelCompleted = useGameStore(state => state.isLevelCompleted);
   const isZoomed = useGameStore(state => state.isZoomed);
 
@@ -28,7 +26,7 @@ const GameGUI = ({ levelId }) => {
       <LevelTitle levelId={levelId} levelTitle={levelTitle} />
 
       <div className={styles.hintsSection}>
-        <HintDisplay hint={currentHint} isVisible={isHintVisible} />
+        <HintDisplay />
       </div>
 
       <div className={styles.controlsSection}>
