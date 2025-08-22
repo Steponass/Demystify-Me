@@ -2,10 +2,7 @@
   position: absolute;
   bottom: 0%;
   left: 50%;
-
   min-width: 264px;
-  /* width: min(80%, 512px); */
-
   text-align: center;
   pointer-events: none;
   color: var(--clr-whiteish);

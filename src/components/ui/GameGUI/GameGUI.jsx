@@ -32,13 +32,11 @@ const GameGUI = ({ levelId }) => {
       <div className={styles.controlsSection}>
         <MenuButton />
 
-
-          <RewindButton levelId={levelId} />
-
+        <RewindButton levelId={levelId} />
       </div>
 
       {isCompleted && !isZoomed && (
-          <NextLevelButton levelId={levelId} />
+        <NextLevelButton levelId={levelId} />
       )}
 
       {isZoomed && (

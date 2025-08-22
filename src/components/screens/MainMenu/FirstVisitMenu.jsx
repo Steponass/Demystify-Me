@@ -7,15 +7,15 @@ const FirstVisitMenu = ({ onStart }) => {
   return (
     <div className={styles.menuContent}>
       <h1 className=
-      {`${styles.titleFirstVisit} ${styles.title}`}
-      
+        {`${styles.titleFirstVisit} ${styles.title}`}
+
       > Mystify Me</h1>
 
       <h6 className={styles.introText}>This experience makes fun of buzzwords, comfort phrases, and other clichés.</h6>
       <h6 className={styles.introText}>You will need to use your microphone. A lot. When prompted, allow access.</h6>
-      
+
       <div className={styles.buttonContainerFirstVisit}>
-        <ActionButton 
+        <ActionButton
           variant="primary"
           onClick={onStart}
         >
@@ -23,7 +23,7 @@ const FirstVisitMenu = ({ onStart }) => {
         </ActionButton>
       </div>
       <div className={styles.thresholdAdjusterFirstVisit}>
-      <ThresholdAdjuster />
+        <ThresholdAdjuster />
       </div>
     </div>
   );

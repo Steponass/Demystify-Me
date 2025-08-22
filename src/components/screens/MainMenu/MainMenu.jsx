@@ -25,7 +25,6 @@ const MainMenu = () => {
     setMenuGradient();
   }, []);
 
-
   const hasStartedGame = completedLevels.length > 0 || currentLevel > 0;
 
   const hasCompletedGame = completedLevels.length >= TOTAL_GAME_LEVELS;
@@ -55,7 +54,6 @@ const MainMenu = () => {
   const handleConfirmReset = () => {
     resetAllProgress();
     setShowConfirmDialog(false);
-    // Stay on the menu after resetting so user can see the change
   };
 
   const handleCancelReset = () => {
@@ -63,16 +61,14 @@ const MainMenu = () => {
   };
 
   const handleEndingSequenceComplete = () => {
-    // Ending sequence is complete, the store state is already updated
-    // The component will re-render and show the normal CompletedGameMenu
   };
 
   // Determine which menu component to render
   let menuContent;
-  
+
   // Check if we should show the ending sequence
   const endingSequenceState = getEndingSequenceState();
-  
+
   if (endingSequenceState === 'sequence_active') {
     menuContent = (
       <EndingSequenceMenu
@@ -106,8 +102,8 @@ const MainMenu = () => {
     <div className={styles.mainMenu}>
 
       <div className={styles.menuFog}>
-        <img 
-          src="/images/clouds/Wide_Fog.webp" 
+        <img
+          src="/images/clouds/Wide_Fog.webp"
           alt=""
           className={styles.fogImage}
         />
@@ -116,7 +112,7 @@ const MainMenu = () => {
       <div className={styles.mainMenu_container}>
         {menuContent}
       </div>
-      
+
       <ConfirmationDialog
         isOpen={showConfirmDialog}
         title="Reset Game Progress"

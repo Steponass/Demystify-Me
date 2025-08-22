@@ -14,7 +14,6 @@ const NextLevelButton = ({ levelId }) => {
   const getEndingSequenceState = useGameStore(state => state.getEndingSequenceState);
   const setEndingSequenceState = useGameStore(state => state.setEndingSequenceState);
 
-  // Check if game should be complete on component mount
   useEffect(() => {
     checkGameComplete();
   }, [checkGameComplete]);
@@ -22,7 +21,7 @@ const NextLevelButton = ({ levelId }) => {
   useEffect(() => {
     const button = buttonRef.current;
     if (button) {
-      // Generate random values between 300-500px
+      // Generate random values. Just to mess with ya a bit.
       const randomY = Math.floor(Math.random() * 801) - 400; // -400 to 400
       const randomX = Math.floor(Math.random() * 801) - 400; // -400 to 400
       const randomActiveY = Math.floor(Math.random() * 401) - 200; // -200 to 200
@@ -43,7 +42,6 @@ const NextLevelButton = ({ levelId }) => {
   };
 
   const handleBonusLevel = () => {
-    // Start the ending sequence and navigate to the special CompletedGameMenu
     setEndingSequenceState('sequence_active');
     navigate('/menu');
   };
@@ -55,7 +53,6 @@ const NextLevelButton = ({ levelId }) => {
   const endingSequenceState = getEndingSequenceState();
   const isLevel10WithBonus = levelId === 10 && isCurrentLevelCompleted && endingSequenceState === 'bonus_available';
   
-  // Determine button behavior
   const buttonText = isLevel10WithBonus ? "Bonus Level!" : "Next Level";
   const handleClick = isLevel10WithBonus ? handleBonusLevel : handleNextLevel;
 

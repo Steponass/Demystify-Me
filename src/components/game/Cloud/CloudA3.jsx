@@ -1,85 +1,104 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import useCloudZoom from '@hooks/useCloudZoom';
-import useBlowDetection from '@hooks/useBlowDetection';
-import useHintDisplay from '@hooks/useHintDisplay';
-import useGameStore from '@store/gameStore';
-import useHintStore from '@store/hintStore';
-import { getRandomCloudImages } from '@data/cloudDefinitions';
-import styles from './Cloud.module.css';
-import Layer3Text from './Layer3Text';
-import { MICROPHONE_START_DELAY, FEEDBACK_TIMEOUT_DELAY } from './constants/cloudConstants';
-import { createLayer3Timeline, animateElementsOut, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import useCloudZoom from "@hooks/useCloudZoom";
+import useBlowDetection from "@hooks/useBlowDetection";
+import useHintDisplay from "@hooks/useHintDisplay";
+import useGameStore from "@store/gameStore";
+import useHintStore from "@store/hintStore";
+import { getRandomCloudImages } from "@data/cloudDefinitions";
+import styles from "./Cloud.module.css";
+import Layer3Text from "./Layer3Text";
+import {
+  MICROPHONE_START_DELAY,
+  FEEDBACK_TIMEOUT_DELAY,
+} from "./constants/cloudConstants";
+import {
+  createLayer3Timeline,
+  animateElementsOut,
+  createFeedbackWiggle,
+  startBlowDetectionWithErrorHandling,
+} from "./utils/cloudAnimations";
 
-const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
+const CloudA3 = ({
+  levelId,
+  cloudId,
+  position,
+  content,
+  onReveal,
+  containerRef,
+}) => {
   const { getCloudState, advanceCloudLayer, getBlowThreshold } = useGameStore();
-  const incrementIncorrectBlow = useHintStore(state => state.incrementIncorrectBlow);
-  const resetIncorrectBlowsForCloud = useHintStore(state => state.resetIncorrectBlowsForCloud);
+  const incrementIncorrectBlow = useHintStore(
+    (state) => state.incrementIncorrectBlow
+  );
+  const resetIncorrectBlowsForCloud = useHintStore(
+    (state) => state.resetIncorrectBlowsForCloud
+  );
   const cloudState = getCloudState(levelId, cloudId);
 
-  const [cloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
+  const [cloudImage] = useState(() => getRandomCloudImages(1, "Heavy")[0]);
 
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
   const [isExitAnimating, setIsExitAnimating] = useState(false);
 
-  const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
-  
-  // Track zoom state to reset incorrect blows when zooming out
+  const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } =
+    useCloudZoom(cloudState?.isRevealed, cloudId);
+
   const prevZoomedStateRef = useRef(isZoomed);
-  
+
   useEffect(() => {
-    // Reset incorrect blows when transitioning from zoomed to not zoomed
     if (prevZoomedStateRef.current && !isZoomed) {
       resetIncorrectBlowsForCloud(levelId, cloudId);
     }
     prevZoomedStateRef.current = isZoomed;
   }, [isZoomed, resetIncorrectBlowsForCloud, levelId, cloudId]);
 
-  // Use the centralized hint display system
   useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
 
   const animationRef = useRef(null);
   const textContentRef = useRef(null);
-  const layer3TextRef = useRef(null); // Add ref for layer 3 content
-  const feedbackTimeoutRef = useRef(null); // Track pending incorrect blow feedback
+  const layer3TextRef = useRef(null);
+  const feedbackTimeoutRef = useRef(null);
 
   const handleXLBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
       return;
     }
 
-    // Cancel any pending incorrect blow feedback since we got the correct blow
+    // Cancel any pending incorrect blow feedback
     if (feedbackTimeoutRef.current) {
       clearTimeout(feedbackTimeoutRef.current);
       feedbackTimeoutRef.current = null;
     }
 
-    // Hide text immediately when blow is detected
     if (textContentRef.current) {
-      textContentRef.current.style.display = 'none';
+      textContentRef.current.style.display = "none";
     }
 
-    const timeline = createLayer3Timeline(
-      layer3TextRef.current,
-      () => {
-        advanceCloudLayer(levelId, cloudId);
-        onReveal?.(cloudId);
-      }
-    );
+    const timeline = createLayer3Timeline(layer3TextRef.current, () => {
+      advanceCloudLayer(levelId, cloudId);
+      onReveal?.(cloudId);
+    });
 
     // Disable CSS floating animation just before GSAP takes over
     setIsExitAnimating(true);
 
-    // Only animate the cloud image out, not the text
     animateElementsOut([animationRef], timeline);
-  }, [isZoomed, isZoomingOut, cloudState?.isRevealed, advanceCloudLayer, levelId, cloudId, onReveal]);
+  }, [
+    isZoomed,
+    isZoomingOut,
+    cloudState?.isRevealed,
+    advanceCloudLayer,
+    levelId,
+    cloudId,
+    onReveal,
+  ]);
 
   const handleIncorrectBlow = useCallback(() => {
     if (!isZoomed || cloudState?.isRevealed || isZoomingOut) {
       return;
     }
 
-    // Cancel any existing timeout to avoid multiple pending feedbacks
     if (feedbackTimeoutRef.current) {
       clearTimeout(feedbackTimeoutRef.current);
     }
@@ -90,21 +109,26 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
         return;
       }
 
-      // Increment incorrect blow count for hint system
       if (cloudState?.cloudType) {
         incrementIncorrectBlow(levelId, cloudId, cloudState.cloudType);
       }
 
       // Disable CSS floating after first incorrect blow to avoid CSS-GSAP conflicts
       setIsExitAnimating(true);
-      
-      createFeedbackWiggle(animationRef, 'heavy');
+
+      createFeedbackWiggle(animationRef, "heavy");
 
       feedbackTimeoutRef.current = null;
     }, FEEDBACK_TIMEOUT_DELAY);
-
-  }, [isZoomed, isZoomingOut, cloudState?.isRevealed, cloudState?.cloudType, incrementIncorrectBlow, levelId, cloudId]);
-
+  }, [
+    isZoomed,
+    isZoomingOut,
+    cloudState?.isRevealed,
+    cloudState?.cloudType,
+    incrementIncorrectBlow,
+    levelId,
+    cloudId,
+  ]);
 
   const { startListening, stopListening } = useBlowDetection({
     onXLBlow: handleXLBlow,
@@ -114,7 +138,6 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     blowThreshold: getBlowThreshold(),
   });
 
-  // Microphone management
   const prevZoomedRef = useRef(isZoomed);
   const prevRevealedRef = useRef(cloudState?.isRevealed);
   const micTimeoutRef = useRef(null);
@@ -122,11 +145,13 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   useEffect(() => {
     const currentRevealed = cloudState?.isRevealed;
 
-    if (prevZoomedRef.current !== isZoomed || prevRevealedRef.current !== currentRevealed) {
+    if (
+      prevZoomedRef.current !== isZoomed ||
+      prevRevealedRef.current !== currentRevealed
+    ) {
       prevZoomedRef.current = isZoomed;
       prevRevealedRef.current = currentRevealed;
 
-      // Clear any pending timeout first
       if (micTimeoutRef.current) {
         clearTimeout(micTimeoutRef.current);
         micTimeoutRef.current = null;
@@ -152,7 +177,6 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     };
   }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
-  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       if (feedbackTimeoutRef.current) {
@@ -177,8 +201,16 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     >
       <div
         ref={cloudRef}
-        className={`${styles.cloud} ${cloudState.isRevealed ? styles.revealed : ''} ${isZoomed ? styles.zoomed : ''}`}
-        onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
+        className={`${styles.cloud} ${
+          cloudState.isRevealed ? styles.revealed : ""
+        } ${isZoomed ? styles.zoomed : ""}`}
+        onClick={
+          !isZoomed
+            ? handleZoomIn
+            : cloudState?.isRevealed
+            ? handleZoomOut
+            : undefined
+        }
         data-flip-id={cloudId}
       >
         <Layer3Text
@@ -189,15 +221,13 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
           isZoomingOut={isZoomingOut}
         />
 
-        {/* Layer 1 - Initial state with resistant cloud */}
+        {/* Layer 1 */}
         {isLayer1 && (
           <>
-            {/* Text content when zoomed */}
+            {/* Text content */}
             {isZoomed && !isZoomingOut && (
               <div ref={textContentRef} className={styles.textContent}>
-                <p className={styles.regularLayerText}>
-                  {content.layer1}
-                </p>
+                <p className={styles.regularLayerText}>{content.layer1}</p>
               </div>
             )}
 
@@ -206,12 +236,15 @@ const CloudA3 = ({ levelId, cloudId, position, content, onReveal, containerRef }
               <img
                 ref={animationRef}
                 src={cloudImage}
-                className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
-                  ? (isReverseDirection ? styles.floatingReverse : styles.floating)
-                  : ''
-                  }`}
+                className={`${styles.floatingCloud} ${
+                  !cloudState?.isRevealed && !isExitAnimating
+                    ? isReverseDirection
+                      ? styles.floatingReverse
+                      : styles.floating
+                    : ""
+                }`}
                 style={{
-                  '--floating-duration': `${animationDuration}s`
+                  "--floating-duration": `${animationDuration}s`,
                 }}
               />
             </div>

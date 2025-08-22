@@ -53,8 +53,8 @@ const ThresholdAdjuster = () => {
       </div>
       
       <div className={styles.controls}>
-        <button 
-          className={`${styles.arrow} ${!canIncrease ? styles.disabled : ''}`}
+        <button
+          className={`${styles.controlsButton} ${styles.controlsButtonLeft} ${!canIncrease ? styles.disabled : ''}`}
           onClick={handleIncrease}
           disabled={!canIncrease}
           aria-label="Decrease sensitivity"
@@ -68,7 +68,7 @@ const ThresholdAdjuster = () => {
         </div>
         
         <button 
-          className={`${styles.arrow} ${!canDecrease ? styles.disabled : ''}`}
+          className={`${styles.controlsButton} ${styles.controlsButtonRight}  ${!canDecrease ? styles.disabled : ''}`}
           onClick={handleDecrease}
           disabled={!canDecrease}
           aria-label="Increase sensitivity"
@@ -83,7 +83,7 @@ const ThresholdAdjuster = () => {
         onClose={handleCloseInfoDialog}
       >
         <p>Blowing hard and still nothing? 
-        <br></br> Try More or Most Sensitive.</p>
+        <br></br> Adjust to More or Most Sensitive.</p>
         <p>Catching too much background noise?
         <br></br> Try Less or Least Sensitive</p>
       </InfoDialog>

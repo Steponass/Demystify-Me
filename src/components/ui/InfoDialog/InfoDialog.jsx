@@ -36,11 +36,11 @@ const InfoDialog = ({
         aria-modal="true"
         aria-labelledby="info-dialog-title"
       >
-        <div className={styles.content}>
-          <h3 className={styles.title}>
+        <div className={styles.dialogContent}>
+          <h3 className={styles.dialogTitle}>
             {title}
           </h3>
-          <div className={styles.body}>{children}</div>
+          <div className={styles.dialogBody}>{children}</div>
           <ActionButton variant="primary" onClick={onClose}>
             {closeText}
           </ActionButton>

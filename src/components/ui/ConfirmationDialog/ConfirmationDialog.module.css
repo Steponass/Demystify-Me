@@ -1,4 +1,4 @@
-.overlay {
+.confirmationOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   backdrop-filter: blur(10px);
 }
 
-.dialog {
+.confirmationDialog {
   background-color: var(--clr-overlay-hint);
   border-radius: var(--radius-16px);
   width: min(90%, 420px);
@@ -31,24 +31,23 @@
   }
 }
 
-.content {
+.confirmationContent {
   padding: var(--space-24-32px);
   color: var(--clr-whiteish);
-
 }
 
-.title {
+.confirmationTitle {
   margin-bottom: var(--space-16-24px);
   text-align: center;
 }
 
-.message {
+.confirmationMessage {
   margin-bottom: var(--space-32-48px);
   text-align: center;
   font-size: var(--fs-h6);
 }
 
-.actions {
+.confirmationActions {
   display: flex;
   gap: var(--space-12-16px);
   justify-content: center;

@@ -42,8 +42,8 @@ const EndingSequenceMenu = ({ onComplete }) => {
         gsap.to(cloudImage, {
           opacity: 0,
           scale: 6,
-          duration: 0.8,
-          ease: 'sine.out'
+          duration: 2,
+          ease: 'sine.inOut'
         });
       }
 
@@ -53,7 +53,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
 
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: handleAnyBlow,
-    onLevelChange: () => {},
+    onLevelChange: () => { },
     blowThreshold: getBlowThreshold(),
   });
 
@@ -81,7 +81,6 @@ const EndingSequenceMenu = ({ onComplete }) => {
     };
   }, [endingPhase, isComplete, startListening, stopListening]);
 
-  // Handle click anywhere to complete the sequence
   const handleCompleteSequence = () => {
     if (endingPhase === 'joke_reveal' && !isComplete) {
       setIsComplete(true);
@@ -91,7 +90,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
   };
 
   return (
-    <div 
+    <div
       className={styles.menuContent}
       onClick={handleCompleteSequence}
       style={{ cursor: endingPhase === 'joke_reveal' ? 'pointer' : 'default' }}
@@ -112,7 +111,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
           data-flip-id="ending-cloud"
         >
 
-          <div 
+          <div
             ref={layer3TextRef}
             className={cloudStyles.textContent}
             style={{
@@ -126,16 +125,13 @@ const EndingSequenceMenu = ({ onComplete }) => {
             </p>
           </div>
 
-          {/* Cloud Image */}
           <div className={cloudStyles.cloudImage}>
             <img
               src={cloudImage}
               className={cloudStyles.floatingCloud}
-              alt="Ending sequence cloud"
             />
           </div>
 
-          {/* Layer 1 Text */}
           <div ref={textContentRef} className={cloudStyles.textContent}>
             <p className={cloudStyles.regularLayerText}>
               {getCurrentText()}
@@ -143,8 +139,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
           </div>
         </div>
       </div>
-      
-      {/* Subtle instruction text */}
+
       {endingPhase === 'joke_reveal' && !isComplete && (
         <div style={{
           position: 'absolute',

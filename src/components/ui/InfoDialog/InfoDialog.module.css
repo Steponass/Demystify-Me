@@ -31,18 +31,18 @@
   }
 }
 
-.content {
+.dialogContent {
   padding: var(--space-24px);
   color: var(--clr-whiteish);
 }
 
-.title {
+.dialogTitle {
   margin-bottom: var(--space-16-24px);
   text-align: center;
   font-size: var(--fs-h5);
 }
 
-.body {
+.dialogBody {
   margin-bottom: var(--space-32px);
   text-align: left;
 }

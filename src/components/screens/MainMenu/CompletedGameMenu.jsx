@@ -8,9 +8,9 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
   return (
     <div className={styles.menuContent}>
       <h1 className={styles.title}>Mystify Me</h1>
-      
+
       <ThresholdAdjuster />
-      
+
       <div className={styles.levelSelection}>
         {LEVEL_METADATA.map((level) => (
           <ActionButton
@@ -23,18 +23,16 @@ const CompletedGameMenu = ({ onLevelSelect, onStartFresh }) => {
           </ActionButton>
         ))}
       </div>
-      
+
       <div className={styles.freshStartContainer}>
-        <ActionButton 
+        <ActionButton
           variant="primary"
           onClick={onStartFresh}
         >
           Start Fresh
         </ActionButton>
-
-
-
       </div>
+      
     </div>
   );
 };

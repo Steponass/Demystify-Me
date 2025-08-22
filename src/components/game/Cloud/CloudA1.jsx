@@ -1,21 +1,34 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import useCloudZoom from '@hooks/useCloudZoom';
-import useBlowDetection from '@hooks/useBlowDetection';
-import useHintDisplay from '@hooks/useHintDisplay';
-import useGameStore from '@store/gameStore';
-import useHintStore from '@store/hintStore';
-import { getRandomCloudImages } from '@data/cloudDefinitions';
-import styles from './Cloud.module.css';
-import Layer3Text from './Layer3Text';
-import { MICROPHONE_START_DELAY } from './constants/cloudConstants';
-import { createLayer3Timeline, animateElementsOut, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import useCloudZoom from "@hooks/useCloudZoom";
+import useBlowDetection from "@hooks/useBlowDetection";
+import useHintDisplay from "@hooks/useHintDisplay";
+import useGameStore from "@store/gameStore";
+import useHintStore from "@store/hintStore";
+import { getRandomCloudImages } from "@data/cloudDefinitions";
+import styles from "./Cloud.module.css";
+import Layer3Text from "./Layer3Text";
+import { MICROPHONE_START_DELAY } from "./constants/cloudConstants";
+import {
+  createLayer3Timeline,
+  animateElementsOut,
+  startBlowDetectionWithErrorHandling,
+} from "./utils/cloudAnimations";
 
-const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
+const CloudA1 = ({
+  levelId,
+  cloudId,
+  position,
+  content,
+  onReveal,
+  containerRef,
+}) => {
   const { getCloudState, advanceCloudLayer, getBlowThreshold } = useGameStore();
-  const resetIncorrectBlowsForCloud = useHintStore(state => state.resetIncorrectBlowsForCloud);
+  const resetIncorrectBlowsForCloud = useHintStore(
+    (state) => state.resetIncorrectBlowsForCloud
+  );
   const cloudState = getCloudState(levelId, cloudId);
 
-  const [cloudImage] = useState(() => getRandomCloudImages(1, 'Regular')[0]);
+  const [cloudImage] = useState(() => getRandomCloudImages(1, "Regular")[0]);
 
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6); // 8-14 seconds
@@ -26,7 +39,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
 
   // Track zoom state to reset incorrect blows when zooming out
   const prevZoomedStateRef = useRef(isZoomed);
-  
+
   useEffect(() => {
     // Reset incorrect blows when transitioning from zoomed to not zoomed
     if (prevZoomedStateRef.current && !isZoomed) {
@@ -46,23 +59,18 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       return;
     }
 
-    // Hide text immediately when blow is detected
     if (textContentRef.current) {
-      textContentRef.current.style.display = 'none';
+      textContentRef.current.style.display = "none";
     }
 
     // Disable CSS floating animation before GSAP takes over
     setIsExitAnimating(true);
-    
-    const timeline = createLayer3Timeline(
-      layer3TextRef.current,
-      () => {
-        advanceCloudLayer(levelId, cloudId);
-        onReveal?.(cloudId);
-      }
-    );
 
-    // Only animate the cloud image out, not the text
+    const timeline = createLayer3Timeline(layer3TextRef.current, () => {
+      advanceCloudLayer(levelId, cloudId);
+      onReveal?.(cloudId);
+    });
+
     animateElementsOut([animationRef], timeline);
   }, [
     isZoomed,
@@ -74,19 +82,16 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     onReveal,
   ]);
 
-
   const { startListening, stopListening } = useBlowDetection({
     onAnyBlow: handleAnyBlow,
     blowThreshold: getBlowThreshold(),
   });
 
-  // Track zoom state changes
   const prevZoomedRef = React.useRef(isZoomed);
   const prevRevealedRef = React.useRef(cloudState?.isRevealed);
   const micTimeoutRef = React.useRef(null);
 
   useEffect(() => {
-    // Only run when zoom state or revealed state changes
     const currentRevealed = cloudState?.isRevealed;
 
     if (
@@ -96,7 +101,6 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       prevZoomedRef.current = isZoomed;
       prevRevealedRef.current = currentRevealed;
 
-      // Clear any pending timeout first
       if (micTimeoutRef.current) {
         clearTimeout(micTimeoutRef.current);
         micTimeoutRef.current = null;
@@ -159,7 +163,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
           isZoomingOut={isZoomingOut}
         />
 
-        {/* Layer 1 */}
+        {/* Layer 1: Cloud Image */}
         {isLayer1 && (
           <div className={styles.cloudImage}>
             <img
@@ -179,7 +183,7 @@ const CloudA1 = ({ levelId, cloudId, position, content, onReveal, containerRef }
           </div>
         )}
 
-        {/* Layer 1 - Text content */}
+        {/* Layer 1: Text content */}
         {isZoomed && !isZoomingOut && isLayer1 && (
           <div ref={textContentRef} className={styles.textContent}>
             <p className={styles.regularLayerText}>{content.layer1}</p>
