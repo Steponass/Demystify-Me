@@ -118,19 +118,6 @@ export const createFeedbackWiggle = (element, intensity = 'medium') => {
   return timeline;
 };
 
-export const startBlowDetectionWithErrorHandling = async (startListening) => {
-  try {
-    const success = await startListening();
-    if (!success) {
-      console.error('Failed to activate blow detection');
-    }
-    return success;
-  } catch (error) {
-    console.error('Error starting blow detection:', error);
-    return false;
-  }
-};
-
 export const createCloudEntranceAnimation = (cloudContainers) => {
   if (!cloudContainers || cloudContainers.length === 0) return null;
 

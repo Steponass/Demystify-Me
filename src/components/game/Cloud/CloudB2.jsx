@@ -4,6 +4,7 @@ import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 import useCloudZoom from '@hooks/useCloudZoom';
 import useBlowDetection from '@hooks/useBlowDetection';
 import useHintDisplay from '@hooks/useHintDisplay';
+import { useCloudMicrophone } from '@hooks/useCloudMicrophone';
 import useGameStore from '@store/gameStore';
 import useHintStore from '@store/hintStore';
 import { getRandomCloudImages } from '@data/cloudDefinitions';
@@ -14,7 +15,7 @@ import {
   TRANSITION_SETTLE_TIME, 
   MICROPHONE_START_DELAY 
 } from './constants/cloudConstants';
-import { createLayer3Timeline, createFeedbackWiggle, startBlowDetectionWithErrorHandling } from './utils/cloudAnimations';
+import { createLayer3Timeline, createFeedbackWiggle } from './utils/cloudAnimations';
 
 gsap.registerPlugin(MorphSVGPlugin);
 
@@ -172,6 +173,13 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     blowThreshold: getBlowThreshold(),
   });
 
+  useCloudMicrophone(
+    isZoomed,
+    cloudState?.isRevealed,
+    startListening,
+    stopListening
+  );
+
   // Initialize SVG and Layer 1 overlay
   useEffect(() => {
     if (cloudState?.currentLayer === 1 && isZoomed && !isTransitioning.current && content.svgMorph) {
@@ -186,35 +194,6 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       }
     }
   }, [cloudState?.currentLayer, isZoomed, content.svgMorph]);
-
-  // Microphone lifecycle
-  const micTimeoutRef = useRef(null);
-
-  useEffect(() => {
-    // Clear any pending timeout first
-    if (micTimeoutRef.current) {
-      clearTimeout(micTimeoutRef.current);
-      micTimeoutRef.current = null;
-    }
-
-    const shouldListen = isZoomed && !cloudState?.isRevealed;
-
-    if (shouldListen) {
-      micTimeoutRef.current = setTimeout(() => {
-        startBlowDetectionWithErrorHandling(startListening);
-        micTimeoutRef.current = null;
-      }, MICROPHONE_START_DELAY);
-    } else {
-      stopListening();
-    }
-
-    return () => {
-      if (micTimeoutRef.current) {
-        clearTimeout(micTimeoutRef.current);
-        micTimeoutRef.current = null;
-      }
-    };
-  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
 
   if (!cloudState) return null;
 

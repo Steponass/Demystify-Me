@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import useCloudZoom from "@hooks/useCloudZoom";
 import useBlowDetection from "@hooks/useBlowDetection";
 import useHintDisplay from "@hooks/useHintDisplay";
+import { useCloudMicrophone } from "@hooks/useCloudMicrophone";
 import useGameStore from "@store/gameStore";
 import useHintStore from "@store/hintStore";
 import { getRandomCloudImages } from "@data/cloudDefinitions";
@@ -16,7 +17,6 @@ import {
 import {
   createLayer3Timeline,
   createFeedbackWiggle,
-  startBlowDetectionWithErrorHandling,
 } from "./utils/cloudAnimations";
 
 const CloudB1 = ({
@@ -219,32 +219,12 @@ const CloudB1 = ({
     blowThreshold: getBlowThreshold(),
   });
 
-  const micTimeoutRef = useRef(null);
-
-  useEffect(() => {
-    if (micTimeoutRef.current) {
-      clearTimeout(micTimeoutRef.current);
-      micTimeoutRef.current = null;
-    }
-
-    const shouldListen = isZoomed && !cloudState?.isRevealed;
-
-    if (shouldListen) {
-      micTimeoutRef.current = setTimeout(() => {
-        startBlowDetectionWithErrorHandling(startListening);
-        micTimeoutRef.current = null;
-      }, MICROPHONE_START_DELAY);
-    } else {
-      stopListening();
-    }
-
-    return () => {
-      if (micTimeoutRef.current) {
-        clearTimeout(micTimeoutRef.current);
-        micTimeoutRef.current = null;
-      }
-    };
-  }, [isZoomed, cloudState?.isRevealed, startListening, stopListening]);
+  useCloudMicrophone(
+    isZoomed,
+    cloudState?.isRevealed,
+    startListening,
+    stopListening
+  );
 
   if (!cloudState) return null;
 
