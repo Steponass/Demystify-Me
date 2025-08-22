@@ -9,19 +9,18 @@ const useCloudLayout = (cloudIds = []) => {
     return containerDimensions.width > 200 && containerDimensions.height > 300;
   }, [containerDimensions.width, containerDimensions.height]);
 
-  // Better responsive cloud sizing with intermediate breakpoint
+  // Responsive cloud sizing with intermediate breakpoint (was problematic)
   const cloudDimensions = useMemo(() => {
     const width = containerDimensions.width;
     
-    // Add intermediate sizing for problematic width range
     let cloudWidth;
     if (width < 480) {
-      cloudWidth = 120; // Mobile
+      cloudWidth = 120;
     } else if (width < 700) {
       // Scale proportionally in the problematic range
       cloudWidth = 120 + ((width - 480) / (700 - 480)) * (200 - 120);
     } else {
-      cloudWidth = 250; // Desktop
+      cloudWidth = 250;
     }
     
     const cloudHeight = cloudWidth * 0.6;
@@ -34,7 +33,6 @@ const useCloudLayout = (cloudIds = []) => {
     };
   }, [containerDimensions.width]);
 
-  // Memoize collision detection to fix linter errors
   const checkCollision = useCallback((rect1, rect2) => {
     return (
       rect1.x < rect2.x + rect2.width &&
@@ -44,7 +42,7 @@ const useCloudLayout = (cloudIds = []) => {
     );
   }, []);
 
-  // Improved fallback with better spacing
+  // Fallback with better spacing
   const findFallbackPosition = useCallback((placedRects, cloudWidth, cloudHeight, buffer, safeZone, cloudIndex) => {
     const containerWidth = containerDimensions.width;
     const containerHeight = containerDimensions.height;
@@ -76,7 +74,7 @@ const useCloudLayout = (cloudIds = []) => {
       }
     }
 
-    // Better last resort: distribute clouds more evenly
+    // Last resort: distribute clouds more evenly
     const columnsCount = Math.max(2, Math.floor(containerWidth / (cloudWidth + buffer)));
     const rowsCount = Math.max(2, Math.floor(containerHeight / (cloudHeight + buffer)));
     
@@ -141,7 +139,7 @@ const useCloudLayout = (cloudIds = []) => {
           cloudHeight, 
           buffer, 
           safeZone, 
-          index // Pass index for better distribution
+          index
         );
         newPositions[cloudId] = fallbackPos;
         

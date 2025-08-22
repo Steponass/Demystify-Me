@@ -5,6 +5,7 @@ import LevelRouter from '@components/game/LevelRouter';
 import MainMenu from '@components/screens/MainMenu/MainMenu';
 
 function App() {
+  console.log("Created by Steponas Dabuzinskas | https://github.com/Steponass")
   return (
     <BrowserRouter>
       <Routes>

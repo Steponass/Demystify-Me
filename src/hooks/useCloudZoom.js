@@ -36,8 +36,6 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
       zIndex: cloudElement.style.zIndex || ''
     };
 
-
-    // Record current state for Flip
     const state = Flip.getState(cloudElement);
 
     // Calculate safe dimensions based on viewport
@@ -45,27 +43,23 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
     const viewportHeight = window.innerHeight;
     const isMobile = viewportWidth < 768;
 
-    // Calculate maximum safe dimensions maintaining aspect ratio
     let targetWidth, targetHeight;
     
     if (isMobile) {
-      // Mobile: More conservative sizing
       targetWidth = Math.min(
         viewportWidth * 0.92,  // 92% of viewport width
         500                     // Max 500px wide
       );
     } else {
-      // Desktop: Larger but still constrained
       targetWidth = Math.min(
         viewportWidth * 0.6,   // 60% of viewport width
         768                    // Max 768px wide
       );
     }
     
-    // Calculate height maintaining 0.6 aspect ratio
     targetHeight = targetWidth * 0.6;
     
-    // Ensure it fits vertically too
+    // Ensure it fits vertically
     const maxHeightAllowed = viewportHeight * 0.7;
     if (targetHeight > maxHeightAllowed) {
       targetHeight = maxHeightAllowed;
@@ -89,25 +83,11 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
     setIsZoomed(true);
     setZoomState(true, cloudId);
 
-    // Animate from original state to new state
     Flip.from(state, {
       duration: 0.8,
       ease: "sine.inOut",
       absolute: true,
       scale: true,
-      onUpdate: function() {
-        // Safety check: ensure element stays within viewport
-        const rect = cloudElement.getBoundingClientRect();
-        const margin = 20; // Safety margin from edges
-        
-        if (rect.left < margin || 
-            rect.right > viewportWidth - margin || 
-            rect.top < margin || 
-            rect.bottom > viewportHeight - margin) {
-          // Force completion if we're going out of bounds
-          this.progress(1);
-        }
-      }
     });
 
 
@@ -142,14 +122,13 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
 
     cloudElement.classList.remove('zoomed');
     
-    // If revealed, add revealed class
     if (isRevealed) {
       cloudElement.classList.add('revealed');
     }
 
     // Animate back from zoomed state to original
     Flip.from(state, {
-      duration: 0.6,
+      duration: 0.8,
       ease: "sine.inOut",
       absolute: true,
       scale: false,
@@ -188,7 +167,7 @@ const useCloudZoomFlip = (isRevealed = false, cloudId = null) => {
       zoomOutDelayRef.current = setTimeout(() => {
         setCanZoomOut(true);
         zoomOutDelayRef.current = null;
-      }, 1500);
+      }, 1200);
     } else {
       setCanZoomOut(true);
       if (zoomOutDelayRef.current) {

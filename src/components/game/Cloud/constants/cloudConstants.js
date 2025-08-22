@@ -4,5 +4,5 @@ export const MICROPHONE_START_DELAY = 1600;
 export const HORIZONTAL_DISTANCE = 42;
 export const FEEDBACK_TIMEOUT_DELAY = 700;
 export const LAYER3_FADE_DURATION = 0.3;
-export const CLOUD_FLOAT_Y_DISTANCE = -700;
-export const CLOUD_SCALE_FACTOR = 3;
+export const CLOUD_FLOAT_Y_DISTANCE = -600;
+export const CLOUD_SCALE_FACTOR = 3.5;

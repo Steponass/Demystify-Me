@@ -5,7 +5,7 @@ import { MICROPHONE_START_DELAY } from '@components/game/Cloud/constants/cloudCo
 import styles from './BlowIndicator.module.css';
 
 const BlowIndicator = () => {
-  const { getBlowThreshold, setAudioLevel } = useGameStore();
+  const { getBlowThreshold } = useGameStore();
   const isZoomed = useGameStore(state => state.isZoomed);
   const threshold = getBlowThreshold();
 
@@ -22,8 +22,7 @@ const BlowIndicator = () => {
   // Handle audio level updates (from our own detection or external sources)
   const handleAudioLevel = useCallback((level) => {
     setCurrentAudioLevel(level);
-    setAudioLevel(level); // Update global state for any other consumers
-  }, [setAudioLevel]);
+  }, []);
 
   // Set up blow detection when zoomed
   const { startListening, stopListening } = useBlowDetection({

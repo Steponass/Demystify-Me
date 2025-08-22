@@ -1,7 +1,4 @@
-/* CSS Reset based on Josh W Comeau and Step's own choices. Edited Dec'24 */
-/* May '25 - styling for 'a' is now with :where */
-/* June '25 - removed font-inherit for button, input */
-/* Aug '25 -  overflow-wrap: normal; - used for Rush IQ in July '25, seems appropriate here too */
+/* CSS Reset based on Josh W Comeau and Step's own choices. Last edited Aug'25 */
 
 *,
 *::before,
@@ -20,10 +17,8 @@ html {
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 
-  /* / Smooth Scrollin' */
   scroll-behavior: smooth;
 
-  /* Ensure default kerning/ligatures are enabled */
   text-rendering: optimizeLegibility;
 }
 
@@ -84,7 +79,6 @@ ol {
   color: inherit;
 }
 
-/* remove animations for people who've turned them off */
 @media (prefers-reduced-motion: reduce) {
 
   *,

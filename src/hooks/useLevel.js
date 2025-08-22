@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo, useCallback } from 'react';
+import { useRef, useEffect, useMemo, useCallback } from 'react';
 import { gsap } from 'gsap';
 import useLevelProgress from '@hooks/useLevelProgress';
 import useCloudLayout from '@hooks/useCloudLayout';
@@ -17,7 +17,6 @@ const useLevel = (levelId, levelData, customHandleReveal = null) => {
   const cloudIds = useMemo(() => 
     cloudConfigs.map(config => config.cloudId), [cloudConfigs]);
 
-  // Create refs for each cloud container (stable references)
   const cloudRefs = useMemo(() => {
     const refs = {};
     cloudConfigs.forEach(config => {
@@ -77,7 +76,7 @@ const useLevel = (levelId, levelData, customHandleReveal = null) => {
     }
     
     // Immediately check for level completion when a cloud is revealed
-    // Use setTimeout to allow the cloud state to update before checking completion
+    // Using setTimeout to allow the cloud state to update before checking completion
     setTimeout(() => {
       const gameState = useGameStore.getState();
       const { isLevelCompleted, completeLevel, isLevelCompletedBefore } = gameState;

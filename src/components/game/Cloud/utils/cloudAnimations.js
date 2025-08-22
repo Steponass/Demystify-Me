@@ -27,7 +27,7 @@ export const createLayer3Timeline = (layer3Element, onComplete) => {
       {
         opacity: 1,
         duration: LAYER3_FADE_DURATION,
-        ease: 'sine.in',
+        ease: 'sine.inOut',
       },
       0
     );
@@ -99,9 +99,8 @@ export const createFeedbackWiggle = (element, intensity = 'medium') => {
   gsap.killTweensOf(element.current);
 
   const wiggleParams = {
-    light: { x: [-15, 15, 0], rotation: [0, 0, 0], duration: [0.1, 0.1, 0.1] },
     medium: { x: [-30, 30, -30, 0], rotation: [-1, 1, 0, 0], duration: [0.1, 0.1, 0.1, 0.1] },
-    heavy: { x: [-50, 50, -50, 0], rotation: [-2, 2, -1, 0], duration: [0.12, 0.12, 0.12, 0.12] }
+    heavy: { x: [-50, 50, -50, 0], rotation: [-2, 2, -1, 0], duration: [0.14, 0.14, 0.14, 0.14] }
   };
 
   const params = wiggleParams[intensity] || wiggleParams.medium;

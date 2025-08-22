@@ -5,7 +5,7 @@ import styles from './RewindButton.module.css';
 import RewindIcon from '@/assets/images/ui/RewindIcon';
 
 const RewindButton = ({ levelId }) => {
-  const { rewindLevel } = useGameStore();
+  const rewindLevel = useGameStore(state => state.rewindLevel);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   
   const handleRewindClick = () => {
@@ -22,6 +22,7 @@ const RewindButton = ({ levelId }) => {
   };
 
   return (
+
     <>
       <button 
         className={styles.rewindButton} 

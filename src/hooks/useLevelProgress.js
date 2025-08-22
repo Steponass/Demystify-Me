@@ -38,8 +38,6 @@ const useLevelProgress = (levelId, cloudConfigs = []) => {
     }
   }, [isCompleted, wasCompletedBefore, levelId, completeLevel]);
 
-  // Note: Auto-routing on level completion removed as requested
-
   return {
     isUnlocked,
     isCompleted,

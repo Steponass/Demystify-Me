@@ -30,7 +30,7 @@ const useGameStore = create(
         if (isFirstTimeCompletion) {
           const newCurrentLevel = Math.max(currentLevel, levelId + 1);
           const newCompletedLevels = [...completedLevels, levelId];
-          const isGameComplete = newCompletedLevels.length === 10; // All 10 levels completed
+          const isGameComplete = newCompletedLevels.length === 10;
           
 
           if (isGameComplete) {
@@ -45,12 +45,8 @@ const useGameStore = create(
             currentLevel: newCurrentLevel,
             isGameComplete,
             endingSequenceState: shouldTriggerEndingSequence ? 'bonus_available' : get().endingSequenceState
-            // isLevelTransitioning removed as requested
           });
-        } else {
-          console.log(`Level ${levelId} was already completed before`);
-        }
-      }, isLevelCompletedBefore: (levelId) => {
+        }}, isLevelCompletedBefore: (levelId) => {
         const { completedLevels } = get();
         return completedLevels.includes(levelId);
       },
@@ -64,6 +60,8 @@ const useGameStore = create(
           set({ isGameComplete: true });
         }
       },
+
+    // Cloud instance-related states
 
       setZoomState: (isZoomed, cloudId = null) => {
         set({ 
@@ -99,7 +97,6 @@ const useGameStore = create(
 
         // Only Level 1 is always unlocked
         if (levelId === 1) {
-
           return true;
         }
 
@@ -138,7 +135,6 @@ const useGameStore = create(
         const cloudState = levelClouds[cloudId];
 
         if (!cloudState) {
-          console.warn('Cloud state not found:', { levelId, cloudId });
           return;
         }
 
@@ -194,11 +190,9 @@ const useGameStore = create(
         const levelClouds = cloudStates[levelId];
 
         if (!levelClouds) {
-          console.warn(`No cloud states found for level ${levelId}`);
           return;
         }
 
-        // Reset all clouds in the level to initial state
         const resetClouds = {};
         Object.keys(levelClouds).forEach(cloudId => {
           const cloudState = levelClouds[cloudId];
@@ -206,7 +200,6 @@ const useGameStore = create(
             ...cloudState,
             currentLayer: 1,
             isRevealed: false
-            // Keep cloudType unchanged - it's needed for proper functionality
           };
         });
 
@@ -218,7 +211,6 @@ const useGameStore = create(
         });
       },
 
-      // Ending sequence management
       setEndingSequenceState: (state) => {
         set({ endingSequenceState: state });
       },

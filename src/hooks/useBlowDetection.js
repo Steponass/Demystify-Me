@@ -15,14 +15,12 @@ const useBlowDetection = ({
 
   const [isListening, setIsListening] = useState(false);
 
-  // Use refs to store callbacks to prevent dependency cascade
   const onLevelChangeRef = useRef(onLevelChange);
   const onAnyBlowRef = useRef(onAnyBlow);
   const onDoubleBlowRef = useRef(onDoubleBlow);
   const onLongBlowRef = useRef(onLongBlow);
   const onXLBlowRef = useRef(onXLBlow);
 
-  // Update refs when callbacks change
   useEffect(() => {
     onLevelChangeRef.current = onLevelChange;
     onAnyBlowRef.current = onAnyBlow;
@@ -44,7 +42,6 @@ const useBlowDetection = ({
   const lastBlowEndTimeRef = useRef(null);
 
   const cleanupAudioResources = useCallback(() => {
-    // Cancel any pending animation frames
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
@@ -88,7 +85,7 @@ const useBlowDetection = ({
       // Create a fresh audio context for blow detection
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
 
-      // Resume context if it's in suspended state (common browser behavior)
+      // Resume context if it's in suspended state (ostensibly it's common browser behavior)
       if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
       }
@@ -105,7 +102,6 @@ const useBlowDetection = ({
       microphoneStreamRef.current = microphoneStream;
       return true;
     } catch {
-      // Return false on any microphone access failure
       return false;
     }
   }, []);
@@ -149,7 +145,6 @@ const useBlowDetection = ({
 
   const startListening = useCallback(async () => {
     try {
-      // Prevent restart if already listening
       if (isListening) return true;
 
       const audioProcessingReady = await initializeAudioProcessing();
@@ -157,7 +152,6 @@ const useBlowDetection = ({
         return false;
       }
 
-      // Start analyzing audio data in real-time
       const analyzeAudioData = () => {
         try {
           if (!analyserRef.current || !dataArrayRef.current) {
@@ -166,7 +160,6 @@ const useBlowDetection = ({
 
           analyserRef.current.getByteFrequencyData(dataArrayRef.current);
 
-          // Calculate average amplitude
           const averageAmplitude = dataArrayRef.current.reduce((sum, value) => sum + value, 0) /
             dataArrayRef.current.length / 255; // Normalize to 0-1 range
 
@@ -222,7 +215,7 @@ const useBlowDetection = ({
             animationFrameRef.current = requestAnimationFrame(analyzeAudioData);
           }
         } catch {
-          // If analysis fails for any reason, cleanup gracefully
+          // If analysis fails for any reason, cleanup
           cleanupAudioResources();
         }
       };

@@ -1,4 +1,3 @@
-// Direct imports for all level components
 import Level01 from '@levels/Level01/Level01';
 import Level02 from '@levels/Level02/Level02';
 import Level03 from '@levels/Level03/Level03';

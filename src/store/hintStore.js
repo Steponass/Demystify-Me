@@ -1,17 +1,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-
 const initialHintState = {
-  // Current active hint data (cloudType + variant)
   currentHintData: null,
   isHintVisible: false,
-  
-  // Tracking
   zoomCounts: {}, // Tracks how many times each cloud type has been zoomed (A1: 2, A2: 1, etc.)
   incorrectBlowCounts: {}, // Tracks incorrect blows per cloud instance (levelId-cloudId: count)
-  
-  // Configuration
   hintsEnabled: true,
 };
 
@@ -42,8 +36,6 @@ const useHintStore = create(
         const { hintsEnabled, zoomCounts, incorrectBlowCounts } = get();
         
         if (!hintsEnabled) return;
-        
-        // Check if this cloud type exists in our hint variants
         if (!cloudType) return;
 
         // Get current zoom count for this cloud type across the entire game
@@ -53,7 +45,6 @@ const useHintStore = create(
         // Reset incorrect blow count for this specific cloud instance when zooming in
         const cloudInstanceId = `${levelId}-${cloudId}`;
         
-        // Determine if we should show a hint and which variant
         let shouldShowHint = false;
         let variant;
         
@@ -62,11 +53,10 @@ const useHintStore = create(
           variant = 'first';
           shouldShowHint = true;
         } else if (newZoomCount === 2) {
-          // Second time seeing this cloud type in the entire game
+          // Second time seeing this cloud type
           variant = 'second';
           shouldShowHint = true;
         }
-        // For 3+ encounters, don't show first/second hints anymore
         
         // Update zoom count and reset incorrect blow count for this cloud instance
         set({
@@ -95,7 +85,6 @@ const useHintStore = create(
         const currentCount = incorrectBlowCounts[cloudInstanceId] || 0;
         const newCount = currentCount + 1;
         
-        // Update the count
         set({
           incorrectBlowCounts: {
             ...incorrectBlowCounts,
