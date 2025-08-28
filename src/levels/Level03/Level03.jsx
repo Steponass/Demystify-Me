@@ -1,10 +1,13 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import Cloud from '@components/game/Cloud/Cloud';
 import useLevel from '@hooks/useLevel';
 import levelData from '@data/levels/level-03.json';
+import InfoDialog from '@components/ui/InfoDialog/InfoDialog';
 import styles from '@levels/Level.module.css';
 
 const Level03 = ({ levelId }) => {
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(true);
+
   const {
     containerRef,
     cloudRefs,
@@ -12,6 +15,10 @@ const Level03 = ({ levelId }) => {
     handleCloudReveal,
     levelData: level
   } = useLevel(levelId, levelData);
+
+  const handleCloseInfoDialog = () => {
+    setIsInfoDialogOpen(false);
+  };
 
   return (
     <main>
@@ -37,6 +44,14 @@ const Level03 = ({ levelId }) => {
           );
         })}
       </div>
+
+      <InfoDialog
+        isOpen={isInfoDialogOpen}
+        title="Autosave"
+        onClose={handleCloseInfoDialog}
+      >
+        <p>Your progress is saved with each cloud you reveal, so you can come back any time.</p>
+      </InfoDialog>
     </main>
   );
 };

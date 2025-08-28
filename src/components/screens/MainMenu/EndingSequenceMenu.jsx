@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import useGameStore from '@store/gameStore';
 import useBlowDetection from '@hooks/useBlowDetection';
 import { MICROPHONE_START_DELAY } from '@components/game/Cloud/constants/cloudConstants';
-import { startBlowDetectionWithErrorHandling } from '@components/game/Cloud/utils/cloudAnimations';
+import { useCloudMicrophone } from '@/hooks/useCloudMicrophone';
 import cloudStyles from '@components/game/Cloud/Cloud.module.css';
 import styles from './MainMenu.module.css';
 
@@ -11,6 +11,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
   const { completeEndingSequence, getBlowThreshold } = useGameStore();
   const [endingPhase, setEndingPhase] = useState('unlock_prompt');
   const [isComplete, setIsComplete] = useState(false);
+  const {startBlowDetection} = useCloudMicrophone();
   const cloudImage = '/images/clouds/Regular/Cloud_Reg_3.webp';
 
   const cloudRef = useRef(null);
@@ -66,7 +67,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
 
     if (endingPhase === 'unlock_prompt' && !isComplete) {
       micTimeoutRef.current = setTimeout(() => {
-        startBlowDetectionWithErrorHandling(startListening);
+        startBlowDetection(startListening);
         micTimeoutRef.current = null;
       }, MICROPHONE_START_DELAY);
     } else {
