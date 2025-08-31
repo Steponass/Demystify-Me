@@ -40,7 +40,7 @@ const InfoDialog = ({
           <h3 className={styles.dialogTitle}>
             {title}
           </h3>
-          <div className={styles.dialogBody}>{children}</div>
+          <p className={styles.dialogBody}>{children}</p>
           <ActionButton variant="primary" onClick={onClose}>
             {closeText}
           </ActionButton>
