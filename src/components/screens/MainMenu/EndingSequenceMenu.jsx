@@ -3,7 +3,6 @@ import { gsap } from 'gsap';
 import useGameStore from '@store/gameStore';
 import useBlowDetection from '@hooks/useBlowDetection';
 import { MICROPHONE_START_DELAY } from '@components/game/Cloud/constants/cloudConstants';
-import { useCloudMicrophone } from '@/hooks/useCloudMicrophone';
 import cloudStyles from '@components/game/Cloud/Cloud.module.css';
 import styles from './MainMenu.module.css';
 
@@ -11,7 +10,9 @@ const EndingSequenceMenu = ({ onComplete }) => {
   const { completeEndingSequence, getBlowThreshold } = useGameStore();
   const [endingPhase, setEndingPhase] = useState('unlock_prompt');
   const [isComplete, setIsComplete] = useState(false);
-  const {startBlowDetection} = useCloudMicrophone();
+  const [microphoneReady, setMicrophoneReady] = useState(false);
+  const [showClickPrompt, setShowClickPrompt] = useState(false);
+  
   const cloudImage = '/images/clouds/Regular/Cloud_Reg_3.webp';
 
   const cloudRef = useRef(null);
@@ -21,7 +22,7 @@ const EndingSequenceMenu = ({ onComplete }) => {
 
   const getCurrentText = () => {
     if (endingPhase === 'unlock_prompt') {
-      return "Ready for the biggest challenge?";
+      return "Ready for the biggest challenge? Tap, then blow";
     } else {
       return "Just kidding, you've completed the game";
     }
@@ -58,6 +59,23 @@ const EndingSequenceMenu = ({ onComplete }) => {
     blowThreshold: getBlowThreshold(),
   });
 
+  const startMicrophone = useCallback(async () => {
+    try {
+      const success = await startListening();
+      if (success) {
+        setMicrophoneReady(true);
+        setShowClickPrompt(false);
+      } else {
+        setShowClickPrompt(true);
+      }
+      return success;
+    } catch (error) {
+      console.error('Error starting microphone:', error);
+      setShowClickPrompt(true);
+      return false;
+    }
+  }, [startListening]);
+
   // Microphone lifecycle
   useEffect(() => {
     if (micTimeoutRef.current) {
@@ -65,12 +83,12 @@ const EndingSequenceMenu = ({ onComplete }) => {
       micTimeoutRef.current = null;
     }
 
-    if (endingPhase === 'unlock_prompt' && !isComplete) {
+    if (endingPhase === 'unlock_prompt' && !isComplete && !microphoneReady) {
       micTimeoutRef.current = setTimeout(() => {
-        startBlowDetection(startListening);
+        startMicrophone();
         micTimeoutRef.current = null;
       }, MICROPHONE_START_DELAY);
-    } else {
+    } else if (endingPhase !== 'unlock_prompt' || isComplete) {
       stopListening();
     }
 
@@ -80,23 +98,32 @@ const EndingSequenceMenu = ({ onComplete }) => {
         micTimeoutRef.current = null;
       }
     };
-  }, [endingPhase, isComplete, startListening, stopListening]);
+  }, [endingPhase, isComplete, microphoneReady, startMicrophone, stopListening]);
 
-  const handleCompleteSequence = () => {
+  const handleScreenClick = useCallback(() => {
     if (endingPhase === 'joke_reveal' && !isComplete) {
+      // Complete sequence on joke reveal phase
       setIsComplete(true);
       completeEndingSequence();
       onComplete();
+    } else if (endingPhase === 'unlock_prompt' && !microphoneReady) {
+      // Start microphone on any click if not ready
+      startMicrophone();
     }
+  }, [endingPhase, isComplete, microphoneReady, startMicrophone, completeEndingSequence, onComplete]);
+
+  const getCursorStyle = () => {
+    if (endingPhase === 'joke_reveal') return 'pointer';
+    if (!microphoneReady && showClickPrompt) return 'pointer';
+    return 'default';
   };
 
   return (
     <div
       className={styles.menuContent}
-      onClick={handleCompleteSequence}
-      style={{ cursor: endingPhase === 'joke_reveal' ? 'pointer' : 'default' }}
+      onClick={handleScreenClick}
+      style={{ cursor: getCursorStyle() }}
     >
-
       <div style={{
         position: 'absolute',
         top: '50%',
@@ -111,7 +138,6 @@ const EndingSequenceMenu = ({ onComplete }) => {
           className={`${cloudStyles.cloud} ${cloudStyles.zoomed}`}
           data-flip-id="ending-cloud"
         >
-
           <div
             ref={layer3TextRef}
             className={cloudStyles.textContent}
@@ -148,9 +174,24 @@ const EndingSequenceMenu = ({ onComplete }) => {
           left: '50%',
           transform: 'translateX(-50%)',
           color: 'rgba(255, 255, 255, 0.8)',
-          textAlign: 'center'
+          textAlign: 'center',
+          transition: 'all 0.4s 1s ease-out'
         }}>
           <p>You can replay any level now</p>
+        </div>
+      )}
+
+      {showClickPrompt && endingPhase === 'unlock_prompt' && !microphoneReady && (
+        <div style={{
+          position: 'absolute',
+          bottom: '50px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: 'rgba(255, 255, 255, 0.7)',
+          textAlign: 'center',
+          fontSize: '14px'
+        }}>
+          <p>Click anywhere to activate microphone</p>
         </div>
       )}
     </div>

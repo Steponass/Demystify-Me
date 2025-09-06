@@ -18,11 +18,12 @@ const ProtectedLevelRoute = () => {
   const isValid = !isNaN(numericLevelId);
   const isUnlocked = isValid && isLevelUnlocked(numericLevelId);
 
+  
+
   if (!isValid) {
     const safeLevel = currentLevel > 0 ? currentLevel : 1;
     return <Navigate to={`/level/${safeLevel}`} replace />;
   }
-
   if (!isUnlocked) {
     // Level not unlocked - redirect to the highest unlocked level
     const safeLevel = currentLevel > 0 ? currentLevel : 1;
