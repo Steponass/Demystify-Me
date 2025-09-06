@@ -4,8 +4,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow: hidden;
   user-select: none;
 }
 
@@ -13,11 +12,10 @@
 @media (orientation: landscape) and (max-height: 500px) {
   .mainMenu {
     align-items: flex-start;
-    padding-bottom: var(--space-32px);
   }
 
   .mainMenu_container {
-    min-height: calc(100svh - var(--space-32px));
+    min-height: 100svh;
   }
 }
 
@@ -59,15 +57,11 @@
 }
 
 .menuContent>*+* {
-
-  margin-block-start: var(--space-16-24px);
-
+  margin-block-start: var(--space-12-16px);
 }
 
 .menuContent> :nth-child(2) {
-
   margin-block-end: auto;
-
 }
 
 .buttonContainerFirstVisit {
@@ -98,7 +92,6 @@
 
 .buttonContainer>* {
   width: 100%;
-  /* padding-inline: 70px; */
 }
 
 /* Level selection grid for completed game state */
@@ -136,8 +129,8 @@
   object-fit: cover;
   object-position: top;
   opacity: 0.6;
-  filter: blur(25px);
-  animation: fogDrift 20s ease-in-out infinite;
+  filter: blur(20px);
+  animation: fogDrift 15s ease-in-out infinite;
 }
 
 @keyframes fogDrift {
