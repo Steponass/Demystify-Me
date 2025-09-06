@@ -1,36 +1,49 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { gsap } from 'gsap';
-import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
-import useCloudZoom from '@hooks/useCloudZoom';
-import useBlowDetection from '@hooks/useBlowDetection';
-import useHintDisplay from '@hooks/useHintDisplay';
-import { useCloudMicrophone } from '@hooks/useCloudMicrophone';
-import useGameStore from '@store/gameStore';
-import useHintStore from '@store/hintStore';
-import { getRandomCloudImages } from '@data/cloudDefinitions';
-import styles from './Cloud.module.css';
-import Layer3Text from './Layer3Text';
-import { 
-  CLOUD_ANIMATION_DURATION, 
-  TRANSITION_SETTLE_TIME, 
-  MICROPHONE_START_DELAY 
-} from './constants/cloudConstants';
-import { createLayer3Timeline, createFeedbackWiggle } from './utils/cloudAnimations';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { gsap } from "gsap";
+import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
+import useCloudZoom from "@hooks/useCloudZoom";
+import useBlowDetection from "@hooks/useBlowDetection";
+import useHintDisplay from "@hooks/useHintDisplay";
+import { useCloudMicrophone } from "@hooks/useCloudMicrophone";
+import useGameStore from "@store/gameStore";
+import useHintStore from "@store/hintStore";
+import { getRandomCloudImages } from "@data/cloudDefinitions";
+import styles from "./Cloud.module.css";
+import Layer3Text from "./Layer3Text";
+import {
+  CLOUD_ANIMATION_DURATION,
+  TRANSITION_SETTLE_TIME,
+  MICROPHONE_START_DELAY,
+} from "./constants/cloudConstants";
+import {
+  createLayer3Timeline,
+  createFeedbackWiggle,
+} from "./utils/cloudAnimations";
 
 gsap.registerPlugin(MorphSVGPlugin);
 
-const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }) => {
+const CloudB2 = ({
+  levelId,
+  cloudId,
+  position,
+  content,
+  onReveal,
+  containerRef,
+}) => {
   const { getCloudState, advanceCloudLayer, getBlowThreshold } = useGameStore();
-  const incrementIncorrectBlow = useHintStore(state => state.incrementIncorrectBlow);
+  const incrementIncorrectBlow = useHintStore(
+    (state) => state.incrementIncorrectBlow
+  );
   const cloudState = getCloudState(levelId, cloudId);
 
-  const [lightCloudImage] = useState(() => getRandomCloudImages(1, 'Light')[0]);
-  const [heavyCloudImage] = useState(() => getRandomCloudImages(1, 'Heavy')[0]);
+  const [lightCloudImage] = useState(() => getRandomCloudImages(1, "Light")[0]);
+  const [heavyCloudImage] = useState(() => getRandomCloudImages(1, "Heavy")[0]);
   const [isReverseDirection] = useState(() => Math.random() > 0.5);
   const [animationDuration] = useState(() => 8 + Math.random() * 6);
   const [isExitAnimating, setIsExitAnimating] = useState(false);
 
-  const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } = useCloudZoom(cloudState?.isRevealed, cloudId);
+  const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } =
+    useCloudZoom(cloudState?.isRevealed, cloudId);
 
   // Use hint display system but exclude B2 from showing hints
   useHintDisplay(levelId, cloudId, isZoomed, cloudState?.isRevealed);
@@ -57,21 +70,26 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     return gsap.to(svgPathRef.current, {
       morphSVG: {
         shape: targetPath,
-        map: morphOptions?.map || "position"
+        map: morphOptions?.map || "position",
       },
       duration: morphOptions?.duration || 1.2,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   }, [content.svgMorph]);
 
   const handleLayer1Blow = useCallback(() => {
-    if (!isZoomed || isZoomingOut || isTransitioning.current || currentLayerRef.current !== 1) {
+    if (
+      !isZoomed ||
+      isZoomingOut ||
+      isTransitioning.current ||
+      currentLayerRef.current !== 1
+    ) {
       return;
     }
 
     // Disable CSS floating animation before GSAP takes over
     setIsExitAnimating(true);
-    
+
     isTransitioning.current = true;
 
     // Coordinated animation: Light cloud disappears + SVG morphs
@@ -81,18 +99,22 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
         setTimeout(() => {
           isTransitioning.current = false;
         }, TRANSITION_SETTLE_TIME);
-      }
+      },
     });
 
     // Light cloud disappears
     if (lightCloudRef.current) {
-      lightCloudRef.current.style.transition = 'none';
-      timeline.to(lightCloudRef.current, {
-        opacity: 0,
-        scale: 4.5,
-        duration: CLOUD_ANIMATION_DURATION,
-        ease: "sine.out"
-      }, 0);
+      lightCloudRef.current.style.transition = "none";
+      timeline.to(
+        lightCloudRef.current,
+        {
+          opacity: 0,
+          scale: 4.5,
+          duration: CLOUD_ANIMATION_DURATION,
+          ease: "sine.out",
+        },
+        0
+      );
     }
 
     // SVG morphs simultaneously
@@ -100,42 +122,54 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     if (morphAnimation) {
       timeline.add(morphAnimation, 0.2);
     }
-
-  }, [isZoomed, isZoomingOut, advanceCloudLayer, levelId, cloudId, morphSVGText]);
+  }, [
+    isZoomed,
+    isZoomingOut,
+    advanceCloudLayer,
+    levelId,
+    cloudId,
+    morphSVGText,
+  ]);
 
   const handleLayer2LongBlow = useCallback(() => {
-    if (!isZoomed || isZoomingOut || isTransitioning.current || currentLayerRef.current !== 2) {
+    if (
+      !isZoomed ||
+      isZoomingOut ||
+      isTransitioning.current ||
+      currentLayerRef.current !== 2
+    ) {
       return;
     }
 
     // Disable CSS floating animation before GSAP takes over
     setIsExitAnimating(true);
-    
+
     isTransitioning.current = true;
 
-    const timeline = createLayer3Timeline(
-      layer3TextRef.current,
-      () => {
-        advanceCloudLayer(levelId, cloudId);
-        onReveal?.(cloudId);
-        setTimeout(() => {
-          isTransitioning.current = false;
-        }, TRANSITION_SETTLE_TIME);
-      }
-    );
+    const timeline = createLayer3Timeline(layer3TextRef.current, () => {
+      advanceCloudLayer(levelId, cloudId);
+      onReveal?.(cloudId);
+      setTimeout(() => {
+        isTransitioning.current = false;
+      }, TRANSITION_SETTLE_TIME);
+    });
 
     const elements = [heavyCloudRef, svgPathRef];
-    elements.forEach(element => {
+    elements.forEach((element) => {
       if (element.current) {
         gsap.killTweensOf(element.current);
-        element.current.style.transition = 'none';
-        timeline.to(element.current, {
-          y: -300,
-          opacity: 0,
-          scale: 0.8,
-          duration: CLOUD_ANIMATION_DURATION,
-          ease: 'sine.out'
-        }, 0);
+        element.current.style.transition = "none";
+        timeline.to(
+          element.current,
+          {
+            y: -300,
+            opacity: 0,
+            scale: 0.8,
+            duration: CLOUD_ANIMATION_DURATION,
+            ease: "sine.out",
+          },
+          0
+        );
       }
     });
   }, [isZoomed, isZoomingOut, advanceCloudLayer, levelId, cloudId, onReveal]);
@@ -150,7 +184,7 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
       incrementIncorrectBlow(levelId, cloudId, cloudState.cloudType);
     }
 
-    createFeedbackWiggle(heavyCloudRef, 'heavy');
+    createFeedbackWiggle(heavyCloudRef, "heavy");
   }, [cloudState?.cloudType, incrementIncorrectBlow, levelId, cloudId]);
 
   const { startListening, stopListening } = useBlowDetection({
@@ -182,10 +216,17 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
 
   // Initialize SVG and Layer 1 overlay
   useEffect(() => {
-    if (cloudState?.currentLayer === 1 && isZoomed && !isTransitioning.current && content.svgMorph) {
+    if (
+      cloudState?.currentLayer === 1 &&
+      isZoomed &&
+      !isTransitioning.current &&
+      content.svgMorph
+    ) {
       // Set initial SVG path
       if (svgPathRef.current) {
-        gsap.set(svgPathRef.current, { attr: { d: content.svgMorph.sourcePath } });
+        gsap.set(svgPathRef.current, {
+          attr: { d: content.svgMorph.sourcePath },
+        });
       }
 
       // Show heavy cloud and SVG
@@ -201,7 +242,6 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
   const isLayer2 = cloudState.currentLayer === 2;
   const isLayer3 = cloudState.currentLayer === 3;
 
-
   return (
     <div
       ref={containerRef}
@@ -213,8 +253,16 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
     >
       <div
         ref={cloudRef}
-        className={`${styles.cloud} ${cloudState.isRevealed ? styles.revealed : ''} ${isZoomed ? styles.zoomed : ''}`}
-        onClick={!isZoomed ? handleZoomIn : (cloudState?.isRevealed ? handleZoomOut : undefined)}
+        className={`${styles.cloud} ${
+          cloudState.isRevealed ? styles.revealed : ""
+        } ${isZoomed ? styles.zoomed : ""}`}
+        onClick={
+          !isZoomed
+            ? handleZoomIn
+            : cloudState?.isRevealed
+            ? handleZoomOut
+            : undefined
+        }
         data-flip-id={cloudId}
       >
         <Layer3Text
@@ -231,35 +279,40 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
             <img
               ref={heavyCloudRef}
               src={heavyCloudImage}
-              className={`${styles.floatingCloud} ${!cloudState?.isRevealed && !isExitAnimating
-                ? (isReverseDirection ? styles.floatingReverse : styles.floating)
-                : ''
-                }`}
+              className={`${styles.floatingCloud} ${
+                !cloudState?.isRevealed && !isExitAnimating
+                  ? isReverseDirection
+                    ? styles.floatingReverse
+                    : styles.floating
+                  : ""
+              }`}
               style={{
-                '--floating-duration': `${animationDuration}s`
+                "--floating-duration": `${animationDuration}s`,
               }}
             />
           </div>
         )}
 
         {/* SVG morphing text layer */}
-        {(isLayer1 || isLayer2) && isZoomed && !isZoomingOut && content.svgMorph && (
-          <div className={styles.textContent}>
-            <svg
-              className={styles.morphingSVG}
-              viewBox={content.svgMorph.viewBox}
-              fill="currentColor"
-            >
-              <path
-                ref={svgPathRef}
-                d={content.svgMorph.sourcePath}
-                stroke="currentColor"
-                strokeWidth="0.2mm"
-              />
-            </svg>
-
-          </div>
-        )}
+        {(isLayer1 || isLayer2) &&
+          isZoomed &&
+          !isZoomingOut &&
+          content.svgMorph && (
+            <div className={styles.textContent}>
+              <svg
+                className={styles.morphingSVG}
+                viewBox={content.svgMorph.viewBox}
+                fill="currentColor"
+              >
+                <path
+                  ref={svgPathRef}
+                  d={content.svgMorph.sourcePath}
+                  stroke="currentColor"
+                  strokeWidth="0.2mm"
+                />
+              </svg>
+            </div>
+          )}
 
         {/* Layer 1 Overlay: Semi-transparent Light cloud */}
         {isLayer1 && isZoomed && !isZoomingOut && (
@@ -268,12 +321,15 @@ const CloudB2 = ({ levelId, cloudId, position, content, onReveal, containerRef }
               ref={lightCloudRef}
               src={lightCloudImage}
               className={`${styles.floatingCloud} 
-              ${!cloudState?.isRevealed && !isExitAnimating
-                ? (isReverseDirection ? styles.floatingReverse : styles.floating)
-                : ''
-                }`}
+              ${
+                !cloudState?.isRevealed && !isExitAnimating
+                  ? isReverseDirection
+                    ? styles.floatingReverse
+                    : styles.floating
+                  : ""
+              }`}
               style={{
-                '--floating-duration': `${animationDuration}s`
+                "--floating-duration": `${animationDuration}s`,
               }}
             />
           </div>

@@ -1,20 +1,35 @@
 .mainMenu {
-  height: 100vh;
+  height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   user-select: none;
+}
+
+/* Prevent content from being cut off in landscape mode */
+@media (orientation: landscape) and (max-height: 500px) {
+  .mainMenu {
+    align-items: flex-start;
+    padding-bottom: var(--space-32px);
+  }
+
+  .mainMenu_container {
+    min-height: calc(100svh - var(--space-32px));
+  }
 }
 
 .titleFirstVisit {
   filter: blur(0px);
   transition: filter 2s ease;
+
   @starting-style {
     filter: blur(50px);
   }
 }
+
 .levelTitle {
   color: var(--clr-greyish);
 }
@@ -23,6 +38,7 @@
   max-width: 50ch;
   filter: blur(0px);
   transition: filter 2s ease 1.7s;
+
   @starting-style {
     filter: blur(50px);
   }
@@ -42,16 +58,17 @@
   align-items: center;
 }
 
-.menuContent > * + * {
+.menuContent>*+* {
 
   margin-block-start: var(--space-16-24px);
-  
-  }
-  .menuContent > :nth-child(2) {
-  
+
+}
+
+.menuContent> :nth-child(2) {
+
   margin-block-end: auto;
-  
-  }
+
+}
 
 .buttonContainerFirstVisit {
   display: flex;
@@ -60,6 +77,7 @@
   margin-top: var(--space-24-32px);
   filter: blur(0px);
   transition: filter 1s ease 6.5s;
+
   @starting-style {
     filter: blur(50px);
   }
@@ -72,12 +90,13 @@
   align-items: center;
   filter: blur(0px);
   transition: filter 0.5s ease;
+
   @starting-style {
     filter: blur(50px);
   }
 }
 
-.buttonContainer >* {
+.buttonContainer>* {
   width: 100%;
   /* padding-inline: 70px; */
 }
@@ -94,6 +113,7 @@
 .thresholdAdjusterFirstVisit {
   filter: blur(0px);
   transition: filter 0.8s ease 7.5s;
+
   @starting-style {
     filter: blur(50px);
   }
@@ -124,11 +144,12 @@
   0% {
     transform: translate(-3%, -10%);
   }
+
   50% {
     transform: translate(3%, 10%);
   }
+
   100% {
     transform: translate(-3%, -10%);
   }
 }
-

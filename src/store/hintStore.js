@@ -92,8 +92,8 @@ const useHintStore = create(
           }
         });
         
-        // Show repeated hint if user has made 2+ incorrect attempts
-        if (newCount >= 2) {
+        // Show repeated hint if user has made 3+ incorrect attempts
+        if (newCount >= 3) {
           get().showHint(cloudType, 'repeated');
           
           // Reset the count after showing repeated hint to give user a fresh start

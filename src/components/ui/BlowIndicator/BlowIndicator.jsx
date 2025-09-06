@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import useGameStore from '@store/gameStore';
-import useBlowDetection from '@hooks/useBlowDetection';
-import { MICROPHONE_START_DELAY } from '@components/game/Cloud/constants/cloudConstants';
-import styles from './BlowIndicator.module.css';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import useGameStore from "@store/gameStore";
+import useBlowDetection from "@hooks/useBlowDetection";
+import { MICROPHONE_START_DELAY } from "@components/game/Cloud/constants/cloudConstants";
+import styles from "./BlowIndicator.module.css";
 
-const BlowIndicator = () => {
-  const { getBlowThreshold } = useGameStore();
-  const isZoomed = useGameStore(state => state.isZoomed);
+const BlowIndicator = ({ levelId }) => {
+  const { getBlowThreshold, getZoomedCloudState } = useGameStore();
+  const isZoomed = useGameStore((state) => state.isZoomed);
   const threshold = getBlowThreshold();
-
+  const zoomedCloudState = getZoomedCloudState(levelId);
 
   const [smoothedLevel, setSmoothedLevel] = useState(0);
   const [currentAudioLevel, setCurrentAudioLevel] = useState(0);
@@ -39,13 +39,16 @@ const BlowIndicator = () => {
     }
 
     // Calculate the moving average
-    const sum = audioLevelsRef.current.reduce((total, level) => total + level, 0);
+    const sum = audioLevelsRef.current.reduce(
+      (total, level) => total + level,
+      0
+    );
     const average = sum / audioLevelsRef.current.length;
 
     setSmoothedLevel(average);
   }, [currentAudioLevel, sampleSize]);
 
-  // Manage microphone based on zoom state with proper timeout handling
+  // Manage microphone based on zoom state and cloud reveal state with proper timeout handling
   const micTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -55,7 +58,10 @@ const BlowIndicator = () => {
       micTimeoutRef.current = null;
     }
 
-    if (isZoomed) {
+    // Only start listening if zoomed AND cloud is not revealed
+    const shouldListen = isZoomed && !zoomedCloudState?.isRevealed;
+
+    if (shouldListen) {
       micTimeoutRef.current = setTimeout(() => {
         startListening();
         micTimeoutRef.current = null;
@@ -72,22 +78,22 @@ const BlowIndicator = () => {
       }
       stopListening();
     };
-  }, [isZoomed]);
+  }, [isZoomed, zoomedCloudState?.isRevealed]);
 
   const normalizedLevel = smoothedLevel / threshold;
 
   // Calculate clip percentage - starts at 88% (12% baseline visible)
-  const clipPercentage = Math.max(88 - (normalizedLevel * 88), 0);
+  const clipPercentage = Math.max(88 - normalizedLevel * 88, 0);
 
   // The SVG path for the blow indicator
-  const blowPath = "M 6.1563 21.2852 C 9.5313 20.2071 13.0235 19.6680 16.3516 19.6680 C 20.6641 19.6680 23.8282 20.3476 27.9063 20.3476 C 32.1250 20.3476 34.7500 17.4883 34.7500 13.7617 C 34.7500 9.9414 31.8204 7.2227 28.2110 7.2227 C 25.5391 7.2227 23.1953 8.8867 22.2110 11.1133 C 21.8360 11.8867 21.9766 12.8008 22.7969 13.2227 C 23.5469 13.5976 24.4610 13.3633 24.9532 12.4024 C 25.4688 11.2071 26.7344 10.2695 28.2110 10.2695 C 30.1563 10.2695 31.6797 11.6289 31.6797 13.7617 C 31.6797 15.8945 30.2032 17.3008 27.9063 17.3008 C 24.0157 17.3008 20.8047 16.5976 16.3516 16.5976 C 12.5313 16.5976 8.6641 17.2773 5.2188 18.3789 C 4.2344 18.6602 3.8594 19.5039 4.0938 20.3242 C 4.3282 21.1211 5.1016 21.5898 6.1563 21.2852 Z M 42.8125 32.2539 C 48.2737 32.2539 52.1406 28.7852 52.1406 23.9336 C 52.1406 19.1524 48.4609 15.6836 43.8906 15.6836 C 39.6485 15.6836 36.5079 18.6367 35.9453 22.5273 C 35.8047 23.4883 36.3438 24.2617 37.1875 24.3789 C 38.0547 24.4961 38.8047 23.9571 38.9922 22.8555 C 39.3906 20.4180 41.4297 18.7305 43.8906 18.7305 C 46.7502 18.7305 49.0705 20.8633 49.0705 23.9336 C 49.0705 27.0508 46.6096 29.2071 42.8125 29.2071 C 35.6641 29.2071 27.9532 25.1289 18.5782 25.1289 C 13.7500 25.1289 9.3438 25.9024 5.2188 27.3789 C 4.2579 27.7071 3.8594 28.5273 4.0938 29.3476 C 4.3282 30.1445 5.1250 30.6367 6.1563 30.2852 C 9.9766 28.8320 13.9610 28.1992 18.5782 28.1992 C 27.9297 28.1992 34.9141 32.2539 42.8125 32.2539 Z M 27.9297 48.7773 C 31.5391 48.7773 34.3282 46.1055 34.3282 42.2852 C 34.3282 36.7539 28.6797 33.6602 18.2735 33.6602 C 13.9141 33.6602 9.2032 34.5039 5.2188 35.8867 C 4.2579 36.2149 3.8594 37.0352 4.0938 37.8555 C 4.3282 38.6524 5.1250 39.1445 6.1563 38.7930 C 9.8828 37.4571 14.0547 36.7305 18.2735 36.7305 C 26.7813 36.7305 31.2813 38.8633 31.2813 42.2852 C 31.2813 44.4414 29.7813 45.7305 27.9297 45.7305 C 26.0782 45.7305 24.9532 44.4883 24.6250 42.5195 C 24.4844 41.6524 23.8516 40.9492 22.8438 41.0195 C 21.7891 41.0898 21.3672 41.9805 21.5079 42.9180 C 21.9297 46.1758 24.3438 48.7773 27.9297 48.7773 Z";
+  const blowPath =
+    "M 6.1563 21.2852 C 9.5313 20.2071 13.0235 19.6680 16.3516 19.6680 C 20.6641 19.6680 23.8282 20.3476 27.9063 20.3476 C 32.1250 20.3476 34.7500 17.4883 34.7500 13.7617 C 34.7500 9.9414 31.8204 7.2227 28.2110 7.2227 C 25.5391 7.2227 23.1953 8.8867 22.2110 11.1133 C 21.8360 11.8867 21.9766 12.8008 22.7969 13.2227 C 23.5469 13.5976 24.4610 13.3633 24.9532 12.4024 C 25.4688 11.2071 26.7344 10.2695 28.2110 10.2695 C 30.1563 10.2695 31.6797 11.6289 31.6797 13.7617 C 31.6797 15.8945 30.2032 17.3008 27.9063 17.3008 C 24.0157 17.3008 20.8047 16.5976 16.3516 16.5976 C 12.5313 16.5976 8.6641 17.2773 5.2188 18.3789 C 4.2344 18.6602 3.8594 19.5039 4.0938 20.3242 C 4.3282 21.1211 5.1016 21.5898 6.1563 21.2852 Z M 42.8125 32.2539 C 48.2737 32.2539 52.1406 28.7852 52.1406 23.9336 C 52.1406 19.1524 48.4609 15.6836 43.8906 15.6836 C 39.6485 15.6836 36.5079 18.6367 35.9453 22.5273 C 35.8047 23.4883 36.3438 24.2617 37.1875 24.3789 C 38.0547 24.4961 38.8047 23.9571 38.9922 22.8555 C 39.3906 20.4180 41.4297 18.7305 43.8906 18.7305 C 46.7502 18.7305 49.0705 20.8633 49.0705 23.9336 C 49.0705 27.0508 46.6096 29.2071 42.8125 29.2071 C 35.6641 29.2071 27.9532 25.1289 18.5782 25.1289 C 13.7500 25.1289 9.3438 25.9024 5.2188 27.3789 C 4.2579 27.7071 3.8594 28.5273 4.0938 29.3476 C 4.3282 30.1445 5.1250 30.6367 6.1563 30.2852 C 9.9766 28.8320 13.9610 28.1992 18.5782 28.1992 C 27.9297 28.1992 34.9141 32.2539 42.8125 32.2539 Z M 27.9297 48.7773 C 31.5391 48.7773 34.3282 46.1055 34.3282 42.2852 C 34.3282 36.7539 28.6797 33.6602 18.2735 33.6602 C 13.9141 33.6602 9.2032 34.5039 5.2188 35.8867 C 4.2579 36.2149 3.8594 37.0352 4.0938 37.8555 C 4.3282 38.6524 5.1250 39.1445 6.1563 38.7930 C 9.8828 37.4571 14.0547 36.7305 18.2735 36.7305 C 26.7813 36.7305 31.2813 38.8633 31.2813 42.2852 C 31.2813 44.4414 29.7813 45.7305 27.9297 45.7305 C 26.0782 45.7305 24.9532 44.4883 24.6250 42.5195 C 24.4844 41.6524 23.8516 40.9492 22.8438 41.0195 C 21.7891 41.0898 21.3672 41.9805 21.5079 42.9180 C 21.9297 46.1758 24.3438 48.7773 27.9297 48.7773 Z";
 
   // Generate a unique ID for the clip path
   const clipPathId = "levelClip";
 
   return (
-    <div
-      className={styles.blowIndicatorContainer}>
+    <div className={styles.blowIndicatorContainer}>
       <svg
         viewBox="0 0 56 56"
         xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +117,6 @@ const BlowIndicator = () => {
           clipPath={`url(#${clipPathId})`}
         />
       </svg>
-
     </div>
   );
 };

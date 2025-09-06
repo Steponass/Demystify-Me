@@ -3,11 +3,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   background-color: var(--clr-overlay-hint);
   color: var(--clr-whiteish);
   font-size: var(--fs-h5);
-
   border: none;
   border-radius: var(--radius-8px);
   padding: var(--space-16-24px) var(--space-24-32px);
