@@ -12,6 +12,7 @@ const BlowIndicator = ({ levelId }) => {
 
   const [smoothedLevel, setSmoothedLevel] = useState(0);
   const [currentAudioLevel, setCurrentAudioLevel] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
 
   // Store recent audio levels for moving average
   const audioLevelsRef = useRef([]);
@@ -60,6 +61,9 @@ const BlowIndicator = ({ levelId }) => {
 
     // Only start listening if zoomed AND cloud is not revealed
     const shouldListen = isZoomed && !zoomedCloudState?.isRevealed;
+    
+    // Control visibility with fade animation
+    setIsVisible(shouldListen);
 
     if (shouldListen) {
       micTimeoutRef.current = setTimeout(() => {
@@ -69,6 +73,9 @@ const BlowIndicator = ({ levelId }) => {
     } else {
       stopListening();
       setCurrentAudioLevel(0);
+      // Reset smoothed level when stopping
+      audioLevelsRef.current = [];
+      setSmoothedLevel(0);
     }
 
     return () => {
@@ -79,6 +86,14 @@ const BlowIndicator = ({ levelId }) => {
       stopListening();
     };
   }, [isZoomed, zoomedCloudState?.isRevealed]);
+
+  useEffect(() => {
+    console.log('BlowIndicator state:', {
+      isZoomed,
+      isRevealed: zoomedCloudState?.isRevealed,
+      cloudState: zoomedCloudState
+    });
+  }, [isZoomed, zoomedCloudState]);
 
   const normalizedLevel = smoothedLevel / threshold;
 
@@ -93,7 +108,13 @@ const BlowIndicator = ({ levelId }) => {
   const clipPathId = "levelClip";
 
   return (
-    <div className={styles.blowIndicatorContainer}>
+    <div 
+      className={styles.blowIndicatorContainer}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        pointerEvents: isVisible ? 'auto' : 'none'
+      }}
+    >
       <svg
         viewBox="0 0 56 56"
         xmlns="http://www.w3.org/2000/svg"

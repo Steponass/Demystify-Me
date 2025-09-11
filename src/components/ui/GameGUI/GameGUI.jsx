@@ -12,8 +12,12 @@ import { LEVEL_METADATA } from "@components/screens/MainMenu/levelMetadata";
 const GameGUI = ({ levelId }) => {
   const isLevelCompleted = useGameStore((state) => state.isLevelCompleted);
   const isZoomed = useGameStore((state) => state.isZoomed);
+  const getZoomedCloudState = useGameStore((state) => state.getZoomedCloudState);
   const isCompleted = isLevelCompleted(levelId);
-
+  
+  // Get the zoomed cloud state to check if it's revealed
+  const zoomedCloudState = getZoomedCloudState(levelId);
+  const shouldShowBlowIndicator = isZoomed && !zoomedCloudState?.isRevealed;
 
   // Get level metadata
   const levelMetadata = LEVEL_METADATA.find((level) => level.id === levelId);
@@ -29,13 +33,12 @@ const GameGUI = ({ levelId }) => {
 
       <div className={styles.controlsSection}>
         <MenuButton />
-
         <RewindButton levelId={levelId} />
       </div>
 
       {isCompleted && !isZoomed && <NextLevelButton levelId={levelId} />}
 
-      {isZoomed && (
+      {shouldShowBlowIndicator && (
         <div className={styles.blowIndicatorSection}>
           <BlowIndicator levelId={levelId} />
         </div>

@@ -35,7 +35,7 @@ const CloudA1 = ({
   const [isExitAnimating, setIsExitAnimating] = useState(false);
 
   const { cloudRef, isZoomed, isZoomingOut, handleZoomIn, handleZoomOut } =
-    useCloudZoom(cloudState?.isRevealed);
+    useCloudZoom(cloudState?.isRevealed, cloudId);
 
   // Track zoom state to reset incorrect blows when zooming out
   const prevZoomedStateRef = useRef(isZoomed);
