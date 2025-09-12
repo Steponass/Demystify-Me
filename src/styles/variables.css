@@ -164,6 +164,17 @@
     oklch(0.2499 0.1039 273.1) 60% 60%, 80%,
     oklch(0.1809 0.0795 271.05) 100%
   );
+
+  --gradient-sep-2025: linear-gradient(
+    360deg in oklch,
+    oklch(81% 0.12 51) 0%, 7%, 
+    oklch(89% 0.10 68) 15% 20%, 
+    oklch(75% 0.08 321) 46%, 80%, 
+    oklch(60% 0.12 291) 100%
+  );
+
+
+
   /* Current Menu */
   --gradient-sky-classic: linear-gradient(
     360deg in oklch,
