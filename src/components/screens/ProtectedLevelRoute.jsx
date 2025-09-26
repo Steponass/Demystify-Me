@@ -11,6 +11,7 @@ const ProtectedLevelRoute = () => {
   const { levelId } = useParams();
   const isLevelUnlocked = useGameStore(state => state.isLevelUnlocked);
   const currentLevel = useGameStore(state => state.currentLevel);
+  const shouldShowTutorial = useGameStore(state => state.shouldShowTutorial);
 
   // Convert to number (since the params are strings)
   const numericLevelId = parseInt(levelId, 10);
@@ -18,7 +19,10 @@ const ProtectedLevelRoute = () => {
   const isValid = !isNaN(numericLevelId);
   const isUnlocked = isValid && isLevelUnlocked(numericLevelId);
 
-  
+  // Redirect first-time users to tutorial
+  if (shouldShowTutorial()) {
+    return <Navigate to="/tutorial" replace />;
+  }
 
   if (!isValid) {
     const safeLevel = currentLevel > 0 ? currentLevel : 1;

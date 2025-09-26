@@ -77,4 +77,8 @@ html[data-level="10"] {
   background: var(--gradient-sky-purple-to-midnight);
 }
 
+html[data-level="tutorial"] {
+  background: var(--gradient-sky-purple-to-midnight);
+}
+
 

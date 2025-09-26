@@ -34,20 +34,20 @@ const useHintStore = create(
 
       showCloudHint: (cloudType, levelId, cloudId) => {
         const { hintsEnabled, zoomCounts, incorrectBlowCounts } = get();
-        
+
         if (!hintsEnabled) return;
         if (!cloudType) return;
 
         // Get current zoom count for this cloud type across the entire game
         const currentZoomCount = zoomCounts[cloudType] || 0;
         const newZoomCount = currentZoomCount + 1;
-        
+
         // Reset incorrect blow count for this specific cloud instance when zooming in
         const cloudInstanceId = `${levelId}-${cloudId}`;
-        
+
         let shouldShowHint = false;
         let variant;
-        
+
         if (newZoomCount === 1) {
           // First time seeing this cloud type in the entire game
           variant = 'first';
@@ -57,7 +57,7 @@ const useHintStore = create(
           variant = 'second';
           shouldShowHint = true;
         }
-        
+
         // Update zoom count and reset incorrect blow count for this cloud instance
         set({
           zoomCounts: {
@@ -78,24 +78,24 @@ const useHintStore = create(
 
       incrementIncorrectBlow: (levelId, cloudId, cloudType) => {
         const { incorrectBlowCounts, hintsEnabled } = get();
-        
+
         if (!hintsEnabled) return;
-        
+
         const cloudInstanceId = `${levelId}-${cloudId}`;
         const currentCount = incorrectBlowCounts[cloudInstanceId] || 0;
         const newCount = currentCount + 1;
-        
+
         set({
           incorrectBlowCounts: {
             ...incorrectBlowCounts,
             [cloudInstanceId]: newCount
           }
         });
-        
+
         // Show repeated hint if user has made 3+ incorrect attempts
         if (newCount >= 3) {
           get().showHint(cloudType, 'repeated');
-          
+
           // Reset the count after showing repeated hint to give user a fresh start
           set({
             incorrectBlowCounts: {

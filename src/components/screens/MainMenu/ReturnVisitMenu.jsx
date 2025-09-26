@@ -4,7 +4,12 @@ import ThresholdAdjuster from "@components/ui/ThresholdAdjuster/ThresholdAdjuste
 import { LEVEL_METADATA } from "./levelMetadata";
 import styles from "./MainMenu.module.css";
 
-const ReturnVisitMenu = ({ currentLevel, onResume }) => {
+const ReturnVisitMenu = ({ 
+  currentLevel, 
+  onResume, 
+  tutorialCompleted, 
+  onRetryTutorial 
+}) => {
   const getLevelTitle = () => {
     const levelData = LEVEL_METADATA.find((level) => level.id === currentLevel);
     return levelData ? levelData.title : `Level ${currentLevel}`;
@@ -17,9 +22,20 @@ const ReturnVisitMenu = ({ currentLevel, onResume }) => {
 
       <div className={styles.buttonContainer}>
         <ThresholdAdjuster />
+        
         <ActionButton variant="primary" onClick={onResume}>
           Resume
         </ActionButton>
+        
+        {tutorialCompleted && (
+          <ActionButton 
+            variant="secondary" 
+            onClick={onRetryTutorial}
+            className={styles.tutorialButton}
+          >
+            Replay Tutorial
+          </ActionButton>
+        )}
       </div>
     </div>
   );

@@ -11,35 +11,41 @@ const useBlowDetection = ({
   onLongBlow = () => { },
   onXLBlow = () => { },
   onLevelChange = () => { },
+  onMicrophoneError = () => { },
 } = {}) => {
 
   const [isListening, setIsListening] = useState(false);
+  const [microphoneState, setMicrophoneState] = useState('inactive'); // 'inactive', 'requesting', 'active', 'error'
 
   const onLevelChangeRef = useRef(onLevelChange);
   const onAnyBlowRef = useRef(onAnyBlow);
   const onDoubleBlowRef = useRef(onDoubleBlow);
   const onLongBlowRef = useRef(onLongBlow);
   const onXLBlowRef = useRef(onXLBlow);
+  const onMicrophoneErrorRef = useRef(onMicrophoneError);
 
+  // Update callback refs when props change
   useEffect(() => {
     onLevelChangeRef.current = onLevelChange;
     onAnyBlowRef.current = onAnyBlow;
     onDoubleBlowRef.current = onDoubleBlow;
     onLongBlowRef.current = onLongBlow;
     onXLBlowRef.current = onXLBlow;
+    onMicrophoneErrorRef.current = onMicrophoneError;
   });
 
+  // Audio processing refs
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const microphoneStreamRef = useRef(null);
   const animationFrameRef = useRef(null);
   const dataArrayRef = useRef(null);
 
+  // Blow detection refs
   const isBlowingRef = useRef(false);
   const blowStartTimeRef = useRef(null);
-  
-  // Track when last blow ended to measure gaps for double blow
   const lastBlowEndTimeRef = useRef(null);
+  const requestStartTimeRef = useRef(null);
 
   const cleanupAudioResources = useCallback(() => {
     if (animationFrameRef.current) {
@@ -64,14 +70,35 @@ const useBlowDetection = ({
     lastBlowEndTimeRef.current = null;
 
     setIsListening(false);
+    setMicrophoneState('inactive');
     onLevelChangeRef.current(0);
+  }, []);
+
+  const createDetailedErrorInfo = useCallback((error, requestStartTime) => {
+    const requestDuration = requestStartTime ? Date.now() - requestStartTime : 0;
+    
+    return {
+      type: error.name,
+      message: error.message,
+      isPermissionDenied: error.name === 'NotAllowedError',
+      isDeviceNotFound: error.name === 'NotFoundError',
+      isBrowserUnsupported: !navigator.mediaDevices?.getUserMedia,
+      wasImmediateDenial: requestDuration < 100,
+      requestDuration,
+      timestamp: Date.now(),
+      userAgent: navigator.userAgent
+    };
   }, []);
 
   const requestMicrophoneAccess = useCallback(async () => {
     try {
+      setMicrophoneState('requesting');
+      requestStartTimeRef.current = Date.now();
+      
       // Return early if we already have a stream
       if (microphoneStreamRef.current) {
-        return true;
+        setMicrophoneState('active');
+        return { success: true, stream: microphoneStreamRef.current };
       }
 
       // Clean up any existing audio context that might be in a bad state
@@ -85,7 +112,7 @@ const useBlowDetection = ({
       // Create a fresh audio context for blow detection
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
 
-      // Resume context if it's in suspended state (ostensibly it's common browser behavior)
+      // Resume context if it's in suspended state
       if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
       }
@@ -100,19 +127,31 @@ const useBlowDetection = ({
       });
 
       microphoneStreamRef.current = microphoneStream;
-      return true;
-    } catch {
-      return false;
+      setMicrophoneState('active');
+      return { success: true, stream: microphoneStream };
+      
+    } catch (error) {
+      console.error('Microphone access request failed:', error);
+      setMicrophoneState('error');
+      
+      // Create detailed error information
+      const errorInfo = createDetailedErrorInfo(error, requestStartTimeRef.current);
+      
+      // Notify parent component about the error
+      onMicrophoneErrorRef.current(errorInfo);
+      
+      return { success: false, error: errorInfo };
     }
-  }, []);
-
+  }, [createDetailedErrorInfo]);
 
   const initializeAudioProcessing = useCallback(async () => {
     try {
       // Ensure there's microphone access
       if (!microphoneStreamRef.current) {
-        const hasMicrophoneAccess = await requestMicrophoneAccess();
-        if (!hasMicrophoneAccess) return false;
+        const accessResult = await requestMicrophoneAccess();
+        if (!accessResult.success) {
+          return false;
+        }
       }
 
       // Ensure audio context exists and is ready
@@ -127,7 +166,7 @@ const useBlowDetection = ({
 
       // Set up audio analyzer with settings for breath detection
       analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 256; // Good balance of frequency resolution and performance. 512 didn't improve anything, at least not on PC
+      analyserRef.current.fftSize = 256; // 128 or 512 weren't as good, so this is golden middle
 
       const microphoneSourceNode = audioContextRef.current.createMediaStreamSource(microphoneStreamRef.current);
       microphoneSourceNode.connect(analyserRef.current);
@@ -137,19 +176,24 @@ const useBlowDetection = ({
       dataArrayRef.current = new Uint8Array(bufferLength);
 
       return true;
-    } catch {
+    } catch (error) {
+      console.error('Audio processing initialization failed:', error);
+      setMicrophoneState('error');
+      
+      const errorInfo = createDetailedErrorInfo(error);
+      onMicrophoneErrorRef.current(errorInfo);
+      
       return false;
     }
-  }, [requestMicrophoneAccess]);
-
+  }, [requestMicrophoneAccess, createDetailedErrorInfo]);
 
   const startListening = useCallback(async () => {
     try {
-      if (isListening) return true;
+      if (isListening) return { success: true };
 
       const audioProcessingReady = await initializeAudioProcessing();
       if (!audioProcessingReady) {
-        return false;
+        return { success: false, reason: 'audio_processing_failed' };
       }
 
       const analyzeAudioData = () => {
@@ -165,7 +209,6 @@ const useBlowDetection = ({
 
           // Report current audio level for UI feedback
           onLevelChangeRef.current(averageAmplitude);
-
 
           const currentTime = Date.now();
 
@@ -214,7 +257,8 @@ const useBlowDetection = ({
           if (animationFrameRef.current) {
             animationFrameRef.current = requestAnimationFrame(analyzeAudioData);
           }
-        } catch {
+        } catch (analysisError) {
+          console.error('Audio analysis failed:', analysisError);
           // If analysis fails for any reason, cleanup
           cleanupAudioResources();
         }
@@ -224,9 +268,13 @@ const useBlowDetection = ({
       animationFrameRef.current = requestAnimationFrame(analyzeAudioData);
       setIsListening(true);
 
-      return true;
-    } catch {
-      return false;
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to start listening:', error);
+      const errorInfo = createDetailedErrorInfo(error);
+      onMicrophoneErrorRef.current(errorInfo);
+      
+      return { success: false, error: errorInfo };
     }
   }, [
     isListening,
@@ -236,17 +284,26 @@ const useBlowDetection = ({
     longBlowThreshold,
     xlBlowThreshold,
     doubleBlowMaxGap,
-    cleanupAudioResources
+    cleanupAudioResources,
+    createDetailedErrorInfo
   ]);
 
   const stopListening = useCallback(() => {
     cleanupAudioResources();
   }, [cleanupAudioResources]);
 
+  // Check for browser microphone support on mount
   useEffect(() => {
-    // Check for browser microphone support on mount
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      return;
+      setMicrophoneState('error');
+      const errorInfo = {
+        type: 'NotSupportedError',
+        message: 'Browser does not support getUserMedia',
+        isBrowserUnsupported: true,
+        isPermissionDenied: false,
+        isDeviceNotFound: false
+      };
+      onMicrophoneErrorRef.current(errorInfo);
     }
 
     return () => {
@@ -256,10 +313,12 @@ const useBlowDetection = ({
 
   return {
     isListening,
+    microphoneState,
     isBlowing: isBlowingRef.current,
     requestMicrophoneAccess,
     startListening,
     stopListening,
+    cleanupAudioResources
   };
 };
 

@@ -12,6 +12,11 @@ const initialState = {
   isGameComplete: false,
   endingSequenceState: 'not_started',
   blowThreshold: 0.28,
+
+  tutorialState: 'not_started', // 'not_started', 'permission_setup', 'practicing', 'completed'
+  tutorialAttempts: 0,
+  microphoneCalibrated: false,
+  microphonePermissionGranted: false,
 };
 
 const useGameStore = create(
@@ -21,6 +26,7 @@ const useGameStore = create(
 
       setCurrentLevel: (level) => set({ currentLevel: level }),
 
+      // Handle tutorial completion unlocking level 1
       completeLevel: (levelId) => {
         const { completedLevels, currentLevel } = get();
 
@@ -31,22 +37,37 @@ const useGameStore = create(
           const newCurrentLevel = Math.max(currentLevel, levelId + 1);
           const newCompletedLevels = [...completedLevels, levelId];
           const isGameComplete = newCompletedLevels.length === 10;
-          
+
 
           if (isGameComplete) {
-            console.log('Game completed! All 10 levels finished.');
+            console.log('Game completed! Have you tried https://hammering.netlify.app/ ?');
           }
 
           // Special handling for level 10 first completion
           const shouldTriggerEndingSequence = levelId === 10 && isFirstTimeCompletion;
-          
+
           set({
             completedLevels: newCompletedLevels,
             currentLevel: newCurrentLevel,
             isGameComplete,
             endingSequenceState: shouldTriggerEndingSequence ? 'bonus_available' : get().endingSequenceState
           });
-        }}, isLevelCompletedBefore: (levelId) => {
+        }
+      },
+
+      isLevelUnlocked: (levelId) => {
+        const { currentLevel, tutorialState } = get();
+
+        // Level 1 is only unlocked after tutorial completion
+        if (levelId === 1) {
+          return tutorialState === 'completed';
+        }
+
+        // Other levels follow normal progression
+        return levelId <= currentLevel;
+      },
+
+      isLevelCompletedBefore: (levelId) => {
         const { completedLevels } = get();
         return completedLevels.includes(levelId);
       },
@@ -55,89 +76,106 @@ const useGameStore = create(
       checkGameComplete: () => {
         const { completedLevels, isGameComplete } = get();
         const shouldBeComplete = completedLevels.length === 10;
-        
+
         if (shouldBeComplete && !isGameComplete) {
           set({ isGameComplete: true });
         }
       },
 
-    // Cloud instance-related states
-
-      setZoomState: (isZoomed, cloudId = null) => {
-        set({ 
-          isZoomed,
-          zoomedCloudId: isZoomed ? cloudId : null 
+      // Tutorial-specific actions
+      startTutorial: () => {
+        const { tutorialAttempts } = get();
+        set({
+          tutorialState: 'permission_setup',
+          tutorialAttempts: tutorialAttempts + 1
         });
       },
 
-      getZoomedCloudState: (levelId) => {
-        const { zoomedCloudId, cloudStates } = get();
-        if (!zoomedCloudId || !cloudStates[levelId]) return null;
-        return cloudStates[levelId][zoomedCloudId];
+      completeTutorialPermissionSetup: () => {
+        set({ tutorialState: 'practicing', microphonePermissionGranted: true });
       },
 
-      getZoomState: () => {
-        return get().isZoomed;
+      completeTutorial: () => {
+        const { currentLevel } = get();
+
+        set({
+          tutorialState: 'completed',
+          microphoneCalibrated: true,
+          // Ensure level 1 is unlocked when tutorial completes
+          currentLevel: Math.max(currentLevel, 1)
+        });
       },
 
-      setAudioLevel: (level) => {
-        set({ audioLevel: level });
+      resetTutorial: () => {
+        set({
+          tutorialState: 'not_started',
+          tutorialAttempts: 0,
+          microphoneCalibrated: false,
+          microphonePermissionGranted: false
+        });
       },
 
-      getAudioLevel: () => {
-        return get().audioLevel;
+      getTutorialState: () => {
+        return get().tutorialState;
       },
 
-      setLevelTransitioning: (isTransitioning) => {
-        set({ isLevelTransitioning: isTransitioning });
+      isTutorialCompleted: () => {
+        return get().tutorialState === 'completed';
       },
 
-      isLevelUnlocked: (levelId) => {
-        const { completedLevels } = get();
+      shouldShowTutorial: () => {
+        const { tutorialState, completedLevels, currentLevel } = get();
 
-        // Only Level 1 is always unlocked
-        if (levelId === 1) {
-          return true;
-        }
+        // Show tutorial if it's not completed AND user hasn't started real game
+        return tutorialState !== 'completed' &&
+          completedLevels.length === 0 &&
+          currentLevel === 0;
+      },
 
-        // Other levels require the previous level to be completed
-        const isUnlocked = completedLevels.includes(levelId - 1);
-        return isUnlocked;
-
+      // Cloud instance-related states
+      setZoomState: (isZoomed, cloudId = null) => {
+        set({
+          isZoomed,
+          zoomedCloudId: isZoomed ? cloudId : null
+        });
       },
 
       initializeClouds: (levelId, cloudConfigs) => {
         const { cloudStates } = get();
 
-        if (!cloudStates[levelId]) {
-          const levelClouds = {};
-
-          cloudConfigs.forEach(config => {
-            levelClouds[config.cloudId] = {
-              currentLayer: 1,
-              isRevealed: false,
-              cloudType: config.cloudType
-            };
-          });
-
-          set({
-            cloudStates: {
-              ...cloudStates,
-              [levelId]: levelClouds
-            }
-          });
+        // Don't reinitialize if clouds already exist for this level
+        if (cloudStates[levelId]) {
+          return;
         }
+
+        const newClouds = {};
+        cloudConfigs.forEach(cloudConfig => {
+          newClouds[cloudConfig.cloudId] = {
+            cloudId: cloudConfig.cloudId,
+            cloudType: cloudConfig.cloudType,
+            currentLayer: 1,
+            isRevealed: false,
+            content: cloudConfig.content || {}
+          };
+        });
+
+        set({
+          cloudStates: {
+            ...cloudStates,
+            [levelId]: newClouds
+          }
+        });
       },
 
       advanceCloudLayer: (levelId, cloudId) => {
         const { cloudStates } = get();
-        const levelClouds = cloudStates[levelId] || {};
-        const cloudState = levelClouds[cloudId];
+        const levelClouds = cloudStates[levelId];
 
-        if (!cloudState) {
+        if (!levelClouds || !levelClouds[cloudId]) {
           return;
         }
 
+        const cloudState = levelClouds[cloudId];
         let newLayer;
         let isRevealed;
 
@@ -175,6 +213,11 @@ const useGameStore = create(
       getCloudState: (levelId, cloudId) => {
         const { cloudStates } = get();
         return cloudStates[levelId]?.[cloudId] || null;
+      },
+
+      getZoomedCloudState: (levelId) => {
+        const { cloudStates, zoomedCloudId } = get();
+        return zoomedCloudId ? cloudStates[levelId]?.[zoomedCloudId] || null : null;
       },
 
       isLevelCompleted: (levelId) => {
@@ -243,6 +286,11 @@ const useGameStore = create(
         isGameComplete: state.isGameComplete,
         endingSequenceState: state.endingSequenceState,
         blowThreshold: state.blowThreshold,
+        // Persist tutorial state
+        tutorialState: state.tutorialState,
+        tutorialAttempts: state.tutorialAttempts,
+        microphoneCalibrated: state.microphoneCalibrated,
+        microphonePermissionGranted: state.microphonePermissionGranted,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,

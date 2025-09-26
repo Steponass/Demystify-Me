@@ -23,7 +23,7 @@ const HINT_VARIANTS = {
     first: 'This has 2 clouds: first one is simple; second one needs a longer blow',
     second: 'First layer needs a quick puff; second: at least 0.8s long',
     repeated: 'Is it wiggling? It means you need to blow for longer'
-  },
+  }
 };
 
 const HintDisplay = () => {
@@ -55,7 +55,6 @@ const HintDisplay = () => {
       handleDismiss();
     }
   }, [handleDismiss]);
-
 
   const hintText = getHintText();
   
