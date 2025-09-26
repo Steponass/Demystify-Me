@@ -1,4 +1,5 @@
 export const LEVEL_METADATA = [
+  { id: "tutorial", title: "Microphone test", path: "/tutorial" },
   { id: 1, title: "Folk Wisdom", path: "/level/1" },
   { id: 2, title: "Nothing Personal", path: "/level/2" },
   { id: 3, title: "Unbiased", path: "/level/3" },

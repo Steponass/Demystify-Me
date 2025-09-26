@@ -3,18 +3,17 @@ import { useNavigate } from "react-router-dom";
 import useGameStore from "@store/gameStore";
 import useBlowDetection from "@hooks/useBlowDetection";
 import Cloud from "@components/game/Cloud/Cloud";
-import HintDisplay from "@components/ui/HintDisplay/HintDisplay";
 import NextLevelButton from "@components/ui/NextLevelButton/NextLevelButton";
-import BlowIndicator from "@components/ui/BlowIndicator/BlowIndicator";
 import MicrophonePermissionFlow from "@components/ui/MicrophonePermissionFlow/MicrophonePermissionFlow";
 import { setLevelGradient } from "@utils/backgroundGradient";
-import styles from "./TutorialLevel.module.css";
+import styles from "@levels/Level.module.css";
+import tutorialStyles from "./TutorialLevel.module.css";
 
 const TUTORIAL_CLOUD_CONFIG = {
   levelId: "tutorial",
   cloudId: "tutorial-cloud",
   cloudType: "A1",
-  position: { x: "25%", y: "25%" }, // Centered
+  position: { x: "25%", y: "15%" }, // Centered
   content: {
     layer1: "It is what it is!",
     layer3: "",
@@ -35,7 +34,6 @@ const TutorialLevel = () => {
     isZoomed,
     setZoomState,
     isLevelCompleted,
-    getZoomedCloudState,
   } = useGameStore();
 
 
@@ -156,30 +154,27 @@ const TutorialLevel = () => {
     TUTORIAL_CLOUD_CONFIG.cloudId
   );
 
-  // Get the zoomed cloud state to check if it's revealed (for BlowIndicator)
-  const zoomedCloudState = getZoomedCloudState(TUTORIAL_CLOUD_CONFIG.levelId);
-  const shouldShowBlowIndicator = isZoomed && !zoomedCloudState?.isRevealed;
-
   // Show permission flow if not yet complete
   if (!permissionFlowComplete) {
     return (
-      <div className={styles.tutorialContainer}>
-        <div className={styles.permissionSection}>
-          <MicrophonePermissionFlow
-            onPermissionGranted={handlePermissionGranted}
-            onPermissionFailed={handlePermissionFailed}
-            showInstructions={true}
-            allowSkip={false}
-          />
+      <main>
+        <div className={styles.cloud_layout}>
+          <div className={tutorialStyles.permissionSection}>
+            <MicrophonePermissionFlow
+              onPermissionGranted={handlePermissionGranted}
+              onPermissionFailed={handlePermissionFailed}
+              showInstructions={true}
+              allowSkip={false}
+            />
+          </div>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className={styles.tutorialContainer}>
-      {/* Tutorial Cloud */}
-      <div className={styles.cloudSection}>
+    <main>
+      <div className={styles.cloud_layout}>
         {cloudState && (
           <Cloud
             levelId={TUTORIAL_CLOUD_CONFIG.levelId}
@@ -192,32 +187,20 @@ const TutorialLevel = () => {
             }
           />
         )}
+
+        {/* Tutorial-specific completion button */}
+        {isLevelCompleted("tutorial") && !isZoomed && (
+          <div className={tutorialStyles.continueSection}>
+            <NextLevelButton
+              levelId={0}
+              forceShow
+              onClickOverride={handleContinueToLevel1}
+              labelOverride="Start the fun"
+            />
+          </div>
+        )}
       </div>
-
-      {/* Hint Display */}
-      <div className={styles.hintSection}>
-        <HintDisplay />
-      </div>
-
-      {/* Blow Indicator - shown when zoomed and cloud not revealed */}
-      {shouldShowBlowIndicator && (
-        <div className={styles.blowIndicatorSection}>
-          <BlowIndicator levelId="tutorial" />
-        </div>
-      )}
-
-      {/* Next Level Button - shown after cloud is revealed and not zoomed */}
-      {isLevelCompleted("tutorial") && !isZoomed && (
-        <div className={styles.continueSection}>
-          <NextLevelButton
-            levelId={0}
-            forceShow
-            onClickOverride={handleContinueToLevel1}
-            labelOverride="Start the fun"
-          />
-        </div>
-      )}
-    </div>
+    </main>
   );
 };
 

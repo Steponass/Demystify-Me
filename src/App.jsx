@@ -4,15 +4,9 @@ import ProtectedLevelRoute from '@components/screens/ProtectedLevelRoute';
 import LevelRouter from '@components/game/LevelRouter';
 import MainMenu from '@components/screens/MainMenu/MainMenu';
 import TutorialLevel from '@levels/Tutorial/TutorialLevel';
-import useGameStore from '@store/gameStore';
+import GameGUI from '@components/ui/GameGUI/GameGUI';
 
 const RootRedirect = () => {
-  const shouldShowTutorial = useGameStore(state => state.shouldShowTutorial);
-
-  if (shouldShowTutorial()) {
-    return <Navigate to="/tutorial" replace />;
-  }
-
   return <MainMenu />;
 };
 
@@ -22,7 +16,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<RootRedirect />} />
-        <Route path="/tutorial" element={<TutorialLevel />} />
+        <Route path="/tutorial" element={
+          <>
+            <TutorialLevel />
+            <GameGUI levelId="tutorial" />
+          </>
+        } />
         <Route path="/level/:levelId" element={<ProtectedLevelRoute />}>
           <Route index element={<LevelRouter />} />
         </Route>

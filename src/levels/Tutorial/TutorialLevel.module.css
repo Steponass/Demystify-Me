@@ -1,41 +1,18 @@
-.tutorialContainer {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-32px);
-  position: relative;
-}
-
 .permissionSection {
-  width: 100%;
-  max-width: 600px;
+  width: min(90%, 560px);
+  margin-inline: auto;
   display: flex;
   justify-content: center;
-}
-
-.cloudSection {
-  flex: 1;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 400px;
-  position: relative;
+  height: 100%;
 }
 
-.blowIndicatorSection {
+.continueSection {
   position: absolute;
-  bottom: var(--space-32-48px);
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: var(--z-zoom-ui);
-}
-
-@media (max-width: 768px) {
-  .tutorialContainer {
-    padding: var(--space-16px);
-  }
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
