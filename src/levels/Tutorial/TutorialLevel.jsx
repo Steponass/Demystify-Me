@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useGameStore from "@store/gameStore";
-import useBlowDetection from "@hooks/useBlowDetection";
 import Cloud from "@components/game/Cloud/Cloud";
 import NextLevelButton from "@components/ui/NextLevelButton/NextLevelButton";
 import MicrophonePermissionFlow from "@components/ui/MicrophonePermissionFlow/MicrophonePermissionFlow";
@@ -13,26 +12,22 @@ const TUTORIAL_CLOUD_CONFIG = {
   levelId: "tutorial",
   cloudId: "tutorial-cloud",
   cloudType: "A1",
-  position: { x: "25%", y: "15%" }, // Centered
+  position: { x: "35%", y: "15%" }, // Centered
   content: {
-    layer1: "It is what it is!",
-    layer3: "",
+    layer1: "Blow me away!",
+    layer3: "Nice! Click anywhere",
   },
 };
 
 const TutorialLevel = () => {
   const navigate = useNavigate();
 
-  // Game store integration - removed unused getTutorialState
+  // Game store integration
   const {
-    getBlowThreshold,
     initializeClouds,
     getCloudState,
-    advanceCloudLayer,
     completeTutorial,
     completeTutorialPermissionSetup,
-    isZoomed,
-    setZoomState,
     isLevelCompleted,
   } = useGameStore();
 
@@ -41,7 +36,6 @@ const TutorialLevel = () => {
   const [permissionFlowComplete, setPermissionFlowComplete] = useState(false);
 
   // Tutorial logic state (useRef)
-  const isUserTryingRef = useRef(false);
   const tutorialPhaseRef = useRef("initial");
   const strugglingTimeoutRef = useRef(null);
   const hasInitializedCloudsRef = useRef(false);
@@ -68,16 +62,6 @@ const TutorialLevel = () => {
     // Show error state or guidance
   }, []);
 
-  const handleAudioLevel = useCallback(
-    (level) => {
-      // Only react when zoomed on the tutorial cloud
-      if (!isZoomed) return;
-      if (level > 0.1 && !isUserTryingRef.current) {
-        isUserTryingRef.current = true;
-      }
-    },
-    [isZoomed]
-  );
 
   const handleCloudRevealed = useCallback(() => {
     // Clear any pending timeout
@@ -86,38 +70,13 @@ const TutorialLevel = () => {
       strugglingTimeoutRef.current = null;
     }
 
-    // Reset zoom state to match regular level pattern
-    setZoomState(false, null);
-
     tutorialPhaseRef.current = "success";
-  }, [setZoomState]);
+  }, []);
 
-  const handleAnyBlow = useCallback(() => {
-    // Advance tutorial cloud to next layer
-    advanceCloudLayer(
-      TUTORIAL_CLOUD_CONFIG.levelId,
-      TUTORIAL_CLOUD_CONFIG.cloudId
-    );
+  const handleCloudReveal = useCallback(() => {
+    handleCloudRevealed();
+  }, [handleCloudRevealed]);
 
-    // Check if cloud is now revealed (layer > 2)
-    const cloudState = getCloudState(
-      TUTORIAL_CLOUD_CONFIG.levelId,
-      TUTORIAL_CLOUD_CONFIG.cloudId
-    );
-    if (cloudState?.isRevealed) {
-      handleCloudRevealed();
-    }
-  }, [advanceCloudLayer, getCloudState, handleCloudRevealed]);
-
-  // Removed unused microphoneState from destructuring
-  const { startListening, stopListening } = useBlowDetection({
-    onLevelChange: handleAudioLevel,
-    onAnyBlow: handleAnyBlow,
-    blowThreshold: getBlowThreshold(),
-    onMicrophoneError: (error) => {
-      console.error("Tutorial microphone error:", error);
-    },
-  });
 
   const handleContinueToLevel1 = useCallback(() => {
     // Complete tutorial in store
@@ -136,18 +95,9 @@ const TutorialLevel = () => {
         clearTimeout(strugglingTimeoutRef.current);
         strugglingTimeoutRef.current = null;
       }
-      stopListening();
     };
-  }, [stopListening]);
+  }, []);
 
-  // Start/stop listening based on being zoomed on the tutorial cloud
-  useEffect(() => {
-    if (permissionFlowComplete && hasInitializedCloudsRef.current && isZoomed) {
-      startListening();
-    } else {
-      stopListening();
-    }
-  }, [permissionFlowComplete, isZoomed, startListening, stopListening]);
 
   const cloudState = getCloudState(
     TUTORIAL_CLOUD_CONFIG.levelId,
@@ -182,14 +132,12 @@ const TutorialLevel = () => {
             position={TUTORIAL_CLOUD_CONFIG.position}
             content={TUTORIAL_CLOUD_CONFIG.content}
             cloudType={TUTORIAL_CLOUD_CONFIG.cloudType}
-            onZoomChange={(zoomed) =>
-              setZoomState(zoomed, TUTORIAL_CLOUD_CONFIG.cloudId)
-            }
+            onReveal={handleCloudReveal}
           />
         )}
 
         {/* Tutorial-specific completion button */}
-        {isLevelCompleted("tutorial") && !isZoomed && (
+        {isLevelCompleted("tutorial") && (
           <div className={tutorialStyles.continueSection}>
             <NextLevelButton
               levelId={0}

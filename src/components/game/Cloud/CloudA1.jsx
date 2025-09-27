@@ -8,7 +8,6 @@ import useHintStore from "@store/hintStore";
 import { getRandomCloudImages } from "@data/cloudDefinitions";
 import styles from "./Cloud.module.css";
 import Layer3Text from "./Layer3Text";
-import { MICROPHONE_START_DELAY } from "./constants/cloudConstants";
 import {
   createLayer3Timeline,
   animateElementsOut,

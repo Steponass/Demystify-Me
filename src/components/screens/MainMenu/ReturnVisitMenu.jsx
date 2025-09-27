@@ -6,9 +6,7 @@ import styles from "./MainMenu.module.css";
 
 const ReturnVisitMenu = ({ 
   currentLevel, 
-  onResume, 
-  tutorialCompleted, 
-  onRetryTutorial 
+  onResume,
 }) => {
   const getLevelTitle = () => {
     const levelData = LEVEL_METADATA.find((level) => level.id === currentLevel);
@@ -27,15 +25,6 @@ const ReturnVisitMenu = ({
           Resume
         </ActionButton>
         
-        {tutorialCompleted && (
-          <ActionButton 
-            variant="secondary" 
-            onClick={onRetryTutorial}
-            className={styles.tutorialButton}
-          >
-            Replay Tutorial
-          </ActionButton>
-        )}
       </div>
     </div>
   );

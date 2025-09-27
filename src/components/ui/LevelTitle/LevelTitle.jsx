@@ -22,7 +22,10 @@ const LevelTitle = ({ levelId, levelTitle }) => {
 
   return (
     <div className={styles.levelDisplay}>
-      <h1 className={styles.levelNumber}>Level {levelId}</h1>
+      {/* Mic check doesn't need level, just title */}
+      {levelId !== "tutorial" && (
+        <h1 className={styles.levelNumber}>Level {levelId}</h1>
+      )}
       <h2 className={styles.levelTitle}>{levelTitle}</h2>
     </div>
   );
