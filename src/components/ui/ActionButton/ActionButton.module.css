@@ -26,7 +26,8 @@
 }
 
 .levelButton {
+  min-width: 156px;
   background-color: var(--clr-btn-secondary);
-  padding: var(--space-8px) var(--space-16px);
+  padding: var(--space-12px) var(--space-16px);
 }
 

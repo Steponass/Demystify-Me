@@ -103,6 +103,16 @@
   row-gap: var(--space-12-16px)
 }
 
+@media (width <= 400px) {
+  .levelSelection {
+    padding-block: var(--space-12px);
+  }
+  .completed_title {
+    font-size: var(--fs-h2);
+    margin-bottom: -24px;
+  }
+}
+
 .thresholdAdjusterFirstVisit {
   filter: blur(0px);
   transition: filter 0.8s ease 7.5s;
